@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+:root {
+    --background-color-2: #dbdbdb;
+    --background-color-1: #f5f5f5;
+    --text-color: #3c4043;
+    --text-color-2: #5b5f63;
+    --hover-color: rgba(0, 0, 0, 0.05);
+    --color-hover: rgb(75, 79, 82);
+    --height-line-color: rgb(218, 220, 224);
+    --primary: rgb(26, 115, 232);
+    --silver: #e4e4e4;
+
+    --button-shadow-1: 0px 4px 4px 0px rgba(60, 64, 67, 0.3), 0px 8px 12px 6px rgba(60, 64, 67, 0.15);
+    --main-box-shadow: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --popup-shadow: 0 24px 38px 3px rgba(0, 0, 0, .14), 0 9px 46px 8px rgba(0, 0, 0, .12), 0 11px 15px -7px rgba(0, 0, 0, .2);
+
+    --err-color: 220, 53, 69;
+    --info-color: 23, 162, 184;
+    --warning-color: 255, 193, 7;
+    --success-color: 40, 167, 69;
+
+    --width-siderbar: 256px;
+}
+
+* {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    text-rendering: optimizeSpeed;
+    box-sizing: border-box;
+}
+
+body {
+    -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+    height: 100vh;
+    background-color: var(--background-color-1);
+    
+    &.dark-mode {
+        --background-color-2: #1b1b1b;
+        --background-color-1: #282a2c;
+        --text-color: #e3e3e3;
+        --text-color-2: #898989;
+        --hover-color: rgba(232,234,237,.08);
+        --color-hover: #e3e3e3;
+        --height-line-color: rgba(255,255,255,0.2);
+    }
+}
+
+#root {
+    height: 100%;
+}

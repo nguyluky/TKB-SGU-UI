@@ -1,0 +1,59 @@
+
+.topbar{
+    height: 50px;
+    width: 100%;
+    background: var(--background-color-1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .leftside {
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        .tools {
+            margin-left: 10px;
+        }
+
+        .logo {
+            height: 35px;
+            width: 35px;
+            img {
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+
+    .rightside {
+        
+        margin-right: 10px;
+        div {
+            display: inline-block;
+        }
+
+        div + div {
+            margin-left: 10px;
+        }
+
+        box-icon {
+            fill: var(--text-color);
+        }
+
+        
+
+        .theme-toggle, .account, .bgithub {
+            height: 35px;
+            width: 35px;
+            padding: calc((35px - 24px) /2);
+            border-radius: 50%;
+            cursor: pointer;
+
+            &:hover {
+
+                background: var(--hover-color);
+            }
+        }
+    }
+
+}

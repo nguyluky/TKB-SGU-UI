@@ -1,0 +1,68 @@
+.tkb {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    color: var(--text-color);
+    // grid-template-rows: 55px repeat(14, 1fr);
+
+    .tkb-row {
+        display: grid;
+        grid-template-rows: 1fr;
+    }
+
+    .tkb-row.head {
+        border-bottom: 1px solid var(--background-color-1);
+
+        .tkb-colmun {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tkb-colmun + .tkb-colmun {
+            border-left: 1px solid var(--background-color-1);
+        }
+        .tkb-colmun:nth-child(2) {
+            border-left: 2px solid var(--background-color-1);
+        }
+    }
+
+    .tkb-colmun.head {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: var(--text-color-2);
+    }
+
+    .tkb-row:not(.head) {
+
+        .tkb-colmun {
+            position: relative;
+            &::before {
+                content: '';
+                position: absolute;
+                bottom: 0px;
+                width: 100%;
+                right: 0px;
+                height: 0.1px;
+                background: var(--hover-color);
+            }
+        }
+
+        .tkb-colmun.head {
+            &::before {
+                width: 30%;
+            }
+        }
+
+        .tkb-colmun + .tkb-colmun {
+
+            border-left: 1px solid var(--hover-color);
+        }
+
+        .tkb-colmun:nth-child(2) {
+            border-left: 2px solid var(--background-color-1);
+        }
+    }
+}

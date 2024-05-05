@@ -1,0 +1,22 @@
+.tools_menu {
+    display: flex;
+} 
+
+.tool {
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 3px 15px 3px 15px;
+    border-radius: 3px;
+    &:hover {
+        background: var(--hover-color);
+
+    }
+}
+
+.tool_warp {
+    width: fit-content;
+    padding: 5px;
+    box-shadow: var(--main-box-shadow);
+    background-color: var(--background-color-1);
+    border-radius: 3px;
+}

@@ -1,0 +1,86 @@
+.tkb_body {
+    box-sizing: border-box;
+    padding: 0 5px;
+    height: calc(100% - 50px);
+    display: flex;
+    gap: 5px;
+
+    .tkb_body_left_side {
+        background-color: var(--background-color-2);
+        border-radius: 5px;
+        width: 300px;
+
+        .tkb_top {
+            box-sizing: border-box;
+            padding: 10px;
+            height: 40px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--background-color-1);
+            color: var(--text-color);
+            button {
+                border: transparent;
+                background: transparent;
+                outline: transparent;
+                padding: auto;
+
+                display: flex;
+                align-items: center;
+                padding: 4px;
+                border-radius: 5px;
+
+                box-icon {
+                    fill: var(--text-color)
+                }
+
+                &:hover {
+                    background: var(--hover-color);
+                }
+            }
+        }
+    }
+
+    .tkb_view {
+        background-color: var(--background-color-2);
+        width: 100%;
+        border-radius: 5px;
+    }
+}
+
+#arrow,
+#arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+}
+
+#arrow {
+    visibility: hidden;
+}
+
+#arrow::before {
+    visibility: visible;
+    content: '';
+    transform: rotate(45deg);
+}
+
+#tooltip[data-popper-placement^='top']>#arrow {
+    bottom: -4px;
+}
+
+#tooltip[data-popper-placement^='bottom']>#arrow {
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#tooltip[data-popper-placement^='left']>#arrow {
+    right: -4px;
+}
+
+#tooltip[data-popper-placement^='right']>#arrow {
+    left: -4px;
+}
