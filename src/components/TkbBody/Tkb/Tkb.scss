@@ -11,7 +11,7 @@
     }
 
     .tkb-row.head {
-        border-bottom: 1px solid var(--background-color-1);
+        border-bottom: 1px solid var(--hover-color);
 
         .tkb-colmun {
             display: flex;
@@ -20,10 +20,10 @@
         }
 
         .tkb-colmun + .tkb-colmun {
-            border-left: 1px solid var(--background-color-1);
+            border-left: 1px solid var(--hover-color);
         }
         .tkb-colmun:nth-child(2) {
-            border-left: 2px solid var(--background-color-1);
+            border-left: 2px solid var(--hover-color);
         }
     }
 
@@ -52,7 +52,7 @@
 
         .tkb-colmun.head {
             &::before {
-                width: 30%;
+                width: 50%;
             }
         }
 
@@ -62,7 +62,7 @@
         }
 
         .tkb-colmun:nth-child(2) {
-            border-left: 2px solid var(--background-color-1);
+            border-left: 2px solid var(--hover-color);
         }
     }
 }

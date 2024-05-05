@@ -29,16 +29,7 @@ function Tool({ data }) {
 }
 
 function ToolMenu({ children }) {
-    const [isMenuShow, setMenuShow] = React.useState(false);
-
     const [source, target] = useSingleton();
-
-    console.log(isMenuShow);
-
-    const showMenu = () => {
-        console.log('onclick');
-        setMenuShow(true);
-    };
 
     return (
         <div className="tools_menu">
