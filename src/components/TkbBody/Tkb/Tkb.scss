@@ -86,6 +86,22 @@
         p:nth-child(1) {
             font-weight: bold;
         }
+
+        &.templay {
+            animation-name: tiet-templay;
+            animation-duration: 0.4s;
+            animation-direction: alternate;
+            animation-iteration-count: infinite;
+        }
     }
 }
 
+
+@keyframes tiet-templay {
+    from {
+        scale: 1.04;
+    }
+    to {
+        scale: 0.96;
+    }
+}

@@ -10,7 +10,7 @@ const initValue = {
 function reducre(state, action) {
     var { path, value } = action;
     if (Object.hasOwn(state, path)) state[path] = value;
-    // console.log(state);
+    console.log(state);
     return { ...state };
 }
 

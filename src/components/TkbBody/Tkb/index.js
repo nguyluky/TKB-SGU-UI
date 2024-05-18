@@ -3,7 +3,7 @@ import './Tkb.scss';
 
 import { TkbContext } from '~/components/pades/Tkb';
 
-function Tiet({ id_to_hoc }) {
+function Tiet({ id_to_hoc, isTemplay }) {
     const [state, dispath] = React.useContext(TkbContext);
 
     const nhomHoc = state.ds_nhom_to.find((e) => {
@@ -17,15 +17,13 @@ function Tiet({ id_to_hoc }) {
     var g = (strHex / (255 * 2)) % 255;
     var b = (strHex / (255 * 3)) % 255;
 
-    console.log(r, g, b);
-
     return (
         <>
             {nhomHoc?.tkb.map((e, i) => {
                 return (
                     <div
                         key={i}
-                        className="tiet"
+                        className={isTemplay ? 'tiet templay' : 'tiet'}
                         style={{
                             backgroundColor: `rgba(${r}, ${g}, ${b}, 0.2)`,
                             borderColor: `rgb(${r}, ${g}, ${b})`,
@@ -77,7 +75,7 @@ function Tkb({ row, column }) {
                     );
                 })}
                 <div className="tkb-tiet-view">
-                    {state.tiet_templay ? <Tiet id_to_hoc={state.tiet_templay} /> : ''}
+                    {state.tiet_templay ? <Tiet id_to_hoc={state.tiet_templay} isTemplay={true} /> : ''}
                     {state.tiet_da_chon?.map((e, i) => {
                         return <Tiet id_to_hoc={e} key={i} />;
                     })}

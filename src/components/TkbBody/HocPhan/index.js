@@ -20,7 +20,7 @@ function HocPhan({ maHocPhan }) {
                     <box-icon name={!isDrop ? 'chevron-down' : 'chevron-up'}></box-icon>
                 </span>
                 <span className="hp-name">{HPDisplayName}</span>
-                <span className="ct">CT {ct}</span>
+                <span className="ct">TC {ct}</span>
             </div>
             <div className="drop-dow" style={!isDrop ? { height: 0 } : {}}>
                 {state.ds_nhom_to
@@ -36,12 +36,18 @@ function HocPhan({ maHocPhan }) {
                             dispath({ path: 'tiet_templay', value: '' });
                         };
 
+                        const handleClick = () => {
+                            state.tiet_da_chon.push(e.id_to_hoc);
+                            dispath({ path: 'tiet_da_chon', value: state.tiet_da_chon });
+                        };
+
                         return (
                             <div
                                 key={i}
                                 className="nhom-hoc"
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
+                                onClick={handleClick}
                             >
                                 <p>{tkb.map((e) => `T${e.thu} - ${e.phong}`)?.join(' | ')}</p>
                                 <p>GV: </p>
