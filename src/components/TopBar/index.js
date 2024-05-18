@@ -5,22 +5,29 @@ import images from '~/assets/images';
 import Tippy from '@tippyjs/react';
 import UserInfo from './UserInfo';
 
+import storeContext from '~/store/Context';
+
 function TopBar({ children }) {
-    const [darkMode, setDarkMode] = React.useState(() => {
-        if (!localStorage.getItem('theme')) {
-            document.body.className =
-                window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-mode' : '';
-            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-        return localStorage.getItem('theme') == 'dark';
-    });
+    const [state, dispath] = React.useContext(storeContext);
+
+    console.log(state);
+
+    // const [darkMode, setDarkMode] = React.useState(() => {
+    //     if (!localStorage.getItem('theme')) {
+    //         document.body.className =
+    //             window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-mode' : '';
+    //         return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    //     }
+    //     return localStorage.getItem('theme') == 'dark';
+    // });
     const [isAccShow, setAccShow] = React.useState(false);
-    console.log(darkMode);
 
     const themeHandle = () => {
-        document.body.className = !darkMode ? 'dark-mode' : '';
-        localStorage.setItem('theme', !darkMode ? 'dark' : 'light');
-        setDarkMode(!darkMode);
+        if (!state.theme) {
+            dispath({ type: 'THEME-SET-DARK' });
+        } else {
+            dispath({ type: 'THEME-SET-LIGHT' });
+        }
     };
 
     const githubHandle = () => {
@@ -48,7 +55,7 @@ function TopBar({ children }) {
                     <box-icon type="logo" name="github"></box-icon>
                 </div>
                 <div className="theme-toggle" onClick={themeHandle}>
-                    {darkMode ? <box-icon name="sun" /> : <box-icon name="moon" />}
+                    {state.theme ? <box-icon name="sun" /> : <box-icon name="moon" />}
                 </div>
                 <Tippy content={<UserInfo />} trigger="click">
                     <div className="account" onClick={isAccShow ? accountHandleHide : accountHandleShow}>

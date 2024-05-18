@@ -1,0 +1,56 @@
+.hoc-phan {
+    margin: 5px 0 0 5px;
+    transition: all 1000ms;
+    
+    .info {
+        border-radius: 5px;
+        background-color: var(--hover-color);
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        padding: 0 5px;
+        color: var(--text-color);
+        font-size: 15px;
+
+        .hp-name {
+            width: calc(100% - 60px );
+            text-wrap: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .drop-down ,
+        .delete {
+            height: 25px;
+            width: 25px;
+        }
+
+        box-icon {
+            fill: var(--text-color);
+        }
+    }
+
+    .drop-dow {
+        height: max-content;
+        overflow: hidden;
+        color: var(--text-color-2);
+
+        
+
+        .nhom-hoc {
+            margin-left: 20px;
+            padding: 5px 0;
+
+            &:hover {
+                color: var(--text-color);
+            }
+        }
+
+        .nhom-hoc + .nhom-hoc {
+            border-top: 2px solid var(--hover-color);
+        }
+    }
+    
+}

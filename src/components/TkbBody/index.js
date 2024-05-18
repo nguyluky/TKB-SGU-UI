@@ -2,41 +2,27 @@ import React from 'react';
 import './TkbBody.scss';
 import Tippy from '@tippyjs/react';
 import Tkb from './Tkb';
+import HocPhan from './HocPhan';
+
+import { TkbContext } from '~/components/pades/Tkb';
 
 function TkbBody() {
+    const [state, dispath] = React.useContext(TkbContext);
     return (
         <div className="tkb_body">
             <div className="tkb_body_left_side">
                 <div className="tkb_top">
-                    <span>Số tính chỉ: 10/26</span>
-                    <Tippy
-                        content={
-                            <div
-                                id="tooltip"
-                                role="tooltip"
-                                style={{ backgroundColor: 'darkgray', padding: '2px', borderRadius: '5px' }}
-                                tabIndex="-1"
-                                data-popper-placement="bottom"
-                            >
-                                <span>Học thêm</span>
-                                <div id="arrow" data-popper-arrow></div>
-                            </div>
-                        }
-                        placement="bottom"
-                        delay={[500, 0]}
-                        theme="material"
-                    >
-                        <button className="button_add">
-                            <box-icon name="plus"></box-icon>
-                        </button>
-                    </Tippy>
+                    <span className="title">TÍN CHỈ: {state.xo_tin_chi}/26</span>
+                    <button className="button-add">
+                        <box-icon name="plus"></box-icon>
+                    </button>
                 </div>
                 <div className="tkb_list_view">
-                    <div className="tab-master">
-                        <div className="tab">Tất cả</div>
-                        <div className="tab">Đã chon</div>
+                    <div className="tab-view">
+                        {state.hoc_phan_da_chon.map((el, index) => {
+                            return <HocPhan key={index} maHocPhan={el} />;
+                        })}
                     </div>
-                    <div className="tab-view"></div>
                 </div>
             </div>
             <div className="tkb_view">

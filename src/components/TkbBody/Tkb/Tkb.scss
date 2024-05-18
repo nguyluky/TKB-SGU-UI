@@ -4,6 +4,7 @@
     display: grid;
     color: var(--text-color);
     // grid-template-rows: 55px repeat(14, 1fr);
+    position: relative;
 
     .tkb-row {
         display: grid;
@@ -11,8 +12,9 @@
     }
 
     .tkb-row.head {
-        border-bottom: 1px solid var(--hover-color);
-
+        border-bottom: 3px solid var(--hover-color);
+        color: var(--text-color);
+        font-weight: bold;
         .tkb-colmun {
             display: flex;
             align-items: center;
@@ -66,3 +68,24 @@
         }
     }
 }
+
+
+.tkb-tiet-view {
+    height: 0px;
+    width: 0px;
+
+    .tiet {
+        height: calc(((100% - 55px) / 14) * 2 - 3px);
+        position: absolute;
+        // background-color: rgba(0, 0, 0 , 0);
+        width: calc(((100% - 55px) / 7 ) - 10px);
+        box-sizing: border-box;
+        padding: 5px;
+        border-left: 3px solid transparent;
+
+        p:nth-child(1) {
+            font-weight: bold;
+        }
+    }
+}
+

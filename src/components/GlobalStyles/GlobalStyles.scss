@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 :root {
-    --background-color-2: #dbdbdb;
-    --background-color-1: #f5f5f5;
+    --background-color-1: #e9eef6;
+    --background-color-2: whitesmoke;
     --text-color: #3c4043;
     --text-color-2: #5b5f63;
     --hover-color: rgba(0, 0, 0, 0.05);
@@ -33,14 +33,14 @@
 
 body {
     -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     height: 100vh;
-    background-color: var(--background-color-1);
+    background-color: var(--background-color-2);
     
     &.dark-mode {
-        --background-color-2: #1b1b1b;
-        --background-color-1: #282a2c;
+        --background-color-1: #1b1b1b;
+        --background-color-2: #282a2c;
         --text-color: #e3e3e3;
         --text-color-2: #898989;
         --hover-color: rgba(232,234,237,.08);
