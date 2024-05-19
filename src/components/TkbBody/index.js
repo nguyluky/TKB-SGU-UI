@@ -1,6 +1,5 @@
 import React from 'react';
 import './TkbBody.scss';
-import Tippy from '@tippyjs/react';
 import Tkb from './Tkb';
 import HocPhan from './HocPhan';
 
@@ -8,6 +7,19 @@ import { TkbContext } from '~/components/pades/Tkb';
 
 function TkbBody() {
     const [state, dispath] = React.useContext(TkbContext);
+
+    var soTC = 0;
+
+    const tabViewChile = state.hoc_phan_da_chon.map((el, index) => {
+        var ct = state.ds_nhom_to.find((e) => e.ma_mon == el)?.so_tc;
+        soTC += ct
+        return <HocPhan key={index} maHocPhan={el} />;
+    })
+
+    React.useEffect(() => {
+        dispath({path: "xo_tin_chi",  value: soTC})
+    }, [soTC])
+
     return (
         <div className="tkb_body">
             <div className="tkb_body_left_side">
@@ -19,9 +31,7 @@ function TkbBody() {
                 </div>
                 <div className="tkb_list_view">
                     <div className="tab-view">
-                        {state.hoc_phan_da_chon.map((el, index) => {
-                            return <HocPhan key={index} maHocPhan={el} />;
-                        })}
+                        {tabViewChile}
                     </div>
                 </div>
             </div>

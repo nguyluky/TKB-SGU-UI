@@ -55,17 +55,74 @@ class UserApi {
     async joinTkb() {}
 }
 
+class ApiResponseBase {
+    code = 0;
+    msg = '';
+    success = false;
+    data = null;
+
+    constructor(code, msg, success, data) {
+        this.code = code;
+        this.msg = msg;
+        this.success = success;
+        this.data = data;
+    }
+
+    static fromJson(ob) {
+        return new ApiResponseBase(ob.code, ob.msg, ob.success, ob.data);
+    }
+}
+
 class TkbSguApi {
+    /**
+     *
+     * @param {String} userName
+     * @param {String} password
+     * @returns {UserApi | ApiResponseBase}
+     */
     static async login(userName, password) {
-        console.log(userName, password);
+        var resp = await fetch(baseUrl + '/api/v1/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userName: userName,
+                password: password,
+            }),
+        });
+
+        const jsonResp = ApiResponseBase.fromJson(await resp.json());
+
+        if (jsonResp.success) {
+            return new UserApi(baseUrl, jsonResp.data.accessToken);
+        }
+        return jsonResp;
     }
 
     static async signup(userName, password, email, type_signup) {
-        console.log('sign_up');
+        var resp = await fetch(baseUrl + '/api/v1/auth/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: userName,
+                password: password,
+                email: email,
+                type_signup: type_signup,
+            }),
+        });
+
+        return await resp.json();
     }
 
     static async verifyEmail(verifyId) {
-        console.log('verify');
+        var resp = await fetch(baseUrl + '/api/v1/auth/verify/' + verifyId, {
+            method: 'POST',
+        });
+
+        return await resp.json();
     }
 
     static async getDsNhomHoc() {
@@ -76,4 +133,5 @@ class TkbSguApi {
     }
 }
 
+export { UserApi, TkbSguApi };
 export default TkbSguApi;

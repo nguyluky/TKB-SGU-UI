@@ -1,6 +1,7 @@
 import React from 'react';
 import './TopBar.scss';
 import 'boxicons';
+
 import images from '~/assets/images';
 import Tippy from '@tippyjs/react';
 import UserInfo from './UserInfo';

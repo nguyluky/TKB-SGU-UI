@@ -12,7 +12,9 @@ function Tiet({ id_to_hoc, isTemplay }) {
 
     // console.log(nhomHoc);
 
-    var strHex = Math.abs(parseInt(id_to_hoc));
+    const ma_mon = nhomHoc.ma_mon;
+
+    var strHex = Math.abs(parseInt(ma_mon * 123));
     var r = (strHex / 255) % 255;
     var g = (strHex / (255 * 2)) % 255;
     var b = (strHex / (255 * 3)) % 255;
@@ -76,7 +78,7 @@ function Tkb({ row, column }) {
                 })}
                 <div className="tkb-tiet-view">
                     {state.tiet_templay ? <Tiet id_to_hoc={state.tiet_templay} isTemplay={true} /> : ''}
-                    {state.tiet_da_chon?.map((e, i) => {
+                    {Object.values(state.tiet_da_chon)?.map((e, i) => {
                         return <Tiet id_to_hoc={e} key={i} />;
                     })}
                 </div>

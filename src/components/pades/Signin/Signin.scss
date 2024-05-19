@@ -1,0 +1,99 @@
+
+
+.sign-up-wall {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, var(--primary-color-3) 0%, var(--primary-color-1) 51%, var(--primary-color-2) 100%);
+    
+    .sign-up-content {
+        border-radius: 10px;
+        width: 400px;
+        margin-bottom: 10vh;
+        padding: 20px;
+        height: fit-content;
+        box-sizing: border-box;
+        background-color: var(--background-color-1);
+
+        .title {
+            color: var(--text-color);
+            text-align: center;
+            margin: 5px 0 25px 0;
+        }
+
+        .line input {
+            background-color: var(--background-color-1);
+            height: 40px;
+            width: 100%;
+            border: 1px solid var(--hover-color);
+            border-radius: 5px;
+            box-sizing: border-box;
+            padding: 0 10px;
+            outline: none;
+            font-size: 16px;
+            color: var(--text-color);
+
+        }
+
+        .line + .line {
+            margin-top: 15px;
+        }
+
+        .dctk {
+            margin-top: 15px;
+            font-size: 13px;
+            display: block;
+            text-align: center;
+        }
+
+        button {
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+            height: 35px;
+            width: 100%;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            box-sizing: border-box;
+            background: transparent;
+
+            &.ok {
+                background: linear-gradient(90deg, var(--primary-color-3) 0%, var(--primary-color-1) 51%, var(--primary-color-2) 100%);
+            }
+
+            &.fb {
+                background: #0866ff;
+            }
+
+            &.gg {
+                background-color: var(--background-color-1);
+                border: 2px solid var(--hover-color);
+            }
+
+            &:active {
+                filter: brightness(0.95);
+            }
+        }
+
+        .or {
+
+            margin-top: 15px;
+            
+            display: flex;
+            align-items: center;
+
+            p {
+                padding: 0 5px;
+            }
+
+            .vr {
+                height: 2px;
+                width: 50%;
+                background-color: var(--hover-color);
+            }
+        }
+    }
+}

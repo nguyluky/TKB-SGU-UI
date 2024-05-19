@@ -1,5 +1,6 @@
 const initValue = {
-    theme: localStorage.getItem('theme') == 'true',
+    theme: localStorage.getItem('theme') === 'true',
+    user: null,
 };
 
 function reducre(state, action) {
@@ -16,9 +17,13 @@ function reducre(state, action) {
             localStorage.setItem('theme', false);
             state.theme = false;
             break;
+
+        case 'SET-USER':
+            state.user = action.value;
+            break;
     }
 
-    return state;
+    return { ...state };
 }
 
 export { initValue };

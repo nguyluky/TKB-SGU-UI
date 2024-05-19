@@ -6,8 +6,10 @@ function HocPhan({ maHocPhan }) {
     const [state, dispath] = React.useContext(TkbContext);
 
     const HPDisplayName = state.ds_mon_hoc[maHocPhan];
-    const ct = state.ds_nhom_to.find((e) => e.ma_mon == maHocPhan)?.so_tc;
+    const tiet = state.ds_nhom_to.find((e) => e.ma_mon === maHocPhan);
 
+    const ct = tiet?.so_tc;
+    
     const [isDrop, setDrop] = React.useState(false);
 
     const dropDowHandle = () => {
@@ -24,7 +26,7 @@ function HocPhan({ maHocPhan }) {
             </div>
             <div className="drop-dow" style={!isDrop ? { height: 0 } : {}}>
                 {state.ds_nhom_to
-                    .filter((e) => e.ma_mon == maHocPhan)
+                    .filter((e) => e.ma_mon === maHocPhan)
                     ?.map((e, i) => {
                         var tkb = e.tkb;
 
@@ -37,7 +39,7 @@ function HocPhan({ maHocPhan }) {
                         };
 
                         const handleClick = () => {
-                            state.tiet_da_chon.push(e.id_to_hoc);
+                            state.tiet_da_chon[maHocPhan] = e.id_to_hoc;
                             dispath({ path: 'tiet_da_chon', value: state.tiet_da_chon });
                         };
 

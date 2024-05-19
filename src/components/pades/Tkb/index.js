@@ -6,9 +6,13 @@ import ToolMenu from '~/components/TopBar/ToolMenu';
 import TkbContext from './Context';
 import TkbSguApi from '~/api/Api';
 import reducre, { initValue } from './reducer';
+import { useParams } from 'react-router-dom';
 
 function Tkb() {
     const [state, dispath] = React.useReducer(reducre, initValue);
+    const {tkbid} = useParams()
+
+    console.log(tkbid)
 
     const saveHanel = () => {
         console.log('onclick');
