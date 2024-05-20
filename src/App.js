@@ -13,12 +13,12 @@ function App() {
     }, []);
 
     return (
-            <Routes>
-                {publicRoutes.map((route, index) => {
-                    var Page = route.element;
-                    return <Route key={index} path={route.path} element={<Page />} />;
-                })}
-            </Routes>
+        <Routes>
+            {publicRoutes.map((route, index) => {
+                var Page = route.element;
+                return <Route key={index} path={route.path} element={<Page />} />;
+            })}
+        </Routes>
     );
 }
 

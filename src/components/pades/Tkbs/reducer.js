@@ -1,6 +1,6 @@
 const initValue = {
-    ds_nhom_to: [],
-    ds_mon_hoc: {},
+    ds_nhom_to: null,
+    ds_mon_hoc: null,
     xo_tin_chi: 0,
     hoc_phan_da_chon: ['813102', '813103', '861302'],
     tiet_templay: '',

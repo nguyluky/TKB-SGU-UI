@@ -1,4 +1,4 @@
-var baseUrl = 'http://localhost';
+var baseUrl = 'http://tkbsgusort.dev.vn';
 class Tkb {
     constructor(token, tkbId) {
         this.token = token;

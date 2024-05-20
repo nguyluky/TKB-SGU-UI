@@ -21,6 +21,9 @@ function reducre(state, action) {
         case 'SET-USER':
             state.user = action.value;
             break;
+
+        default:
+            break;
     }
 
     return { ...state };

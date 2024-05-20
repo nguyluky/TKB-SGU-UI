@@ -39,12 +39,12 @@
         box-icon {
             fill: var(--text-color);
         }
-
-        
+        display: flex;
 
         .theme-toggle, .account, .bgithub {
-            height: 35px;
-            width: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: calc((35px - 24px) /2);
             border-radius: 50%;
             cursor: pointer;
@@ -52,6 +52,21 @@
             &:hover {
 
                 background: var(--hover-color);
+            }
+        }
+
+        .account:has(.btt-sign-in) {
+            border-radius: 0;
+
+            .btt-sign-in {
+                background-color: var(--primary-color-2);
+                padding: 5px 15px;
+                border-radius: 5px;
+                color: var(--background-color-1);
+            }
+
+            &:hover {
+                background-color: transparent;
             }
         }
     }

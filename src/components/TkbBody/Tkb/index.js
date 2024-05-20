@@ -1,16 +1,14 @@
 import React from 'react';
 import './Tkb.scss';
 
-import { TkbContext } from '~/components/pades/Tkb';
+import TkbContext from '~/components/pades/Tkbs/Context';
 
 function Tiet({ id_to_hoc, isTemplay }) {
-    const [state, dispath] = React.useContext(TkbContext);
+    const [state] = React.useContext(TkbContext);
 
     const nhomHoc = state.ds_nhom_to.find((e) => {
-        return e.id_to_hoc == id_to_hoc;
+        return e.id_to_hoc === id_to_hoc;
     });
-
-    // console.log(nhomHoc);
 
     const ma_mon = nhomHoc.ma_mon;
 
@@ -47,7 +45,7 @@ function Tiet({ id_to_hoc, isTemplay }) {
 function Tkb({ row, column }) {
     const thu = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
 
-    const [state, dispath] = React.useContext(TkbContext);
+    const [state] = React.useContext(TkbContext);
 
     return (
         <>

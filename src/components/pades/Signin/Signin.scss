@@ -15,7 +15,7 @@
         padding: 20px;
         height: fit-content;
         box-sizing: border-box;
-        background-color: var(--background-color-1);
+        background-color: var(--background-color-2);
 
         .title {
             color: var(--text-color);
@@ -24,11 +24,11 @@
         }
 
         .line input {
-            background-color: var(--background-color-1);
+
+            background-color: transparent;
+            border: transparent;
             height: 40px;
             width: 100%;
-            border: 1px solid var(--hover-color);
-            border-radius: 5px;
             box-sizing: border-box;
             padding: 0 10px;
             outline: none;
@@ -41,11 +41,41 @@
             margin-top: 15px;
         }
 
+        .line {
+
+            display: flex;
+            align-items: center;
+            background-color: var(--background-color-2);
+            border: 1px solid var(--hover-color);
+            border-radius: 5px;
+
+            input {
+                display: inline-block;
+            }
+
+            span {
+                box-sizing: border-box;
+                padding-right: 5px;
+            }
+        }
+
+        .err:has(p) {
+            p {
+                margin-top: 15px;
+                text-align: center;
+                font-size: 14.5px;
+                color: #f44336;
+                text-transform:capitalize;
+            }
+        }
+
         .dctk {
             margin-top: 15px;
             font-size: 13px;
             display: block;
             text-align: center;
+            color: var(--text-color-2);
+            
         }
 
         button {
@@ -59,6 +89,7 @@
             border: none;
             box-sizing: border-box;
             background: transparent;
+            color: var(--background-color-1);
 
             &.ok {
                 background: linear-gradient(90deg, var(--primary-color-3) 0%, var(--primary-color-1) 51%, var(--primary-color-2) 100%);
@@ -71,6 +102,7 @@
             &.gg {
                 background-color: var(--background-color-1);
                 border: 2px solid var(--hover-color);
+                color: var(--text-color);
             }
 
             &:active {
@@ -87,6 +119,7 @@
 
             p {
                 padding: 0 5px;
+                color: var(--text-color-2);
             }
 
             .vr {

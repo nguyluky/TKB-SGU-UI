@@ -1,9 +1,12 @@
 import React from 'react';
+
+import Tippy from '@tippyjs/react';
+import { useNavigate } from 'react-router-dom';
+
 import './TopBar.scss';
 import 'boxicons';
 
 import images from '~/assets/images';
-import Tippy from '@tippyjs/react';
 import UserInfo from './UserInfo';
 
 import storeContext from '~/store/Context';
@@ -11,17 +14,9 @@ import storeContext from '~/store/Context';
 function TopBar({ children }) {
     const [state, dispath] = React.useContext(storeContext);
 
-    console.log(state);
-
-    // const [darkMode, setDarkMode] = React.useState(() => {
-    //     if (!localStorage.getItem('theme')) {
-    //         document.body.className =
-    //             window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-mode' : '';
-    //         return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    //     }
-    //     return localStorage.getItem('theme') == 'dark';
-    // });
     const [isAccShow, setAccShow] = React.useState(false);
+
+    const navigate = useNavigate();
 
     const themeHandle = () => {
         if (!state.theme) {
@@ -36,6 +31,7 @@ function TopBar({ children }) {
     };
 
     const accountHandleShow = () => {
+        if (!state.user) navigate('/sign_in');
         setAccShow(true);
     };
 
@@ -60,7 +56,7 @@ function TopBar({ children }) {
                 </div>
                 <Tippy content={<UserInfo />} trigger="click">
                     <div className="account" onClick={isAccShow ? accountHandleHide : accountHandleShow}>
-                        <box-icon name="user"></box-icon>
+                        {state.user ? <box-icon name="user"></box-icon> : <p className="btt-sign-in">login</p>}
                     </div>
                 </Tippy>
             </div>

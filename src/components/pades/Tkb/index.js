@@ -3,16 +3,15 @@ import TkbBody from '~/components/TkbBody';
 import TopBar from '~/components/TopBar';
 import ToolMenu from '~/components/TopBar/ToolMenu';
 
-import TkbContext from './Context';
 import TkbSguApi from '~/api/Api';
-import reducre, { initValue } from './reducer';
+import { tkbReducre, tkbInitValue, tkbContext } from '../Tkbs';
 import { useParams } from 'react-router-dom';
 
 function Tkb() {
-    const [state, dispath] = React.useReducer(reducre, initValue);
-    const {tkbid} = useParams()
+    const [state, dispath] = React.useReducer(tkbReducre, tkbInitValue);
+    const { tkbid } = useParams();
 
-    console.log(tkbid)
+    console.log(tkbid);
 
     const saveHanel = () => {
         console.log('onclick');
@@ -63,14 +62,13 @@ function Tkb() {
     }, []);
 
     return (
-        <TkbContext.Provider value={[state, dispath]}>
+        <tkbContext.Provider value={[state, dispath]}>
             <TopBar>
                 <ToolMenu>{tools}</ToolMenu>
             </TopBar>
             <TkbBody />
-        </TkbContext.Provider>
+        </tkbContext.Provider>
     );
 }
 
-export { TkbContext };
 export default Tkb;

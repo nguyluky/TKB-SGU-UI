@@ -7,24 +7,26 @@ import TkbSguApi, { UserApi } from '~/api/Api';
 import Context from '~/store/Context';
 
 function Signin() {
-    const userNameRef = useRef(null);
-    const passwordRef = useRef(null);
+    const [userName, setUserName] = useState('');
+    const [password, setPassword] = useState('');
 
-    const isLoading = useState(false);
+    const [err, setErr] = useState('');
+
+    const [isLoading, setLoading] = useState(false);
+    const [isShowPass, setShow] = useState(false);
 
     const navigate = useNavigate();
 
     const [state, dispath] = useContext(Context);
 
     const signInHandle = () => {
-        const userName = userNameRef.current?.value;
-        const password = passwordRef.current?.value;
-
         TkbSguApi.login(userName, password)
             .then((result) => {
                 if (result instanceof UserApi) {
                     dispath({ type: 'SET-USER', value: result });
                     navigate('/');
+                } else {
+                    setErr(result.msg);
                 }
             })
             .catch((err) => {});
@@ -35,11 +37,25 @@ function Signin() {
             <div className="sign-up-content">
                 <h1 className="title">SignIn</h1>
                 <div className="line">
-                    <input type="text" ref={userNameRef} placeholder="Tên đăng nhập" />
+                    <input
+                        type="text"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                        placeholder="Tên đăng nhập"
+                    />
                 </div>
                 <div className="line">
-                    <input type="password" ref={passwordRef} placeholder="Mật khẩu" />
+                    <input
+                        type={isShowPass ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Mật khẩu"
+                    />
+                    <span onClick={() => setShow(!isShowPass)}>
+                        <box-icon name={isShowPass ? 'show' : 'hide'}></box-icon>
+                    </span>
                 </div>
+                <div className="err">{err ? <p>{err}</p> : ''}</div>
                 <Link className="dctk" to="/sign_in/forget_password">
                     Quên mật khẩu?
                 </Link>
@@ -56,7 +72,7 @@ function Signin() {
                     <div className="vr" />
                 </div>
 
-                <button className="fb">Lognin with facebook</button>
+                <button className="fb"> with facebook</button>
 
                 <button className="gg">Lognin with google</button>
             </div>

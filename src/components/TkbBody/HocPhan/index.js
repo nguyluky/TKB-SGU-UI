@@ -1,5 +1,5 @@
 import React from 'react';
-import { TkbContext } from '~/components/pades/Tkb';
+import TkbContext from '~/components/pades/Tkbs/Context';
 import './HocPhan.scss';
 
 function HocPhan({ maHocPhan }) {
@@ -9,7 +9,7 @@ function HocPhan({ maHocPhan }) {
     const tiet = state.ds_nhom_to.find((e) => e.ma_mon === maHocPhan);
 
     const ct = tiet?.so_tc;
-    
+
     const [isDrop, setDrop] = React.useState(false);
 
     const dropDowHandle = () => {
