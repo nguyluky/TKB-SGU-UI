@@ -43,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-private-property-in-object": "^7.24.5",
     "babel-plugin-module-resolver": "^5.0.2"
   }
 }
