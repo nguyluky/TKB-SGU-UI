@@ -46,7 +46,7 @@ function TopBar({ children }) {
         <div className="topbar">
             <div className="leftside">
                 <div className="logo">
-                    <img src={images.logo} />
+                    <img src={images.logo} alt="logo" />
                 </div>
                 <div className="tools">{children}</div>
             </div>
