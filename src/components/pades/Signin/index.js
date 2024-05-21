@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -12,11 +12,12 @@ function Signin() {
 
     const [err, setErr] = useState('');
 
-    const [isLoading, setLoading] = useState(false);
+    // const [isLoading, setLoading] = useState(false);
     const [isShowPass, setShow] = useState(false);
 
     const navigate = useNavigate();
 
+    // eslint-disable-next-line no-unused-vars
     const [state, dispath] = useContext(Context);
 
     const signInHandle = () => {
@@ -24,7 +25,9 @@ function Signin() {
             .then((result) => {
                 if (result instanceof UserApi) {
                     dispath({ type: 'SET-USER', value: result });
-                    navigate('/');
+                    var last = window.sessionStorage.getItem('last');
+                    if (last) navigate(last);
+                    else navigate('/');
                 } else {
                     setErr(result.msg);
                 }

@@ -30,7 +30,7 @@
             height: 40px;
             width: 100%;
             box-sizing: border-box;
-            padding: 0 10px;
+            padding: 0 0 0 10px;
             outline: none;
             font-size: 16px;
             color: var(--text-color);
@@ -51,11 +51,15 @@
 
             input {
                 display: inline-block;
+                width: calc(100% - 30px);
             }
 
             span {
                 box-sizing: border-box;
-                padding-right: 5px;
+                padding-right: 10px;
+                height: 25px;
+                width: 25px;
+                fill: var(--text-color-2);
             }
         }
 

@@ -25,16 +25,21 @@ function Tiet({ id_to_hoc, isTemplay }) {
                         key={i}
                         className={isTemplay ? 'tiet templay' : 'tiet'}
                         style={{
-                            backgroundColor: `rgba(${r}, ${g}, ${b}, 0.2)`,
-                            borderColor: `rgb(${r}, ${g}, ${b})`,
                             top: `calc(((100% - 55px) / 14) * ${e.tbd - 1} + 55px )`,
                             left: `calc(((100% - 55px) / 7 ) * ${e.thu - 2} + 55px)`,
                             height: `calc(((100% - 55px) / 14) * ${e.tkt - e.tbd + 1} - 3px)`,
                         }}
                     >
-                        <p>{nhomHoc.ten_mon}</p>
-                        <p>Phòng: {e.phong}</p>
-                        <p>GV: {e.gv}</p>
+                        <div
+                            style={{
+                                backgroundColor: `rgba(${r}, ${g}, ${b}, 0.2)`,
+                                borderColor: `rgb(${r}, ${g}, ${b})`,
+                            }}
+                        >
+                            <p>{nhomHoc.ten_mon}</p>
+                            <p>Phòng: {e.phong}</p>
+                            <p>GV: {e.gv}</p>
+                        </div>
                     </div>
                 );
             })}

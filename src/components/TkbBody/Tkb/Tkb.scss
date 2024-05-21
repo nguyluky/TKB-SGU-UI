@@ -80,14 +80,22 @@
         // background-color: rgba(0, 0, 0 , 0);
         width: calc(((100% - 55px) / 7 ) - 10px);
         box-sizing: border-box;
-        padding: 5px;
-        border-left: 3px solid transparent;
+        background-color: var(--background-color-1);
+        
+        > div {
+            padding: 5px;
+            border-left: 3px solid transparent;
+            height: 100%;
+            width: 100%;
+        }
 
         p:nth-child(1) {
             font-weight: bold;
         }
 
+
         &.templay {
+            z-index: 1;
             animation-name: tiet-templay;
             animation-duration: 0.4s;
             animation-direction: alternate;
@@ -99,9 +107,9 @@
 
 @keyframes tiet-templay {
     from {
-        scale: 1.04;
+        scale: 0.9;
     }
     to {
-        scale: 0.96;
+        scale: 0.8;
     }
 }

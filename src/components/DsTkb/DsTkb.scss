@@ -1,0 +1,35 @@
+.ds-tkbs-body {
+    height: calc(100% - 55px);
+
+    .tkbs-save-wall,
+    .tkbs-start-wall {
+        height: 300px;
+        display: flex;
+        box-sizing: border-box;
+        justify-content: center;
+        
+        .header {
+            padding: 20px;
+            font-weight:300;
+        }
+        
+        .start-list {
+            height: 250px;
+        }
+    }
+    
+    .center {
+        width: 70%;
+    }
+    
+    .card {
+        height: 167px;
+        width: 164px;
+        border: 2px solid black;
+    }
+    
+    .tkbs-save-wall {
+        min-height: calc(100% - 300px);
+        background: var(--background-color-1);
+    }
+}

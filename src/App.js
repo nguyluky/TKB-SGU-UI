@@ -1,24 +1,30 @@
 import React from 'react'; // nạp thư viện react
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { publicRoutes } from './routes';
 import storeContext from './store/Context';
-import Tkb from './components/pades/Tkb';
+import { setDarkMode, setLightMode } from './components/GlobalStyles';
+// import { UserApi } from './api/Api';
 
 function App() {
-    const [state, dispath] = React.useContext(storeContext);
+    const [state] = React.useContext(storeContext);
+
+    console.log('reloat');
 
     React.useEffect(() => {
-        if (state.theme) document.body.className = 'dark-mode';
-    }, []);
+        if (state.theme) setDarkMode();
+        else setLightMode();
+    }, [state.theme]);
 
     return (
-        <Routes>
-            {publicRoutes.map((route, index) => {
-                var Page = route.element;
-                return <Route key={index} path={route.path} element={<Page />} />;
-            })}
-        </Routes>
+        <BrowserRouter>
+            <Routes>
+                {publicRoutes.map((route, index) => {
+                    var Page = route.element;
+                    return <Route key={index} path={route.path} element={<Page />} />;
+                })}
+            </Routes>
+        </BrowserRouter>
     );
 }
 

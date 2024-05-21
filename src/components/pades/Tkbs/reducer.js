@@ -5,6 +5,7 @@ const initValue = {
     hoc_phan_da_chon: ['813102', '813103', '861302'],
     tiet_templay: '',
     tiet_da_chon: {},
+    tkbs: null,
 };
 
 function reducre(state, action) {

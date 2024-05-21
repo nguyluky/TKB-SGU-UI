@@ -31,7 +31,10 @@ function TopBar({ children }) {
     };
 
     const accountHandleShow = () => {
-        if (!state.user) navigate('/sign_in');
+        if (!state.user) {
+            sessionStorage.setItem('last', window.location.pathname);
+            navigate('/sign_in');
+        }
         setAccShow(true);
     };
 
