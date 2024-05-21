@@ -1,9 +1,27 @@
 .user_info {
     min-width: 300px; 
     background-color: var(--background-color-1);
-    padding: 10px;
+    padding: 5px;
     border-radius: 10px;
 
     box-shadow: var(--main-box-shadow);
     color: var(--text-color);
+
+    .line {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        padding: 5px;
+        border-radius: 5px;
+
+        span {
+            text-align: center;
+            width: 100%;
+        }
+
+        &:hover {
+            background-color: var(--hover-color);
+        }
+    }
 }

@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './UserInfo.scss';
+import Context from '~/store/Context';
 
-function UserInfo() {
+function UserInfo({ onHide }) {
+    const [state, dispath] = useContext(Context);
+
+    const handleLogOut = () => {
+        onHide();
+        window.localStorage.clear();
+        dispath({ type: 'SET-USER', value: null });
+    };
+
     return (
         <div className="user_info">
-            <li>UserInfo</li>
-            <li>Logout</li>
+            <div className="line" onClick={handleLogOut}>
+                <box-icon name="log-out"></box-icon>
+                <span>Đăng xuất</span>
+            </div>
         </div>
     );
 }

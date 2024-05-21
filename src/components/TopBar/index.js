@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 
-import Tippy from '@tippyjs/react';
 import { useNavigate } from 'react-router-dom';
 
 import './TopBar.scss';
@@ -10,21 +9,20 @@ import images from '~/assets/images';
 import UserInfo from './UserInfo';
 
 import storeContext from '~/store/Context';
+import { themes } from '../GlobalStyles';
 
 function TopBar({ children }) {
     const [state, dispath] = React.useContext(storeContext);
 
     const [isAccShow, setAccShow] = React.useState(false);
+    const [isThemeShow, setThemeShow] = React.useState(false);
 
     const navigate = useNavigate();
 
-    const themeHandle = () => {
-        if (!state.theme) {
-            dispath({ type: 'THEME-SET-DARK' });
-        } else {
-            dispath({ type: 'THEME-SET-LIGHT' });
-        }
-    };
+    const refAcc = useRef(null);
+    const refTheme = useRef(null);
+
+    const radioThemeName = useId();
 
     const githubHandle = () => {
         window.open('https://github.com/nguyluky/TKB-SGU-UI');
@@ -39,8 +37,27 @@ function TopBar({ children }) {
     };
 
     const accountHandleHide = () => {
+        console.log('ok');
         setAccShow(false);
     };
+
+    useEffect(() => {
+        function mousedownHandle(event) {
+            if (refAcc.current && !refAcc.current.contains(event.target)) {
+                setAccShow(false);
+            }
+            if (refTheme.current && !refTheme.current.contains(event.target)) {
+                console.log('ok');
+                setThemeShow(false);
+            }
+        }
+
+        document.addEventListener('mousedown', mousedownHandle);
+
+        return () => {
+            document.removeEventListener('mousedown', mousedownHandle);
+        };
+    }, [refAcc]);
 
     return (
         <div className="topbar">
@@ -52,16 +69,56 @@ function TopBar({ children }) {
             </div>
             <div className="rightside">
                 <div className="bgithub" onClick={githubHandle}>
-                    <box-icon type="logo" name="github"></box-icon>
+                    <div className="icon">
+                        <box-icon type="logo" name="github"></box-icon>
+                    </div>
                 </div>
-                <div className="theme-toggle" onClick={themeHandle}>
-                    {state.theme ? <box-icon name="sun" /> : <box-icon name="moon" />}
+                <div className="theme-toggle" ref={refTheme}>
+                    <div className="icon" onClick={() => (isThemeShow ? setThemeShow(false) : setThemeShow(true))}>
+                        <box-icon name="moon" />
+                    </div>
+
+                    {isThemeShow ? (
+                        <div className="drop-down-wall">
+                            <div className="themes">
+                                {Object.keys(themes).map((key, i) => {
+                                    return (
+                                        <label className="line" key={i}>
+                                            <input
+                                                type="radio"
+                                                name={radioThemeName}
+                                                key={i}
+                                                value={key}
+                                                checked={state.theme === key}
+                                                onChange={() => {
+                                                    setThemeShow(false);
+                                                    dispath({ type: 'SET-THEME', value: key });
+                                                }}
+                                            />
+                                            <span>{key}</span>
+                                            {state.theme === key ? <box-icon name="check"></box-icon> : ''}
+                                        </label>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ) : (
+                        ''
+                    )}
                 </div>
-                <Tippy content={<UserInfo />} trigger="click">
-                    <div className="account" onClick={isAccShow ? accountHandleHide : accountHandleShow}>
+                <div className="account" ref={refAcc}>
+                    <div className="icon" onClick={isAccShow ? accountHandleHide : accountHandleShow}>
                         {state.user ? <box-icon name="user"></box-icon> : <p className="btt-sign-in">login</p>}
                     </div>
-                </Tippy>
+                    {isAccShow ? (
+                        <div className="drop-down-wall">
+                            {' '}
+                            <UserInfo onHide={accountHandleHide} />{' '}
+                        </div>
+                    ) : (
+                        ''
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { publicRoutes } from './routes';
 import storeContext from './store/Context';
-import { setDarkMode, setLightMode } from './components/GlobalStyles';
+import { setTheme } from './components/GlobalStyles';
 // import { UserApi } from './api/Api';
 
 function App() {
@@ -12,8 +12,7 @@ function App() {
     console.log('reloat');
 
     React.useEffect(() => {
-        if (state.theme) setDarkMode();
-        else setLightMode();
+        setTheme(state.theme);
     }, [state.theme]);
 
     return (

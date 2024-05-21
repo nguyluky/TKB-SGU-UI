@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>TKB SGU</title>
         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
             .loader {
                 --cell-size: 52px;
                 --cell-spacing: 1px;
@@ -108,13 +109,25 @@
                 padding: 0;
                 background: var(--background-color-2);
             }
+
+            * {
+                font-family: "Roboto", sans-seri;
+                margin: 0;
+                padding: 0;
+                text-rendering: optimizeSpeed;
+                box-sizing: border-box;
+            }
         </style>
 
     <script>
         console.log('init')
-        if (localStorage.theme == 'true') {
-            document.documentElement.style.setProperty('--background-color-2', '#282a2c');
-        };
+        const css = {
+            light: 'whitesmoke',
+            dracula :'rgb(52 55 70)',
+            dark : '#282a2c',
+
+        }
+            document.documentElement.style.setProperty('--background-color-2', css[localStorage.theme  || 'light']);
     </script>
 
     </head>

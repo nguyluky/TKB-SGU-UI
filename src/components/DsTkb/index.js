@@ -4,9 +4,17 @@ import './DsTkb.scss';
 import Context from '~/store/Context';
 import { tkbContext } from '../pades/Tkbs';
 import Loading from '../Loading/Loading';
-
+import { Link } from 'react-router-dom';
 function Card() {
-    return <div className="card"></div>;
+    return (
+        <div className="card">
+            <div className="thumbnail "></div>
+            <div className="des">
+                <p> nhấn đây</p>
+                <Link to="new">new</Link>
+            </div>
+        </div>
+    );
 }
 
 function DsTkb() {
@@ -41,7 +49,21 @@ function DsTkb() {
                     <div className="header">
                         <p>Thời khóa biểu đã lưu</p>
                     </div>
-                    <div>{tkbState.tkbs ? tkbState.tkbs?.length ? <p></p> : <p>không có tkb nào</p> : <Loading />}</div>
+                    <div>
+                        {state.user ? (
+                            tkbState.tkbs ? (
+                                tkbState.tkbs?.length ? (
+                                    <p></p>
+                                ) : (
+                                    <p>không có tkb nào</p>
+                                )
+                            ) : (
+                                <Loading />
+                            )
+                        ) : (
+                            <p>Chưa đăng nhập</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -5,18 +5,38 @@
 .tool {
     color: var(--text-color);
     cursor: pointer;
-    padding: 3px 15px 3px 15px;
-    border-radius: 3px;
-    &:hover {
+    position: relative;
+    
+    p {
+        border-radius: 3px;
+        padding: 3px 15px 3px 15px;
+    }
+    p:hover {
         background: var(--hover-color);
 
     }
 }
 
 .tool_warp {
-    width: fit-content;
+    width: max-content;
     padding: 5px;
     box-shadow: var(--main-box-shadow);
     background-color: var(--background-color-1);
     border-radius: 3px;
+}
+
+.popup-wall {
+    position: absolute;
+
+
+    &.bottom {
+        top: 100%;
+        left: 0;
+        transform: translateY(10px);
+    }
+
+    &.left {
+        left: 100%;
+        top: 0;
+    }
 }

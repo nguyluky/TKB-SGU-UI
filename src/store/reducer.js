@@ -1,25 +1,21 @@
 import { UserApi } from '~/api/Api';
 
 const initValue = {
-    theme: localStorage.getItem('theme') === 'true',
+    theme: localStorage.getItem('theme') || 'light',
     user: UserApi.loadFromLocalStorage(),
 };
 
 function reducre(state, action) {
     console.log(state, action);
-    switch (action.type) {
-        case 'THEME-SET-DARK':
-            localStorage.setItem('theme', true);
-            state.theme = true;
-            break;
-
-        case 'THEME-SET-LIGHT':
-            localStorage.setItem('theme', false);
-            state.theme = false;
+    const { type, value } = action;
+    switch (type) {
+        case 'SET-THEME':
+            localStorage.setItem('theme', value);
+            state.theme = value;
             break;
 
         case 'SET-USER':
-            state.user = action.value;
+            state.user = value;
             break;
 
         default:

@@ -23,9 +23,17 @@
     }
     
     .card {
-        height: 167px;
-        width: 164px;
-        border: 2px solid black;
+        width: fit-content;
+        
+        .thumbnail {
+            border: 2px solid black;
+            height: 167px;
+            width: 200px;
+        }
+
+        .des {
+            padding: 5px;
+        }
     }
     
     .tkbs-save-wall {
