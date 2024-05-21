@@ -5,6 +5,8 @@ import Context from '~/store/Context';
 function UserInfo({ onHide }) {
     const [state, dispath] = useContext(Context);
 
+    console.log(state);
+
     const handleLogOut = () => {
         onHide();
         window.localStorage.clear();
