@@ -15,6 +15,8 @@ const themes = {
         '--primary-color-3': '#0d2b53',
 
         '--button-color-1': '#1a73e8',
+
+        '--hsl-color-1': '100% 82.92%',
     },
     dracula: {
         '--background-color-1': 'rgb(40 42 54)',
@@ -30,10 +32,12 @@ const themes = {
         '--primary-color-3': '#5f717f',
 
         '--button-color-1': 'rgb(161 121 192)',
+
+        '--hsl-color-1': '14.75% 23.92%',
     },
     dark: {
-        '--background-color-1': '#1b1b1b',
-        '--background-color-2': '#282a2c',
+        '--background-color-1': 'hsl( 254 ,12%,6%)',
+        '--background-color-2': 'hsl( 254 ,12%,12%)',
         '--text-color': '#e3e3e3',
         '--text-color-2': '#898989',
         '--hover-color': 'rgba(232,234,237,.08)',
@@ -45,6 +49,8 @@ const themes = {
         '--primary-color-3': '#0d2b53',
 
         '--button-color-1': '#1a73e8',
+
+        '--hsl-color-1': '12% 30%',
     },
 };
 

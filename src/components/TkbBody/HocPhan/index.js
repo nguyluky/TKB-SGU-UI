@@ -39,8 +39,10 @@ function HocPhan({ maHocPhan }) {
                         };
 
                         const handleClick = () => {
-                            state.tiet_da_chon[maHocPhan] = e.id_to_hoc;
-                            dispath({ path: 'tiet_da_chon', value: state.tiet_da_chon });
+                            state.mahp_idtohoc[maHocPhan] = e.id_to_hoc;
+                            console.log(Object.values(state.mahp_idtohoc));
+                            state.currTkb.id_to_hocs = Object.values(state.mahp_idtohoc);
+                            dispath({ path: 'mahp_idtohoc', value: state.mahp_idtohoc });
                         };
 
                         return (

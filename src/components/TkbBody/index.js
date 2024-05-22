@@ -11,7 +11,7 @@ function TkbBody() {
 
     var soTC = 0;
 
-    const tabViewChile = state.hoc_phan_da_chon.map((el, index) => {
+    const tabViewChile = state.currTkb?.ma_hoc_phans?.map((el, index) => {
         var ct = state.ds_nhom_to?.find((e) => e.ma_mon === el)?.so_tc;
         soTC += ct;
         return <HocPhan key={index} maHocPhan={el} />;

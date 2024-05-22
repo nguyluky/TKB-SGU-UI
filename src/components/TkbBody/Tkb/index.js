@@ -13,9 +13,6 @@ function Tiet({ id_to_hoc, isTemplay }) {
     const ma_mon = nhomHoc.ma_mon;
 
     var strHex = Math.abs(parseInt(ma_mon * 123));
-    var r = (strHex / 255) % 255;
-    var g = (strHex / (255 * 2)) % 255;
-    var b = (strHex / (255 * 3)) % 255;
 
     return (
         <>
@@ -32,8 +29,8 @@ function Tiet({ id_to_hoc, isTemplay }) {
                     >
                         <div
                             style={{
-                                backgroundColor: `rgba(${r}, ${g}, ${b}, 0.2)`,
-                                borderColor: `rgb(${r}, ${g}, ${b})`,
+                                backgroundColor: `hsl(${strHex} var(--hsl-color-1) / 0.5)`,
+                                borderColor: `hsl(${strHex} var(--hsl-color-1) / 1)`,
                             }}
                         >
                             <p>{nhomHoc.ten_mon}</p>
@@ -81,7 +78,7 @@ function Tkb({ row, column }) {
                 })}
                 <div className="tkb-tiet-view">
                     {state.tiet_templay ? <Tiet id_to_hoc={state.tiet_templay} isTemplay={true} /> : ''}
-                    {Object.values(state.tiet_da_chon)?.map((e, i) => {
+                    {Object.values(state.mahp_idtohoc)?.map((e, i) => {
                         return <Tiet id_to_hoc={e} key={i} />;
                     })}
                 </div>

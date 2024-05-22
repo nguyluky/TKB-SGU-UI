@@ -6,10 +6,10 @@ import './TopBar.scss';
 import 'boxicons';
 
 import images from '~/assets/images';
-import UserInfo from './UserInfo';
+import UserInfo from '~/components/UserInfo';
 
 import storeContext from '~/store/Context';
-import { themes } from '../GlobalStyles';
+import { themes } from '~/components/GlobalStyles';
 
 function TopBar({ children }) {
     const [state, dispath] = React.useContext(storeContext);
@@ -29,7 +29,7 @@ function TopBar({ children }) {
     };
 
     const accountHandleShow = () => {
-        if (!state.user) {
+        if (!state.user?.token) {
             sessionStorage.setItem('last', window.location.pathname);
             navigate('/sign_in');
         }
@@ -47,7 +47,6 @@ function TopBar({ children }) {
                 setAccShow(false);
             }
             if (refTheme.current && !refTheme.current.contains(event.target)) {
-                console.log('ok');
                 setThemeShow(false);
             }
         }
@@ -108,7 +107,7 @@ function TopBar({ children }) {
                 </div>
                 <div className="account" ref={refAcc}>
                     <div className="icon" onClick={isAccShow ? accountHandleHide : accountHandleShow}>
-                        {state.user ? <box-icon name="user"></box-icon> : <p className="btt-sign-in">login</p>}
+                        {state.user?.token ? <box-icon name="user"></box-icon> : <p className="btt-sign-in">login</p>}
                     </div>
                     {isAccShow ? (
                         <div className="drop-down-wall">

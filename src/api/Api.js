@@ -63,9 +63,17 @@ class sendReq {
 
 var baseUrl = 'https://tkbsgusort.dev.vn/api/v1';
 class Tkb {
-    constructor(token, tkbId) {
+    constructor(baseUrl, token, tkbId, name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, access, created) {
+        this.baseUrl = baseUrl;
         this.token = token;
         this.tkbId = tkbId;
+        this.name = name;
+        this.tkb_describe = tkb_describe;
+        this.thumbnails = thumbnails;
+        this.ma_hoc_phans = ma_hoc_phans || [];
+        this.id_to_hocs = id_to_hocs || [];
+        this.access = access;
+        this.created = new Date(created);
     }
 
     async update(name, description, thumbmail, isPublic) {}
@@ -79,6 +87,22 @@ class Tkb {
     async changePermission(userId, newRule) {}
 
     async kid() {}
+
+    async saveAs(name, description, thumbmail, isPublic) {}
+
+    static async getTkb(baseUrl, token, tkbId) {
+        console.log(token);
+        var resp = await sendReq.GET(baseUrl + '/tkbs/' + tkbId, {
+            Authorization: 'Bearer ' + token,
+        });
+
+        if (resp.code !== 200) {
+            return resp;
+        }
+
+        const { name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, rule, created } = resp.data[0];
+        return new Tkb(baseUrl, token, tkbId, name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, rule, created);
+    }
 }
 
 class UserApi {
@@ -113,8 +137,8 @@ class UserApi {
         });
     }
 
-    async createNewTkb(name, description, thumbmail, isPublic) {
-        console.log('createNewTkb');
+    createNewTkb() {
+        return new Tkb(this.baseUrl, this.token, null, null, null, null, [], [], 0, new Date().toISOString());
     }
 
     async getDsTkb() {
@@ -123,7 +147,9 @@ class UserApi {
         });
     }
 
-    async getTkb(tkbId) {}
+    async getTkb(tkbId) {
+        return await Tkb.getTkb(this.baseUrl, this.token, tkbId);
+    }
 
     async joinTkb() {}
 
@@ -132,7 +158,7 @@ class UserApi {
         if (token) {
             return new UserApi(baseUrl, token);
         }
-        return null;
+        return new UserApi(baseUrl, '');
     }
 }
 

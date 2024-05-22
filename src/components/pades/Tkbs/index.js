@@ -6,8 +6,9 @@ import reducre, { initValue } from './reducer';
 import DsTkb from '~/components/DsTkb';
 import TkbSguApi from '~/api/Api';
 import { useLocation } from 'react-router-dom';
-import ToolMenu from '~/components/TopBar/ToolMenu';
+import ToolMenu from '~/components/ToolMenu';
 import TkbBody from '~/components/TkbBody';
+import Context from '~/store/Context';
 
 const saveHanel = () => {
     console.log('onclick');
@@ -47,28 +48,43 @@ const tools = [
 ];
 
 function Tkbs() {
-    const [state, dispath] = React.useReducer(reducre, initValue);
+    const [tkbState, tkbDispath] = React.useReducer(reducre, initValue);
+    const [state, dispath] = React.useContext(Context);
 
     const { pathname } = useLocation();
     const tkbid = pathname.replace('/tkbs', '');
 
-    console.log(tkbid);
+    // console.log(tkbState);
 
     useEffect(() => {
-        document.title = '';
-    }, [tkbid]);
+        if (tkbid && tkbid !== '/new')
+            state.user?.getTkb(tkbid.replace('/', '')).then((e) => {
+                console.log(e);
+                var temp = {};
+                e.id_to_hocs.forEach((element) => {
+                    var nhom = tkbState.ds_nhom_to?.find((e) => e.id_to_hoc === element);
+                    if (nhom) temp[nhom.ma_mon] = element;
+                });
+                tkbDispath({ path: 'mahp_idtohoc', value: temp });
+                tkbDispath({ path: 'currTkb', value: e });
+            });
+        else if (tkbid === '/new') {
+            var newTKb = state.user.createNewTkb();
+            dispath({ path: 'currTkb', value: newTKb });
+        }
+    }, [tkbid, state.user, dispath, tkbState.ds_nhom_to]);
 
     useEffect(() => {
         TkbSguApi.getDsNhomHoc().then((data) => {
             console.log(data);
             const { ds_mon_hoc, ds_nhom_to } = data;
-            dispath({ path: 'ds_mon_hoc', value: ds_mon_hoc });
-            dispath({ path: 'ds_nhom_to', value: ds_nhom_to });
+            tkbDispath({ path: 'ds_mon_hoc', value: ds_mon_hoc });
+            tkbDispath({ path: 'ds_nhom_to', value: ds_nhom_to });
         });
     }, []);
 
     return (
-        <tkbContext.Provider value={[state, dispath]}>
+        <tkbContext.Provider value={[tkbState, tkbDispath]}>
             <TopBar>
                 {!tkbid ? (
                     <p style={{ color: 'var(--text-color)', fontWeight: 'bold' }}>TKB SGU</p>
