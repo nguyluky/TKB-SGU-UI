@@ -1,5 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Popup from 'reactjs-popup';
+
+function PopupChangName({ initName, onCancel, onOk }) {
+    const [name, setName] = useState(initName);
+
+    return (
+        <div className="conten-menu-popup">
+            <div className="header">
+                <h2>Đổi tên</h2>
+            </div>
+            <div className="content">
+                <p>Vui lòng nhập tên vào mục này:</p>
+                <input value={name} onChange={(event) => setName(event.target.value)} />
+            </div>
+            <div className="buttons">
+                <button className="cancel" onClick={onCancel}>
+                    Huỷ
+                </button>
+                <button className="ok" onClick={() => onOk(name)}>
+                    ok
+                </button>
+            </div>
+        </div>
+    );
+}
 
 export function Card({ name, des, dateCreated, link, thumbnail, children }) {
     const contextMenuRef = useRef(null);
@@ -7,7 +32,11 @@ export function Card({ name, des, dateCreated, link, thumbnail, children }) {
 
     const [pos, setPos] = useState([0, 0]);
 
+    const [fun, setFun] = useState('');
+
     const [isMenuShow, setMenuShow] = useState(false);
+
+    const closeModal = () => setFun('');
 
     useEffect(() => {
         function mouseOnClick(event) {
@@ -26,14 +55,14 @@ export function Card({ name, des, dateCreated, link, thumbnail, children }) {
 
     const changeName = (event) => {
         event.preventDefault();
-        console.log('change name');
         setMenuShow(false);
+        setFun('rename');
     };
 
     const deleteTkb = (event) => {
         event.preventDefault();
-        console.log('deleteTkb');
         setMenuShow(false);
+        setFun('xoa');
     };
 
     const openNewTab = (event) => {
@@ -94,10 +123,48 @@ export function Card({ name, des, dateCreated, link, thumbnail, children }) {
                                         <div className="line" onClick={changeName}>
                                             <box-icon name="rename"></box-icon>
                                             <span>Đổi tên</span>
+                                            <Popup
+                                                open={fun === 'rename'}
+                                                closeOnDocumentClick
+                                                closeOnEscape
+                                                onClose={closeModal}
+                                            >
+                                                <PopupChangName
+                                                    initName={name}
+                                                    onCancel={() => setFun('')}
+                                                    onOk={(name) => console.log('chang name to', name)}
+                                                />
+                                            </Popup>
                                         </div>
                                         <div className="line" onClick={deleteTkb}>
                                             <box-icon name="trash-alt"></box-icon>
                                             <span>Xoá</span>
+
+                                            <Popup
+                                                open={fun === 'xoa'}
+                                                closeOnDocumentClick
+                                                closeOnEscape
+                                                onClose={closeModal}
+                                            >
+                                                <div className="conten-menu-popup">
+                                                    <div className="header">
+                                                        <h2>Xoá thời khoá biểu?</h2>
+                                                    </div>
+                                                    <div className="content">
+                                                        <p>
+                                                            "{name}" sẽ bị xoá vĩnh viễn bạn có chắc là muốn xoá không
+                                                        </p>
+                                                    </div>
+                                                    <div className="buttons">
+                                                        <button className="cancel" onClick={() => setFun('')}>
+                                                            Huỷ
+                                                        </button>
+                                                        <button className="ok" onClick={() => console.log('xoá')}>
+                                                            xoá
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </Popup>
                                         </div>
                                         <div className="line" onClick={openNewTab}>
                                             <box-icon name="link-external"></box-icon>

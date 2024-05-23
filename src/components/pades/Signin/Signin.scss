@@ -6,7 +6,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(45deg, var(--primary-color-3) 0%, var(--primary-color-1) 51%, var(--primary-color-2) 100%);
+    background: var(--login-backgrow);
     
     .sign-up-content {
         border-radius: 10px;
@@ -96,7 +96,7 @@
             color: var(--background-color-1);
 
             &.ok {
-                background: linear-gradient(90deg, var(--primary-color-1) , var(--primary-color-3) , var(--primary-color-2));
+                background: var(--primary-color-2);
             }
 
             &.fb {

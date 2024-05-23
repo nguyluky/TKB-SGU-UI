@@ -76,7 +76,7 @@ class Tkb {
         this.created = new Date(created);
     }
 
-    async update(name, description, thumbmail, isPublic) {}
+    async update() {}
 
     async delete() {}
 
@@ -91,7 +91,7 @@ class Tkb {
     async saveAs(name, description, thumbmail, isPublic) {}
 
     static async getTkb(baseUrl, token, tkbId) {
-        console.log(token);
+        // console.log(token);
         var resp = await sendReq.GET(baseUrl + '/tkbs/' + tkbId, {
             Authorization: 'Bearer ' + token,
         });
@@ -138,7 +138,7 @@ class UserApi {
     }
 
     createNewTkb() {
-        return new Tkb(this.baseUrl, this.token, null, null, null, null, [], [], 0, new Date().toISOString());
+        return new Tkb(this.baseUrl, this.token, null, 'Untitled', null, null, [], [], 0, new Date().toISOString());
     }
 
     async getDsTkb() {
@@ -224,7 +224,7 @@ class TkbSguApi {
     }
 
     static async getDsNhomHoc() {
-        console.log('ok');
+        // console.log('ok');
         var resp = await fetch(baseUrl + '/ds-nhom-hoc');
 
         return await resp.json();

@@ -27,9 +27,10 @@ const themes = {
         '--color-hover': '#e3e3e3',
         '--height-line-color': 'rgba(255,255,255,0.2)',
 
-        '--primary-color-1': '#0e1c26',
-        '--primary-color-2': '#2a454b',
-        '--primary-color-3': '#5f717f',
+        '--primary-color-1': '#bd93f9',
+        '--primary-color-2': '#8be9fd',
+        '--primary-color-3': '#50fa7b',
+        '--primary-color-4': '#ff79c6',
 
         '--button-color-1': 'rgb(161 121 192)',
 

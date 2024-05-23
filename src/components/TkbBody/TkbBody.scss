@@ -29,14 +29,14 @@
                 background: transparent;
                 padding: 0;
                 border: 0;
-                height: 30px;
-                width: 30px;
+                height: 20px;
+                width: 20px;
                 cursor: pointer;
                 background-color: var(--background-color-2);
                 border-radius: 10px;
                 box-icon {
-                    height: 30px;
-                    width: 30px;
+                    height: 20px;
+                    width: 20px;
                     fill: var(--text-color);
                 }
 
@@ -61,6 +61,107 @@
         width: calc(100% - 270px);
     }
 }
+
+.add-hp-popup {
+    overflow: hidden;
+    width: 550px;
+    border-radius: 5px;
+    background: var(--background-color-1);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px;
+
+    
+    .search-input {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+
+        background-color: var(--background-color-2);
+
+        box-icon {
+            fill: var(--text-color);
+        }
+
+        input {
+            margin-left: 10px;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+    }
+
+    .ketqua {
+        height: 400px;
+        padding: 0px 10px;
+        overflow-y: auto;
+
+        scrollbar-width: thin;
+
+
+        scrollbar-color: var(--hover-color) transparent ;
+        .conten {
+            padding: 5px 0;
+            width: 100%;
+
+            .hp {
+                color: var(--text-color);
+                display: flex;
+                align-items: center;
+                padding: 10px;
+
+                .name {
+                    margin-left: 10px;
+                    text-overflow: ellipsis;
+                    text-wrap: nowrap;
+                }
+            }
+
+            .hp + .hp {
+                border-top: 1px solid var(--hover-color);
+            }
+        }
+    }
+}
+
+
+.container {
+
+    height: 20px;
+
+	cursor: pointer;
+	input {
+		display: none;
+		&:checked {
+			~ {
+				svg {
+					.path {
+						stroke-dasharray: 70.5096664428711 9999999;
+						stroke-dashoffset: -262.2723388671875;
+                        stroke: var(--primary-color-2) !important;
+					}
+				}
+			}
+		}
+	}
+	svg {
+		overflow: visible;
+        .path {
+            fill: none;
+            stroke: var(--hover-color);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease, stroke 0.5s ease;
+            stroke-dasharray: 241 9999999;
+            stroke-dashoffset: 0;
+        }
+	}
+}
+
+
 
 #arrow,
 #arrow::before {

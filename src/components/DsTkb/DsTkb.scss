@@ -1,6 +1,6 @@
 .ds-tkbs-body {
-
     --card-count: 5;
+    --card-size: 220px;
 
     height: calc(100% - 55px);
     overflow-y: auto;
@@ -10,36 +10,33 @@
         display: flex;
         box-sizing: border-box;
         justify-content: center;
-        
+
         .header {
             padding: 20px;
             color: var(--text-color);
             display: flex;
             justify-content: space-between;
-
-
-            
         }
-        
+
         .start-list {
             height: 250px;
         }
     }
-    
+
     box-icon {
         fill: var(--text-color);
     }
 
     .center {
-        width: calc(var(--card-count) * 220px);
+        width: calc(var(--card-count) * var(--card-size));
     }
-    
+
     .card {
         position: relative;
         text-decoration: none;
         width: fit-content;
         color: var(--text-color);
-        
+
         a {
             text-decoration: none;
             color: var(--text-color);
@@ -49,7 +46,7 @@
             text-decoration: none;
 
             border-radius: 3px;
-            border: 1px solid var(--color-hover);
+            border: 1px solid var(--text-color-2);
             height: 167px;
             width: 200px;
 
@@ -61,6 +58,7 @@
                 box-icon {
                     height: 100%;
                     width: 100%;
+                    fill: var(--text-color-2);
                 }
             }
         }
@@ -95,22 +93,20 @@
                 box-icon {
                     fill: var(--text-color);
                 }
-
-               
             }
 
             .popup {
                 position: absolute;
                 z-index: 1;
-                
+
                 .context-menu {
                     padding: 5px;
                     border-radius: 5px;
                     background-color: var(--background-color-2);
-                    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px;;
+                    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px;
                     width: 150px;
                     height: fit-content;
-                    
+
                     .line {
                         border-radius: 5px;
                         display: flex;
@@ -128,18 +124,17 @@
                     }
                 }
             }
-
-
         }
     }
-    
+
     .tkbs-save-wall {
         min-height: calc(100% - 300px);
         background: var(--background-color-1);
         height: fit-content;
         .header {
             position: sticky;
-            top: 0;
+            z-index: 1;
+            top: -1px;
             background-color: var(--background-color-1);
         }
 
@@ -148,7 +143,7 @@
             .save-list {
                 display: inline-flex;
                 flex-wrap: wrap;
-                
+
                 .card {
                     padding: 10px;
                 }
@@ -157,7 +152,12 @@
     }
 
     .add {
-        background: linear-gradient(45deg, var(--primary-color-3) 0%, var(--primary-color-1) 51%, var(--primary-color-2) 100%);
+        background: linear-gradient(
+            45deg,
+            var(--primary-color-3) 0%,
+            var(--primary-color-1) 51%,
+            var(--primary-color-2) 100%
+        );
         background-clip: text;
         height: 100%;
         width: 100%;
@@ -175,6 +175,79 @@
     }
 }
 
+.conten-menu-popup {
+    min-width: 350px;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: var(--background-color-2);
+
+    .header {
+        color: var(--text-color);
+        margin-bottom: 15px;
+    }
+    .content {
+        p {
+            color: var(--text-color-2);
+            font-size: 15px;
+        }
+
+        input {
+            background-color: transparent;
+            border: transparent;
+            outline: none;
+            width: 100%;
+
+            border: 1px solid var(--text-color-2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: var(--text-color);
+
+            &:focus {
+                border-color: var(--primary-color-2);
+            }
+        }
+    }
+
+    .buttons {
+        margin-top: 15px;
+        display: flex;
+        justify-content: flex-end;
+
+        button + button {
+            margin-left: 10px;
+        }
+
+        button {
+            height: 30px;
+            width: 80px;
+            background-color: transparent;
+            border: none;
+            outline: none;
+
+            color: var(--text-color);
+            border-radius: 5px;
+            font-size: 16px;
+
+            cursor: pointer;
+
+            &:active {
+                transform: scale(0.95);
+            }
+        }
+
+        .cancel {
+            border: 1px solid var(--hover-color);
+        }
+
+        .ok {
+            background: var(--primary-color-1);
+        }
+    }
+}
+
+div[data-testid='overlay'] {
+    background-color: rgba(0, 0, 0, 0.2);
+}
 
 @media (max-width: calc(5 * 220px + 100px)) {
     .ds-tkbs-body {
@@ -182,16 +255,29 @@
     }
 }
 
-
 @media (max-width: calc(4 * 220px + 100px)) {
     .ds-tkbs-body {
         --card-count: 3;
     }
 }
 
-
 @media (max-width: calc(3 * 220px + 100px)) {
     .ds-tkbs-body {
         --card-count: 2;
+        --card-size: calc(200px - 50px + 20px);
+    }
+
+    .tkbs-start-wall {
+        height: 240px !important;
+    }
+
+    .card .thumbnail {
+        height: calc(167px - 50px) !important;
+        width:  calc(200px - 50px) !important;
+    }
+
+    .tkbs-save-wall {
+        min-height: calc(100% - 240px) !important;
+
     }
 }
