@@ -40,6 +40,9 @@ function Signin() {
             <div className="sign-up-content">
                 <h1 className="title">SignIn</h1>
                 <div className="line">
+                    <span>
+                        <box-icon name="user" type="solid"></box-icon>
+                    </span>
                     <input
                         type="text"
                         value={userName}
@@ -48,6 +51,9 @@ function Signin() {
                     />
                 </div>
                 <div className="line">
+                    <span>
+                        <box-icon name="lock-alt" type="solid"></box-icon>
+                    </span>
                     <input
                         type={isShowPass ? 'text' : 'password'}
                         value={password}

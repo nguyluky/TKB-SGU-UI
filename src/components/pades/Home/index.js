@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
 import './Home.scss';
 import TopBar from '~/components/TopBar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Context from '~/store/Context';
 
 function Home() {
+    const [state, dispath] = useContext(Context);
+
+    const navigate = useNavigate();
+
+    var callback = useCallback(() => {
+        navigate('/tkbs');
+    }, [navigate]);
+
+    useEffect(() => {
+        if (state.user?.token) {
+            callback();
+        }
+    }, [state.user, callback]);
+
     return (
         <>
             <TopBar>

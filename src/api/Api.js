@@ -196,7 +196,7 @@ class TkbSguApi {
      * @param {String} password
      * @param {String} email
      * @param {String} type_signup
-     * @returns {ApiResponseBase}
+     * @returns {Promise<ApiResponseBase>}
      */
     static async signup(userName, password, email, type_signup) {
         var resp = await fetch(baseUrl + '/auth/signup', {
