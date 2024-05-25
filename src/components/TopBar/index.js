@@ -31,7 +31,7 @@ function TopBar({ children }) {
     const accountHandleShow = () => {
         if (!state.user?.token) {
             sessionStorage.setItem('last', window.location.pathname);
-            navigate('/sign_in');
+            navigate('/auth/signin');
         }
         setAccShow(true);
     };

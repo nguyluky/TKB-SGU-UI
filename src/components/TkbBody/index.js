@@ -7,12 +7,15 @@ import TkbContext from '~/components/pades/Tkbs/Context';
 import Loading from '../Loading/Loading';
 import Context from '~/store/Context';
 import Popup from 'reactjs-popup';
+import { useParams } from 'react-router-dom';
 
-function TkbBody({ tkbid }) {
+function TkbBody() {
     const [tkbState, tkbDispath] = React.useContext(TkbContext);
     const [state, dispath] = React.useContext(Context);
 
     var soTC = 0;
+
+    const { tkbid } = useParams();
 
     const tabViewChile = tkbState.currTkb?.ma_hoc_phans?.map((el, index) => {
         var ct = tkbState.ds_nhom_to?.find((e) => e.ma_mon === el)?.so_tc;
@@ -21,7 +24,7 @@ function TkbBody({ tkbid }) {
     });
 
     React.useEffect(() => {
-        if (tkbid && tkbid !== '/new')
+        if (tkbid && tkbid !== 'new')
             state.user?.getTkb(tkbid.replace('/', '')).then((e) => {
                 console.log(e);
                 var temp = {};
@@ -32,7 +35,7 @@ function TkbBody({ tkbid }) {
                 tkbDispath({ path: 'mahp_idtohoc', value: temp });
                 tkbDispath({ path: 'currTkb', value: e });
             });
-        else if (tkbid === '/new') {
+        else if (tkbid === 'new') {
             var newTKb = state.user.createNewTkb();
             tkbDispath({ path: 'currTkb', value: newTKb });
         }

@@ -5,7 +5,7 @@ import tkbContext from './Context';
 import reducre, { initValue } from './reducer';
 import DsTkb from '~/components/DsTkb';
 import TkbSguApi from '~/api/Api';
-import { useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import ToolMenu from '~/components/ToolMenu';
 import TkbBody from '~/components/TkbBody';
 
@@ -70,7 +70,7 @@ function Tkbs() {
                     <ToolMenu>{tools}</ToolMenu>
                 )}
             </TopBar>
-            {tkbid ? <TkbBody tkbid={tkbid} /> : <DsTkb />}
+            <Outlet />
         </tkbContext.Provider>
     );
 }

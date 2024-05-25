@@ -92,7 +92,7 @@ export function Card({ name, des, dateCreated, link, thumbnail, children }) {
 
     return (
         <div className="card" onContextMenu={showContenMenu} ref={cardRef}>
-            <Link to={link ? link : 'new'}>
+            <Link to={'edit/' + (link ? link : 'new')}>
                 <div className="thumbnail ">
                     {children ? (
                         children
