@@ -67,7 +67,7 @@ function ToolLeve1({ setShow, element, index, show, currIndex, setIndex }) {
     }, [ref, currIndex, index, setShow, setIndex]);
 
     return (
-        <div className="tool" ref={ref}>
+        <div className="tool lever1" ref={ref}>
             <p onClick={() => setShow(true)} onMouseEnter={() => setIndex(index)}>
                 {element.displayName}
             </p>

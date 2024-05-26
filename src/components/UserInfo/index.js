@@ -1,20 +1,17 @@
 import React, { useContext } from 'react';
 import './UserInfo.scss';
-import Context from '~/store/Context';
-import { tkbContext } from '../pades/Tkbs';
+import Context from '~/store/GlobalStore/Context';
 
 function UserInfo({ onHide }) {
     const [state, dispath] = useContext(Context);
-    // eslint-disable-next-line no-unused-vars
-    const [tkbState, tkbDispath] = useContext(tkbContext);
-    console.log(state);
 
     const handleLogOut = () => {
         onHide();
         localStorage.removeItem('token');
-        dispath({ type: 'SET-USER', value: null });
-        tkbDispath({ path: 'currTkb', value: null });
-        tkbDispath({ path: 'mahp_idtohoc', value: {} });
+        state.user.token = '';
+        dispath({ path: 'user', value: state.user });
+        dispath({ path: 'currTkb', value: null });
+        dispath({ path: 'mahp_idtohoc', value: {} });
     };
 
     return (

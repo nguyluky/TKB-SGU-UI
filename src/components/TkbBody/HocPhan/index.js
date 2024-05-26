@@ -1,9 +1,9 @@
 import React from 'react';
-import TkbContext from '~/components/pades/Tkbs/Context';
 import './HocPhan.scss';
+import Context from '~/store/GlobalStore/Context';
 
 function HocPhan({ maHocPhan }) {
-    const [state, dispath] = React.useContext(TkbContext);
+    const [state, dispath] = React.useContext(Context);
 
     const HPDisplayName = state.ds_mon_hoc[maHocPhan];
     const tiet = state.ds_nhom_to.find((e) => e.ma_mon === maHocPhan);
@@ -40,7 +40,6 @@ function HocPhan({ maHocPhan }) {
 
                         const handleClick = () => {
                             state.mahp_idtohoc[maHocPhan] = e.id_to_hoc;
-                            console.log(Object.values(state.mahp_idtohoc));
                             state.currTkb.id_to_hocs = Object.values(state.mahp_idtohoc);
                             dispath({ path: 'mahp_idtohoc', value: state.mahp_idtohoc });
                         };

@@ -1,20 +1,47 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import Home from '~/components/pades/Home';
+import Home from '~/components/Home';
 import Auth from '~/components/pades/Auth';
-import Tkbs from '~/components/pades/Tkbs';
 import DsTkb from '~/components/DsTkb';
-import TkbBody from '~/components/TkbBody';
 import SignIn from '~/components/SignIn';
 import SignUp from '~/components/SignUp';
 
-import { initValue } from '~/store/reducer';
+import MainLayout from '~/components/pades/MainLayout';
+import TkbBody from '~/components/TkbBody';
+import { initValue } from '~/store/GlobalStore/reducer';
 import TkbSguApi from '~/api/Api';
+import { useContext } from 'react';
+import { globalContext } from '~/store/GlobalStore';
 
 const publicRoutes = createBrowserRouter([
     {
         path: '/',
-        element: <Home />,
+        element: <MainLayout />,
+        children: [
+            { index: true, element: <Home /> },
+            {
+                path: '/tkbs',
+                element: <DsTkb />,
+            },
+            {
+                path: '/tkbs/:tkbid',
+                loader: async ({ params }) => {
+                    var { tkbid } = params;
+                    var resp1 = {};
+                    if (!initValue.ds_nhom_to) {
+                        resp1 = await TkbSguApi.getDsNhomHoc();
+                    }
+
+                    if (!tkbid || tkbid === 'new') {
+                        return { tkb: initValue.user.createNewTkb(), ...resp1 };
+                    }
+                    var tkb = await initValue.user?.getTkb(tkbid);
+
+                    return { tkb, ...resp1 };
+                },
+                element: <TkbBody />,
+            },
+        ],
     },
 
     {
@@ -33,34 +60,34 @@ const publicRoutes = createBrowserRouter([
             </Auth>
         ),
     },
-    {
-        path: '/tkbs',
-        element: <Tkbs />,
-        loader: async () => {
-            var resp = await TkbSguApi.getDsNhomHoc();
+    // {
+    //     path: '/tkbs',
+    //     element: <Tkbs />,
+    //     loader: async () => {
+    //         var resp = await TkbSguApi.getDsNhomHoc();
 
-            return { resp };
-        },
-        children: [
-            {
-                index: true,
-                element: <DsTkb />,
-            },
-            {
-                path: 'edit/:tkbid',
-                loader: async ({ params }) => {
-                    var { tkbid } = params;
+    //         return { resp };
+    //     },
+    //     children: [
+    //         {
+    //             index: true,
+    //             element: <DsTkb />,
+    //         },
+    //         {
+    //             path: 'edit/:tkbid',
+    //             loader: async ({ params }) => {
+    //                 var { tkbid } = params;
 
-                    if (!tkbid || tkbid === 'new') return {};
-                    var tkb = await initValue.user?.getTkb(tkbid);
+    //                 if (!tkbid || tkbid === 'new') return {};
+    //                 var tkb = await initValue.user?.getTkb(tkbid);
 
-                    console.log(tkb);
-                    return { tkb };
-                },
-                element: <TkbBody />,
-            },
-        ],
-    },
+    //                 console.log(tkb);
+    //                 return { tkb };
+    //             },
+    //             element: <TkbBody />,
+    //         },
+    //     ],
+    // },
 ]);
 
 const privateRoutes = [];

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import GlobalStyles from '~/components/GlobalStyles';
 import App from '~/App';
-import Provider from './store/Provider';
+import Provider from './store/GlobalStore/Provider';
 
 const root = createRoot(document.getElementById('root'));
 root.render(

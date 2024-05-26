@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from 'react';
 
 import './DsTkb.scss';
-import Context from '~/store/Context';
-import { tkbContext } from '../pades/Tkbs';
+import Context from '~/store/GlobalStore/Context';
 import Card from './Card';
 import Loading3 from '../Loading/Loading3';
+import { useLoaderData } from 'react-router-dom';
+import TkbSguApi from '~/api/Api';
 
 function FileNoFound() {
     return (
@@ -21,21 +22,15 @@ function FileNoFound() {
 }
 
 function DsTkb() {
-    const [state] = useContext(Context);
-    const [tkbState, tkbDispath] = useContext(tkbContext);
+    const [state, dispath] = useContext(Context);
 
     useEffect(() => {
-        var tkbs = state.tkbs_local_store;
-        if (state.user?.token) {
-            state.user.getDsTkb().then((res) => {
-                if (res.success) {
-                    tkbDispath({ path: 'tkbs', value: tkbs.concat(res.data) });
-                }
-            });
-        } else {
-            tkbDispath({ path: 'tkbs', value: tkbs });
-        }
-    }, [state.user, tkbDispath, state.tkbs_local_store]);
+        state.topbar.left = <p style={{ color: 'var(--text-color)', fontWeight: 'bold' }}>TKB SGU</p>;
+        dispath({ path: 'topbar', value: state.topbar });
+        state.user?.getDsTkb().then((resp) => {
+            dispath({ path: 'tkbs', value: resp.data });
+        });
+    }, []);
 
     return (
         <div className="ds-tkbs-body">
@@ -78,9 +73,9 @@ function DsTkb() {
                     <div className="save-list-wall">
                         <div className="save-list">
                             {state.user?.token ? (
-                                tkbState.tkbs ? (
-                                    tkbState.tkbs?.length ? (
-                                        tkbState.tkbs.map((e, i) => {
+                                state.tkbs ? (
+                                    state.tkbs?.length ? (
+                                        state.tkbs.map((e, i) => {
                                             // console.log(e);
                                             return <Card name={e.name} des={e.tkb_describe} link={e.id} key={i} />;
                                         })

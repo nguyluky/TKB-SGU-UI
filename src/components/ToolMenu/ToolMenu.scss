@@ -18,6 +18,12 @@
     box-sizing: content-box;
     height: 25px;
 
+    box-icon {
+        fill: var(--text-color-2);
+    }
+
+    
+
     .icon {
         height: 25px;
         width: 25px;
@@ -39,8 +45,13 @@
     }
     
     &:hover {
-        
         background: var(--hover-color);
+    }
+
+    &.lever1 {
+        &:hover {
+            background: none;
+        }
     }
 }
 

@@ -8,10 +8,10 @@ import 'boxicons';
 import images from '~/assets/images';
 import UserInfo from '~/components/UserInfo';
 
-import storeContext from '~/store/Context';
+import storeContext from '~/store/GlobalStore/Context';
 import { themes } from '~/components/GlobalStyles';
 
-function TopBar({ children, right, center }) {
+function TopBar({ left, right, center }) {
     const [state, dispath] = React.useContext(storeContext);
 
     const [isAccShow, setAccShow] = React.useState(false);
@@ -64,7 +64,7 @@ function TopBar({ children, right, center }) {
                 <div className="logo">
                     <img src={images.logo} alt="logo" />
                 </div>
-                <div className="tools">{children}</div>
+                <div className="tools">{left}</div>
             </div>
             <div className="centerside">{center}</div>
             <div className="rightside">
@@ -93,7 +93,8 @@ function TopBar({ children, right, center }) {
                                                 checked={state.theme === key}
                                                 onChange={() => {
                                                     setThemeShow(false);
-                                                    dispath({ type: 'SET-THEME', value: key });
+                                                    window.localStorage.setItem('theme', key);
+                                                    dispath({ path: 'theme', value: key });
                                                 }}
                                             />
                                             <span>{key}</span>

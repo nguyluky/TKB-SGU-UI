@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import TkbSguApi, { UserApi } from '~/api/Api';
-import Context from '~/store/Context';
+import Context from '~/store/GlobalStore/Context';
 
 function SignIn() {
     const [userName, setUserName] = useState('');
@@ -17,7 +17,8 @@ function SignIn() {
         TkbSguApi.login(userName, password)
             .then((result) => {
                 if (result instanceof UserApi) {
-                    dispath({ type: 'SET-USER', value: result });
+                    state.user.token = result.token;
+                    dispath({ path: 'user', value: state.user });
                     var last = window.sessionStorage.getItem('last');
                     if (last) navigate(last);
                     else navigate('/');

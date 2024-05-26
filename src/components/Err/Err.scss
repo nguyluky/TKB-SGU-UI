@@ -1,0 +1,12 @@
+.err-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    .icon {
+        width: 10%;
+        aspect-ratio: 1 / 1;
+    }
+}
