@@ -8,6 +8,9 @@ import TkbBody from '~/components/TkbBody';
 import SignIn from '~/components/SignIn';
 import SignUp from '~/components/SignUp';
 
+import { initValue } from '~/store/reducer';
+import TkbSguApi from '~/api/Api';
+
 const publicRoutes = createBrowserRouter([
     {
         path: '/',
@@ -33,6 +36,11 @@ const publicRoutes = createBrowserRouter([
     {
         path: '/tkbs',
         element: <Tkbs />,
+        loader: async () => {
+            var resp = await TkbSguApi.getDsNhomHoc();
+
+            return { resp };
+        },
         children: [
             {
                 index: true,
@@ -40,6 +48,15 @@ const publicRoutes = createBrowserRouter([
             },
             {
                 path: 'edit/:tkbid',
+                loader: async ({ params }) => {
+                    var { tkbid } = params;
+
+                    if (!tkbid || tkbid === 'new') return {};
+                    var tkb = await initValue.user?.getTkb(tkbid);
+
+                    console.log(tkb);
+                    return { tkb };
+                },
                 element: <TkbBody />,
             },
         ],

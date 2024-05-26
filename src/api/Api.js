@@ -338,5 +338,5 @@ class TkbSguApi {
     }
 }
 
-export { UserApi, TkbSguApi, Tkb };
+export { UserApi, TkbSguApi, Tkb, ApiResponseBase };
 export default TkbSguApi;

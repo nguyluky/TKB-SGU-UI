@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import TopBar from '~/components/TopBar';
 import tkbContext from './Context';
 import reducre, { initValue } from './reducer';
 import TkbSguApi from '~/api/Api';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useParams, useNavigation, useLoaderData } from 'react-router-dom';
 import ToolMenu from '~/components/ToolMenu';
+import Loading from '~/components/Loading/Loading';
 
 const saveHanel = () => {
     console.log('onclick');
@@ -94,14 +95,14 @@ function Tkbs() {
 
     const { tkbid } = useParams();
 
+    const navigation = useNavigation();
+
+    const { resp } = useLoaderData();
     useEffect(() => {
-        TkbSguApi.getDsNhomHoc().then((data) => {
-            console.log(data);
-            const { ds_mon_hoc, ds_nhom_to } = data;
-            tkbDispath({ path: 'ds_mon_hoc', value: ds_mon_hoc });
-            tkbDispath({ path: 'ds_nhom_to', value: ds_nhom_to });
-        });
-    }, []);
+        const { ds_mon_hoc, ds_nhom_to } = resp;
+        tkbDispath({ path: 'ds_mon_hoc', value: ds_mon_hoc });
+        tkbDispath({ path: 'ds_nhom_to', value: ds_nhom_to });
+    }, [resp]);
 
     return (
         <tkbContext.Provider value={[tkbState, tkbDispath]}>
@@ -112,7 +113,20 @@ function Tkbs() {
                     <ToolMenu>{tools}</ToolMenu>
                 )}
             </TopBar>
-            <Outlet />
+            {navigation.state !== 'loading' ? (
+                <Outlet />
+            ) : (
+                <div
+                    style={{
+                        height: 'calc(100% - 55px)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Loading />
+                </div>
+            )}
         </tkbContext.Provider>
     );
 }
