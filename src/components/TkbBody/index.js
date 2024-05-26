@@ -17,7 +17,7 @@ function TkbBody() {
 
     const { tkbid } = useParams();
 
-    const tabViewChile = tkbState.currTkb?.ma_hoc_phans?.map((el, index) => {
+    const hocPhans = tkbState.currTkb?.ma_hoc_phans?.map((el, index) => {
         var ct = tkbState.ds_nhom_to?.find((e) => e.ma_mon === el)?.so_tc;
         soTC += ct;
         return <HocPhan key={index} maHocPhan={el} />;
@@ -144,7 +144,7 @@ function TkbBody() {
                 </div>
                 <div className="tkb_list_view">
                     {tkbState.ds_nhom_to && tkbState.ds_mon_hoc && tkbState.currTkb ? (
-                        <div className="tab-view">{tabViewChile}</div>
+                        <div className="tab-view">{hocPhans}</div>
                     ) : (
                         <div style={{ height: '50%' }}>
                             <Loading cellSize="20px" />

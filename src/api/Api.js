@@ -50,6 +50,17 @@ class sendReq {
         return this.send(url, 'DELETE', headers, body);
     }
 
+    /**
+     *
+     * @param {String} url
+     * @param {Object} headers
+     * @param {String} body
+     * @returns {ApiResponseBase}
+     */
+    static async PUT(url, headers, body) {
+        return this.send(url, 'PUT', headers, body);
+    }
+
     static async send(url, method, headers, body) {
         var resp = await fetch(url, {
             method: method,
@@ -63,7 +74,19 @@ class sendReq {
 
 var baseUrl = 'https://tkbsgusort.dev.vn/api/v1';
 class Tkb {
-    constructor(baseUrl, token, tkbId, name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, access, created) {
+    constructor(
+        baseUrl,
+        token,
+        tkbId,
+        name,
+        tkb_describe,
+        thumbnails,
+        ma_hoc_phans,
+        id_to_hocs,
+        access,
+        created,
+        local,
+    ) {
         this.baseUrl = baseUrl;
         this.token = token;
         this.tkbId = tkbId;
@@ -74,9 +97,44 @@ class Tkb {
         this.id_to_hocs = id_to_hocs || [];
         this.access = access;
         this.created = new Date(created);
+        this.local = local;
     }
 
-    async update() {}
+    async updateName(newName) {
+        this.name = newName;
+
+        var resp = await sendReq.PUT(
+            this.baseUrl + '/tkbs/' + this.tkbId,
+            {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + this.token,
+            },
+            JSON.stringify({
+                name: this.name,
+            }),
+        );
+
+        return resp;
+    }
+
+    async update() {
+        var resp = await sendReq.PUT(
+            this.baseUrl + '/tkbs/' + this.tkbId,
+            {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + this.token,
+            },
+            JSON.stringify({
+                name: this.name,
+                tkb_describe: this.tkb_describe,
+                thumbnails: null,
+                id_to_hocs: this.id_to_hocs,
+                ma_hoc_phans: this.ma_hoc_phans,
+            }),
+        );
+
+        return resp;
+    }
 
     async delete() {}
 
@@ -90,6 +148,8 @@ class Tkb {
 
     async saveAs(name, description, thumbmail, isPublic) {}
 
+    saveToLocal() {}
+
     static async getTkb(baseUrl, token, tkbId) {
         // console.log(token);
         var resp = await sendReq.GET(baseUrl + '/tkbs/' + tkbId, {
@@ -101,7 +161,26 @@ class Tkb {
         }
 
         const { name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, rule, created } = resp.data[0];
-        return new Tkb(baseUrl, token, tkbId, name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, rule, created);
+        return new Tkb(
+            baseUrl,
+            token,
+            tkbId,
+            name,
+            tkb_describe,
+            thumbnails,
+            ma_hoc_phans,
+            id_to_hocs,
+            rule,
+            created,
+            false,
+        );
+    }
+
+    static loadFromLocalStorage() {
+        var tkbs = localStorage.getItem('tkb_store') || [];
+        return tkbs.map((name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, created, id) => {
+            return new Tkb(null, null, id, name, tkb_describe, thumbnails, ma_hoc_phans, id_to_hocs, 0, created, true);
+        });
     }
 }
 

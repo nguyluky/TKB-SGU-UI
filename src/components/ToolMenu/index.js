@@ -21,8 +21,22 @@ function Tool({ data, pos }) {
 
     return (
         <div className="tool" onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+            {data.icon ? (
+                <div className="icon">
+                    <box-icon name={data.icon}></box-icon>
+                </div>
+            ) : (
+                ''
+            )}
             <p onClick={onclickHandle}>{data.displayName}</p>
 
+            {listTool ? (
+                <div className="icon right">
+                    <box-icon name="right-arrow" type="solid"></box-icon>
+                </div>
+            ) : (
+                ''
+            )}
             {isShow ? (
                 <div className={pos ? 'popup-wall ' + pos : 'popup-wall left'}>
                     <ToolWarp data={listTool} />

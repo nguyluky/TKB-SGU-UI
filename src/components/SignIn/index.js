@@ -65,7 +65,7 @@ function SignIn() {
             </button>
             <p className="dctk">
                 Không có tài khoản?
-                <Link to="/auth/signup" unstable_viewTransition>
+                <Link to="/sign_up" unstable_viewTransition>
                     SignUp
                 </Link>
             </p>

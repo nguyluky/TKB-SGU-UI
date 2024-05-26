@@ -1,19 +1,46 @@
 .tools_menu {
     display: flex;
+
+    > .tool + .tool {
+        margin-left: 20px;
+    }
 } 
 
+
 .tool {
+    display: flex;
     color: var(--text-color);
     cursor: pointer;
     position: relative;
-    
-    p {
-        border-radius: 3px;
-        padding: 3px 15px 3px 15px;
-    }
-    p:hover {
-        background: var(--hover-color);
+    align-items: center;
+    padding: 3px 5px;
+    border-radius: 5px;
+    box-sizing: content-box;
+    height: 25px;
 
+    .icon {
+        height: 25px;
+        width: 25px;
+
+        &.right {
+            height: 15px;
+            width: 15px;
+
+            box-icon {
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+
+    p {
+        width: 100%;
+        padding: 0 10px;
+    }
+    
+    &:hover {
+        
+        background: var(--hover-color);
     }
 }
 
@@ -27,6 +54,7 @@
 
 .popup-wall {
     position: absolute;
+    z-index: 1;
 
 
     &.bottom {

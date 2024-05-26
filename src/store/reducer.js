@@ -1,8 +1,9 @@
-import { UserApi } from '~/api/Api';
+import { Tkb, UserApi } from '~/api/Api';
 
 const initValue = {
     theme: localStorage.getItem('theme') || 'light',
     user: UserApi.loadFromLocalStorage(),
+    tkbs_local_store: Tkb.loadFromLocalStorage(),
 };
 
 function reducre(state, action) {

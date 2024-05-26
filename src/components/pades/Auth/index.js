@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import './Signup.scss';
 
-function Auth() {
+function Auth({ children }) {
     // const signUpHandle = () => {
     //     console.log(userName, password, email);
 
@@ -23,9 +23,7 @@ function Auth() {
     return (
         <div className="sign-up-wall">
             <div className="sign-up-content">
-                <div className="conten">
-                    <Outlet />
-                </div>
+                <div className="conten">{children}</div>
 
                 <div className="or">
                     <div className="vr" />

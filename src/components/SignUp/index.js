@@ -81,7 +81,7 @@ function SignUp() {
             </button>
             <p className="dctk">
                 Đã có tài khoản?
-                <Link to="/auth/signin" unstable_viewTransition>
+                <Link to="/sign_in" unstable_viewTransition>
                     SignIn
                 </Link>
             </p>

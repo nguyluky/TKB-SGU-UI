@@ -11,7 +11,7 @@ import UserInfo from '~/components/UserInfo';
 import storeContext from '~/store/Context';
 import { themes } from '~/components/GlobalStyles';
 
-function TopBar({ children }) {
+function TopBar({ children, right, center }) {
     const [state, dispath] = React.useContext(storeContext);
 
     const [isAccShow, setAccShow] = React.useState(false);
@@ -31,7 +31,7 @@ function TopBar({ children }) {
     const accountHandleShow = () => {
         if (!state.user?.token) {
             sessionStorage.setItem('last', window.location.pathname);
-            navigate('/auth/signin');
+            navigate('/sign_in');
         }
         setAccShow(true);
     };
@@ -66,7 +66,9 @@ function TopBar({ children }) {
                 </div>
                 <div className="tools">{children}</div>
             </div>
+            <div className="centerside">{center}</div>
             <div className="rightside">
+                {right}
                 <div className="bgithub" onClick={githubHandle}>
                     <div className="icon">
                         <box-icon type="logo" name="github"></box-icon>

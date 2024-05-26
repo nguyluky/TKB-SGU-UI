@@ -1,30 +1,44 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import TopBar from '~/components/TopBar';
 import tkbContext from './Context';
 import reducre, { initValue } from './reducer';
-import DsTkb from '~/components/DsTkb';
 import TkbSguApi from '~/api/Api';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import ToolMenu from '~/components/ToolMenu';
-import TkbBody from '~/components/TkbBody';
 
 const saveHanel = () => {
     console.log('onclick');
 };
 
+function SavePopup() {
+    return <div>SavePopup</div>;
+}
+
 const tools = [
     {
         displayName: 'File',
         data: [
-            { displayName: 'New', onclick: saveHanel },
-            { displayName: 'Save', onclick: saveHanel },
+            { icon: 'file', displayName: 'Mới', onclick: saveHanel, element: <SavePopup /> },
+            { icon: 'folder', displayName: 'Mở', onclick: saveHanel },
             {
-                displayName: 'Save As',
+                displayName: 'Tạo bản sao',
+                icon: 'copy',
+                onclick: saveHanel,
+            },
+            {
+                displayName: 'Chia sẻ',
+                icon: 'user-plus',
+                onclick: saveHanel,
+            },
+            {
+                displayName: 'Tải xuống',
+                icon: 'download',
+                onclick: saveHanel,
                 data: [
-                    { displayName: 'Json', onclick: saveHanel },
-                    { displayName: 'javascript', onclick: saveHanel },
-                    { displayName: 'img', onclick: saveHanel },
+                    { displayName: 'json (.json)', onclick: saveHanel },
+                    { displayName: 'ảnh (.png)', onclick: saveHanel },
+                    { displayName: 'javascript (.js)', onclick: saveHanel },
                 ],
             },
         ],
@@ -46,11 +60,39 @@ const tools = [
     },
 ];
 
+function NameTkb() {
+    const [tkbState, tkbDispath] = React.useContext(tkbContext);
+
+    const ref = useRef(null);
+
+    useEffect(() => {
+        if (ref.current) ref.current.value = tkbState.currTkb?.name;
+    }, [tkbState.currTkb, ref]);
+
+    return (
+        <input
+            className="name-input"
+            ref={ref}
+            style={{
+                backgroundColor: 'transparent',
+                outline: 'none',
+                border: 'none',
+                textAlign: 'center',
+                fontSize: '16px',
+            }}
+            onBlur={(event) => {
+                tkbState.currTkb.updateName(event.target.value).then((e) => {
+                    document.title = event.target.value + ' | TKB SGU';
+                });
+            }}
+        />
+    );
+}
+
 function Tkbs() {
     const [tkbState, tkbDispath] = React.useReducer(reducre, initValue);
 
-    const { pathname } = useLocation();
-    const tkbid = pathname.replace('/tkbs', '');
+    const { tkbid } = useParams();
 
     useEffect(() => {
         TkbSguApi.getDsNhomHoc().then((data) => {
@@ -63,7 +105,7 @@ function Tkbs() {
 
     return (
         <tkbContext.Provider value={[tkbState, tkbDispath]}>
-            <TopBar>
+            <TopBar center={tkbid ? <NameTkb /> : ''}>
                 {!tkbid ? (
                     <p style={{ color: 'var(--text-color)', fontWeight: 'bold' }}>TKB SGU</p>
                 ) : (
