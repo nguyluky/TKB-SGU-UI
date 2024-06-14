@@ -1,0 +1,26 @@
+.ct-input {
+    margin-top: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    padding-left: 10px;
+    .title {
+        top: 0;
+        left: 0;
+        transform: translateY(-100%);
+        position: absolute;
+    }
+
+
+
+    input {
+        flex: 1;
+        font-size: 16px;
+        margin-left: 5px;
+        background: transparent;
+        border: transparent;
+        outline: none;
+        padding: var(--margin-g);
+    }
+}

@@ -1,0 +1,211 @@
+
+.thu:first-child .day-name:first-child {
+    svg {
+        color: var(--primary-color-1);
+        cursor: pointer;
+    }
+}
+
+.calendar.layout-column {
+    --tiet-width: 50px;
+    --rows: 14;
+    --columns: 7;
+    --top-m: 0px;
+    --left-m: 50px;
+    --x-s: 0;
+    --y-s: 1;
+    height: calc(100% - var(--margin-g));
+    display: flex;
+    flex-direction: column;
+    margin-right: var(--margin-g);
+
+    .thu {
+        height: calc(var(--header-height) - 5px);
+        display: flex;
+        margin: var(--margin-g) 0px;
+        background-color: var(--content-color-1);
+        border-radius: var(--border-radius-g);
+    }
+
+    .day-name {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:first-child {
+
+            flex: unset;
+            width: var(--tiet-width);
+        }
+    }
+
+    .tiets {
+        position: relative;
+        flex: 1;
+        display: flex;
+        border-radius: var(--border-radius-g);
+        background-color: transparent;
+
+    }
+
+    
+
+    .calendar-day {
+        height: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        .tiet {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .tiet + .tiet {
+            border-top: 1px solid var(--content-color-1);
+        }
+    }
+
+    .calendar-day + .calendar-day + .calendar-day .tiet {
+        border-left: 1px solid var(--content-color-1);
+    }
+
+    .calendar-day.tiet-display {
+        background-color: var(--content-color-1);
+        border-radius: var(--border-radius-g);
+        flex: unset;
+        width: calc( var(--tiet-width) - 5px);
+        margin-right: 5px;
+        .tiet {
+            width: calc( var(--tiet-width) - 5px);
+        }
+    }
+}
+
+
+
+
+.calendar.layout-row {
+    --tiet-width: calc(var(--header-height) - 5px);
+
+    --rows: 7;
+    --columns: 14;
+    --top-m: calc(var(--header-height) + 2px);
+    --left-m: 0px;
+    --x-s: 1;
+    --y-s: 0;
+    height: calc(100% - var(--margin-g));
+    display: flex;
+    flex-direction: row;
+    margin-right: var(--margin-g);
+
+    .thu {
+        display: flex;
+        padding: 0 3px;
+        flex-direction: column;
+        margin-top: var(--margin-g);
+        margin-right: var(--margin-g);
+        background-color: var(--content-color-1);
+        border-radius: var(--border-radius-g);
+    }
+
+    .day-name {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & + .day-name {
+            border-top: 1px solid var(--content-color);
+        }
+
+        &:first-child {
+            flex: unset;
+            height: var(--tiet-width);
+        }
+    }
+
+    .tiets {
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--border-radius-g);
+    }
+
+    .calendar-day {
+        background-color: transparent;
+
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        .tiet {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .tiet + .tiet {
+            border-left: 1px solid var(--content-color-1);   
+        }
+    }
+
+    .calendar-day:nth-child(2) {
+        margin-top: calc(var(--margin-g) / 2);
+        border-top-left-radius: var(--border-radius-g);
+        border-top-right-radius: var(--border-radius-g);
+    }
+
+    .calendar-day:last-child {
+        border-bottom-left-radius: var(--border-radius-g);
+        border-bottom-right-radius: var(--border-radius-g);
+    }
+
+    .calendar-day + .calendar-day + .calendar-day .tiet {
+        border-top: 1px solid var(--content-color-1);
+    }
+
+    .calendar-day.tiet-display {
+        margin-top: var(--margin-g);
+        height: var(--tiet-width);
+        flex: unset;
+        background-color: transparent;
+        
+        // border-radius: var(--border-radius-g);
+        .tiet {
+
+            border-color: transparent;
+
+            background-color: var(--content-color-1);
+            padding: 5px 0;
+            margin-bottom: calc(var(--margin-g) / 2);
+
+            &:first-child {
+                border-radius: var(--margin-g) 0 0 var(--margin-g);
+            }
+
+            &:last-child {
+                border-radius: 0 var(--margin-g) var(--margin-g) 0;
+            }
+        }
+    }
+}
+
+
+.display-tiet {
+    height: 0;
+    width: 0;
+}
+
+.item {
+    box-sizing: border-box;
+    padding: var(--margin-g);
+    position: absolute;
+
+    .title {
+        font-size: large;
+        font-weight: bold;
+    }
+}

@@ -1,0 +1,74 @@
+.conten-menu-popup {
+    min-width: 350px;
+    border-radius: 5px;
+    padding: 15px;
+
+    .header {
+        color: var(--text-color);
+        margin-bottom: 15px;
+    }
+    .content {
+        p {
+            color: var(--text-color-2);
+            font-size: 15px;
+        }
+
+        option {
+            background-color: var(--content-color);
+            padding: 3px 0;
+        }
+        select,
+        input {
+            box-sizing: border-box;
+            background-color: transparent;
+            border: transparent;
+            outline: none;
+            width: 100%;
+
+            border: 1px solid var(--text-color-2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: var(--text-color);
+
+            &:focus {
+                border-color: var(--primary-color-2);
+            }
+        }
+    }
+
+    .buttons {
+        margin-top: 15px;
+        display: flex;
+        justify-content: flex-end;
+
+        button + button {
+            margin-left: 10px;
+        }
+
+        button {
+            height: 30px;
+            width: 80px;
+            background-color: transparent;
+            border: none;
+            outline: none;
+
+            color: var(--text-color);
+            border-radius: 5px;
+            font-size: 16px;
+
+            cursor: pointer;
+
+            &:active {
+                transform: scale(0.95);
+            }
+        }
+
+        .cancel {
+            border: 1px solid var(--hover-color);
+        }
+
+        .ok {
+            background: var(--primary-color-1);
+        }
+    }
+}

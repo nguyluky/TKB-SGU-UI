@@ -1,0 +1,12 @@
+{
+    "cSpell.words": [
+        "fontawesome",
+        "fortawesome",
+        "Lucide",
+        "tiet",
+        "tiets",
+        "tkbid",
+        "usehooks"
+    ],
+    "html-to-css-autocompletion.includePattern": "src\\components\\GlobalStyles"
+}

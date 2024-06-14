@@ -1,55 +1,67 @@
-
 :root {
-    --background-color-1: #e9eef6;
-    --background-color-2: whitesmoke;
-    --text-color: #3c4043;
-    --text-color-2: #5b5f63;
-    --hover-color: rgba(0, 0, 0, 0.05);
-    --color-hover: rgb(75, 79, 82);
-    --height-line-color: rgb(218, 220, 224);
+    --header-height: 45px;
+
+    --header-color: #ffffff;
+    --content-color: #e3e5e8;
+    --content-color-1: #f2f3f5;
+    --background-btn-hover: #0000000c;
+
+    --shadow-1: rgba(0, 0, 0, 0.1);
+    --shadow-2: rgba(0, 0, 0, 0.2);
+
+    --text-color: black;
+    --text-color-2: #777777;
+    --text-color-selection: #e06c75;
+
+    --hover-color: #555;
+    --drop-down-box-shadow: 0 12px 28px 0 var(--shadow-2), 0 2px 4px 0 var(--shadow-1);
     
-    --primary-color-1: #bd93f9;
-    --primary-color-2: #8be9fd;
-    --primary-color-3: #50fa7b;
-    --primary-color-4: #ff79c6;
-    --silver: #e4e4e4;
+    --margin-g : 5px;
+    --border-radius-g: 5px;
 
-    --button-color-1: #1a73e8;
+    --primary-color-1: #20b6ae;
 
-    --button-shadow-1: 0px 4px 4px 0px rgba(60, 64, 67, 0.3), 0px 8px 12px 6px rgba(60, 64, 67, 0.15);
-    --main-box-shadow: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
-    --popup-shadow: 0 24px 38px 3px rgba(0, 0, 0, .14), 0 9px 46px 8px rgba(0, 0, 0, .12), 0 11px 15px -7px rgba(0, 0, 0, .2);
+    --error-color: #f7675f;
+    --success-color: #5ff764;
+    --warning-color: #f7c45f;
+    --info-color: #5f69f7;
+}
 
-    --login-backgrow: linear-gradient(
-        45deg,
-        hsl(240deg 100% 20%) 0%,
-        hsl(289deg 100% 21%) 56%,
-        hsl(315deg 100% 27%) 73%,
-        hsl(329deg 100% 36%) 84%,
-        hsl(337deg 100% 43%) 90%,
-        hsl(357deg 91% 59%) 95%,
-        hsl(17deg 100% 59%) 98%,
-        hsl(34deg 100% 53%) 99%,
-        hsl(45deg 100% 50%) 100%,
-        hsl(55deg 100% 50%) 100%
-      );
+p, a, span, svg, label, input {
+    color: var(--text-color);
+}
 
-    --err-color: 220, 53, 69;
-    --info-color: 23, 162, 184;
-    --warning-color: 255, 193, 7;
-    --success-color: 40, 167, 69;
 
-    --width-siderbar: 256px;
+html[theme=dark] {
+    --header-color: #1e1f22;
+    --content-color: #2b2d31;
+    --content-color-1: #313338;
+    --background-btn-hover: #0000000c;
+
+    --text-color: #f3f3f3;
+
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
     height: 100vh;
-    background-color: var(--background-color-2);
 }
+
 
 #root {
     height: 100%;
+    width: 100%;
+}
+
+.popup-content {
+    border-color: transparent;
+    outline: none;
+    border-radius: var(--border-radius-g);
+    width: max-content !important;
+    background-color: var(--header-color) !important;
 }

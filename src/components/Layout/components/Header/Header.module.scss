@@ -1,0 +1,85 @@
+.wrapper {
+    --icon-size: 30px;
+    height: var(--header-height);
+    width: 100%;
+    background-color: var(--header-color);
+    display: grid;
+
+    grid-template-columns: 3fr 2fr 3fr;
+
+    > div {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.left {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: calc(var(--icon-size) / 2);
+    box-sizing: border-box;
+}
+
+.icon {
+    height: calc(var(--icon-size));
+    
+    img {
+        height: 100%;
+    }
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    box-sizing: border-box;
+    padding-right: calc(var(--icon-size) / 2);
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity {
+    display: flex;
+
+    > .item + .item {
+        margin-left: 15px;
+    }
+}
+
+.item {
+    height: var(--icon-size);
+    width: var(--icon-size);
+}
+
+.container {
+    width: max-content;
+    
+
+    label:has(input:checked) svg {
+        color: var(--text-color-selection);
+    }
+
+    label:has(input:checked) p {
+        color: var(--text-color-selection);
+    }
+
+
+    label {
+        padding: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    svg {
+        margin-right: 10px;
+    }
+
+    input {
+        display: none;
+    }
+}

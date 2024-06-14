@@ -1,0 +1,42 @@
+.button-wrapper {
+    position: relative;
+    color: var(--text-color);
+}
+
+.icon-wrapper {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 5px;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    transition: all 0.2s;
+    cursor: pointer;
+
+    &:active {
+        background-color: var(--background-btn-hover);
+        transform: scale(0.9);
+    }
+
+    svg {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.activity-drop-down {
+    position: absolute;
+    z-index: 5;
+    top: 100%;
+    right: 0;
+    transform: translateY(5px);
+}
+
+.drop-down-wrapper {
+    width: max-content;
+    padding: 5px;
+    border-radius: 2px;
+    background-color: var(--header-color);
+    box-shadow: var(--drop-down-box-shadow);
+}
+
+

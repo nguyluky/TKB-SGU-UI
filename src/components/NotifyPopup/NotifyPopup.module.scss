@@ -1,0 +1,73 @@
+.popup-area {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+}
+
+.popup-element + .popup-element {
+    margin-top: calc(var(--margin-g) * 2);
+}
+
+.popup-element {
+    position: relative;
+    overflow: hidden;
+    background: var(--info-color);
+    padding: 10px;
+    border-radius: var(--border-radius-g);
+    width: 300px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--margin-g) * 2);
+    p {
+        font-weight: 700;
+        margin-right: auto;
+    }
+}
+
+.body {
+    padding: 10px;
+    margin-left: 15px;
+    color: rgba($color: #000000, $alpha: 0.5);
+}
+
+.icon, .close, .title {
+    text-transform: uppercase;
+    color: rgba($color: #000000, $alpha: 0.7);
+}
+
+.close {
+    cursor: pointer;
+}
+
+
+.popup-element {
+    &.info {
+        background: var(--info-color );
+    }
+
+    &.success {
+        background: var(--success-color);
+    }
+    &.warning {
+        background: var(--warning-color);
+
+    }
+    &.error {
+        background: var(--error-color);
+
+    }
+}
+
+.loading {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: inherit ;
+    filter: brightness(0.8);
+}
