@@ -1,19 +1,18 @@
 import classNames from 'classnames/bind';
-import style from './Tkb.module.scss';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import style from './Tkb.module.scss';
 
-import { headerContent } from '../../components/Layout/DefaultLayout';
-import Calendar from '../components/Calendar';
+import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import Loader from '../components/Loader';
+import { headerContent } from '../../components/Layout/DefaultLayout';
 import { globalContent } from '../../store/GlobalContent';
+import Calendar from '../components/Calendar';
+import Loader from '../components/Loader';
 import Error from '../Error';
-import axios from 'axios';
+import { HeaderTool } from './HeaderTool';
 import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
-import { HeaderTool } from './HeaderTool';
 
 export const cx = classNames.bind(style);
 
@@ -66,8 +65,33 @@ export interface Tkb {
     th: boolean;
 }
 
-function AddHp() {
-    return <div className={cx('add-popup')}></div>;
+function AddHp({ data }: { data: DsNhomHocResp }) {
+    const [search, setSearch] = useState('');
+
+    const relust = Object.keys(data.ds_mon_hoc)
+        .map((e) => data.ds_mon_hoc[e] + ' ' + e)
+        .filter((e) => e.includes(search));
+
+    return (
+        <div className={cx('add-popup')}>
+            <div className="header">
+                <h2 className="title"></h2>
+                <FontAwesomeIcon icon={faClose} />
+            </div>
+
+            <div className="body">
+                <div className="search">
+                    <input type="text" />
+                </div>
+
+                <div className="relust">
+                    {relust.map((e) => {
+                        return <div className="monhoc">{e}</div>;
+                    })}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 function Tkb() {
@@ -99,6 +123,20 @@ function Tkb() {
         if (tkbData?.id_to_hocs.includes(idToHoc)) return;
         setTkbData((e) => {
             if (!e) return;
+
+            // lấy mã môn học của nhóm đó
+            var ma_mon = data?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc)?.ma_mon;
+            if (!ma_mon) return;
+
+            // nếu môn đó đã có nếu có thì xóa
+            var copyCache = cache.current;
+            if (copyCache[ma_mon]) {
+                var index = e.id_to_hocs.indexOf(copyCache[ma_mon]);
+                if (index >= 0) e.id_to_hocs.splice(index, 1);
+            }
+
+            // thêm cái mới vào
+            copyCache[ma_mon] = idToHoc;
             e.id_to_hocs.push(idToHoc);
             return { ...e };
         });
@@ -121,8 +159,24 @@ function Tkb() {
             console.log(re);
 
             const getTkbResp = re[0];
-            if (getTkbResp.data.success) setTkbData(getTkbResp.data.data);
-            else setErrMsg(getTkbResp.data.msg);
+
+            if (!getTkbResp.data.success) {
+                setErrMsg(getTkbResp.data.msg);
+                return;
+            }
+
+            // setup cache
+            var newCache: { [key: string]: string } = {};
+            getTkbResp.data.data.id_to_hocs.forEach((e) => {
+                var nhom = re[1].data.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+                if (!nhom) return;
+
+                newCache[nhom.ma_mon] = e;
+            });
+            cache.current = newCache;
+
+            setTkbData(getTkbResp.data.data);
 
             setData(re[1].data);
 

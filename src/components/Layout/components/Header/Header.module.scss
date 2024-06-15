@@ -23,7 +23,7 @@
 
 .icon {
     height: calc(var(--icon-size));
-    
+
     img {
         height: 100%;
     }
@@ -58,7 +58,6 @@
 
 .container {
     width: max-content;
-    
 
     label:has(input:checked) svg {
         color: var(--text-color-selection);
@@ -67,7 +66,6 @@
     label:has(input:checked) p {
         color: var(--text-color-selection);
     }
-
 
     label {
         padding: 5px;
@@ -82,4 +80,8 @@
     input {
         display: none;
     }
+}
+
+.line {
+    padding: 3px 5px;
 }

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DsNhomHocResp, cx } from './Tkb';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
 
 export function HocPhan({
     data,
@@ -12,6 +13,7 @@ export function HocPhan({
     onAddNhomHoc: (idToHoc: string) => void;
 }) {
     var nhomHoc = data?.ds_nhom_to.filter((j) => j.ma_mon === maHocPhan);
+    const [show, setShow] = useState(false);
 
     return (
         <div className={cx('hocphan')}>
