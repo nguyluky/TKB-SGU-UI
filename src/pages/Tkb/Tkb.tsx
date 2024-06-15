@@ -1,19 +1,19 @@
 import classNames from 'classnames/bind';
-import style from './Tkb.module.scss';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import style from './Tkb.module.scss';
 
-import { headerContent } from '../../components/Layout/DefaultLayout';
-import Calendar from '../components/Calendar';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import Loader from '../components/Loader';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Popup from 'reactjs-popup';
+import { headerContent } from '../../components/Layout/DefaultLayout';
 import { globalContent } from '../../store/GlobalContent';
 import Error from '../Error';
-import axios from 'axios';
+import Calendar from '../components/Calendar';
+import Loader from '../components/Loader';
+import { HeaderTool } from './HeaderTool';
 import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
-import { HeaderTool } from './HeaderTool';
 
 export const cx = classNames.bind(style);
 
@@ -67,7 +67,18 @@ export interface Tkb {
 }
 
 function AddHp() {
-    return <div className={cx('add-popup')}></div>;
+    return (
+        <div className={cx('conten-menu-popup')}>
+            <div className={cx('header')}>
+                <h2>{}</h2>
+            </div>
+            <div className={cx('content')}>{}</div>
+            <div className={cx('buttons')}>
+                <button className={cx('cancel')}>Huỷ</button>
+                <button className={cx('ok')}>ok</button>
+            </div>
+        </div>
+    );
 }
 
 function Tkb() {
@@ -126,6 +137,12 @@ function Tkb() {
 
             setData(re[1].data);
 
+            var newCache = {};
+
+            getTkbResp.data.data.id_to_hocs.forEach((e) => {
+                var nhom = re[1].data.ds_nhom_to.find((j) => j.id_to_hoc === e);
+            });
+
             setHeaderPar((e) => {
                 e.center = <ReName defaultName={getTkbResp.data.data.name} />;
                 e.left = <HeaderTool />;
@@ -144,7 +161,10 @@ function Tkb() {
                         <div className={cx('side-bar-wrapper')}>
                             <div className={cx('header')}>
                                 <p>Tính chỉ: 0/26</p>
-                                <FontAwesomeIcon icon={faPlus} />
+
+                                <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
+                                    <AddHp />
+                                </Popup>
                             </div>
 
                             <div className={cx('content')}>
