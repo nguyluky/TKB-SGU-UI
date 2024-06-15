@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import style from './Tkb.module.scss';
 
-import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { globalContent } from '../../store/GlobalContent';
@@ -13,6 +13,8 @@ import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
 import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
+import Popup from 'reactjs-popup';
+import { AddHp } from './AddHp';
 
 export const cx = classNames.bind(style);
 
@@ -65,37 +67,10 @@ export interface Tkb {
     th: boolean;
 }
 
-function AddHp({ data }: { data: DsNhomHocResp }) {
-    const [search, setSearch] = useState('');
-
-    const relust = Object.keys(data.ds_mon_hoc)
-        .map((e) => data.ds_mon_hoc[e] + ' ' + e)
-        .filter((e) => e.includes(search));
-
-    return (
-        <div className={cx('add-popup')}>
-            <div className="header">
-                <h2 className="title"></h2>
-                <FontAwesomeIcon icon={faClose} />
-            </div>
-
-            <div className="body">
-                <div className="search">
-                    <input type="text" />
-                </div>
-
-                <div className="relust">
-                    {relust.map((e) => {
-                        return <div className="monhoc">{e}</div>;
-                    })}
-                </div>
-            </div>
-        </div>
-    );
-}
-
 function Tkb() {
     const setHeaderPar = useContext(headerContent);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [globalState, setGlobalState] = useContext(globalContent);
 
     const [tkbData, setTkbData] = useState<TKB | undefined>();
@@ -105,6 +80,7 @@ function Tkb() {
     const [isLoading, setLoading] = useState(true);
     const [errMsg, setErrMsg] = useState('');
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const { tkbid } = useParams();
@@ -114,13 +90,16 @@ function Tkb() {
     const addHp = (maHocPhan: string) => {
         setTkbData((e) => {
             if (!e) return e;
-            e?.ma_hoc_phans.push(maHocPhan);
+            if (tkbData?.ma_hoc_phans.includes(maHocPhan)) {
+                var index = e?.ma_hoc_phans.indexOf(maHocPhan);
+                e.ma_hoc_phans.splice(index, 1);
+            } else e.ma_hoc_phans.push(maHocPhan);
+
             return { ...e };
         });
     };
 
     const addNhomHoc = (idToHoc: string) => {
-        if (tkbData?.id_to_hocs.includes(idToHoc)) return;
         setTkbData((e) => {
             if (!e) return;
 
@@ -128,15 +107,22 @@ function Tkb() {
             var ma_mon = data?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc)?.ma_mon;
             if (!ma_mon) return;
 
+            var isExit = tkbData?.id_to_hocs.includes(idToHoc);
+
             // nếu môn đó đã có nếu có thì xóa
-            var copyCache = cache.current;
-            if (copyCache[ma_mon]) {
-                var index = e.id_to_hocs.indexOf(copyCache[ma_mon]);
+            if (cache.current[ma_mon]) {
+                var index = e.id_to_hocs.indexOf(cache.current[ma_mon]);
                 if (index >= 0) e.id_to_hocs.splice(index, 1);
             }
 
+            // neu da chon ma nham them lan nua la bo
+            if (isExit) {
+                cache.current[ma_mon] = '';
+                return { ...e };
+            }
+
             // thêm cái mới vào
-            copyCache[ma_mon] = idToHoc;
+            cache.current[ma_mon] = idToHoc;
             e.id_to_hocs.push(idToHoc);
             return { ...e };
         });
@@ -198,7 +184,10 @@ function Tkb() {
                         <div className={cx('side-bar-wrapper')}>
                             <div className={cx('header')}>
                                 <p>Tính chỉ: 0/26</p>
-                                <FontAwesomeIcon icon={faPlus} />
+
+                                <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
+                                    <AddHp data={data} onAddHp={addHp} />
+                                </Popup>
                             </div>
 
                             <div className={cx('content')}>

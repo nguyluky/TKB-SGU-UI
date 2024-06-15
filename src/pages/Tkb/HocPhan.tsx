@@ -33,6 +33,7 @@ export function HocPhan({
                         >
                             <p>thứ: {j.tkb.map((i) => i.thu).join(', ')}</p>
                             <p>GV: {Array.from(new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : '')))).join(', ')}</p>
+                            <p>Phong: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}</p>
                         </div>
                     );
                 })}
