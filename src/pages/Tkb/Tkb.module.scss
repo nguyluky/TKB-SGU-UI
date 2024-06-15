@@ -27,15 +27,30 @@
         height: calc(100% - var(--margin-g) * 2);
         box-sizing: border-box;
         border-radius: var(--border-radius-g);
-      .header {
-        height: var(--header-height);
-        display: flex;
-        align-items: center;
-        padding: 0 5px;
-        border-bottom: 1px solid var(--content-color); 
-      }
-      .content {
-  
-      }
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            border-bottom: 1px solid var(--content-color);
+        }
+        .content {
+        }
     }
-  }
+}
+
+.hocphan {
+}
+
+.hocphan-title {
+    padding: 3px 0 3px 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.hocphan-dropdown {
+}
+
+.nhom {
+    margin-left: 10px;
+}

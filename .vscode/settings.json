@@ -8,5 +8,14 @@
         "tkbid",
         "usehooks"
     ],
-    "html-to-css-autocompletion.includePattern": "src\\components\\GlobalStyles"
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[scss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    }
+    
 }

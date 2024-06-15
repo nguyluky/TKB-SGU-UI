@@ -5,15 +5,16 @@ import style from './Tkb.module.scss';
 
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Popup from 'reactjs-popup';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { globalContent } from '../../store/GlobalContent';
-import Error from '../Error';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
+import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
 import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
+import Popup from 'reactjs-popup';
+import { AddHp } from './AddHp';
 
 export const cx = classNames.bind(style);
 
@@ -66,23 +67,10 @@ export interface Tkb {
     th: boolean;
 }
 
-function AddHp() {
-    return (
-        <div className={cx('conten-menu-popup')}>
-            <div className={cx('header')}>
-                <h2>{}</h2>
-            </div>
-            <div className={cx('content')}>{}</div>
-            <div className={cx('buttons')}>
-                <button className={cx('cancel')}>Huỷ</button>
-                <button className={cx('ok')}>ok</button>
-            </div>
-        </div>
-    );
-}
-
 function Tkb() {
     const setHeaderPar = useContext(headerContent);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [globalState, setGlobalState] = useContext(globalContent);
 
     const [tkbData, setTkbData] = useState<TKB | undefined>();
@@ -92,6 +80,7 @@ function Tkb() {
     const [isLoading, setLoading] = useState(true);
     const [errMsg, setErrMsg] = useState('');
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const { tkbid } = useParams();
@@ -101,15 +90,39 @@ function Tkb() {
     const addHp = (maHocPhan: string) => {
         setTkbData((e) => {
             if (!e) return e;
-            e?.ma_hoc_phans.push(maHocPhan);
+            if (tkbData?.ma_hoc_phans.includes(maHocPhan)) {
+                var index = e?.ma_hoc_phans.indexOf(maHocPhan);
+                e.ma_hoc_phans.splice(index, 1);
+            } else e.ma_hoc_phans.push(maHocPhan);
+
             return { ...e };
         });
     };
 
     const addNhomHoc = (idToHoc: string) => {
-        if (tkbData?.id_to_hocs.includes(idToHoc)) return;
         setTkbData((e) => {
             if (!e) return;
+
+            // lấy mã môn học của nhóm đó
+            var ma_mon = data?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc)?.ma_mon;
+            if (!ma_mon) return;
+
+            var isExit = tkbData?.id_to_hocs.includes(idToHoc);
+
+            // nếu môn đó đã có nếu có thì xóa
+            if (cache.current[ma_mon]) {
+                var index = e.id_to_hocs.indexOf(cache.current[ma_mon]);
+                if (index >= 0) e.id_to_hocs.splice(index, 1);
+            }
+
+            // neu da chon ma nham them lan nua la bo
+            if (isExit) {
+                cache.current[ma_mon] = '';
+                return { ...e };
+            }
+
+            // thêm cái mới vào
+            cache.current[ma_mon] = idToHoc;
             e.id_to_hocs.push(idToHoc);
             return { ...e };
         });
@@ -132,8 +145,24 @@ function Tkb() {
             console.log(re);
 
             const getTkbResp = re[0];
-            if (getTkbResp.data.success) setTkbData(getTkbResp.data.data);
-            else setErrMsg(getTkbResp.data.msg);
+
+            if (!getTkbResp.data.success) {
+                setErrMsg(getTkbResp.data.msg);
+                return;
+            }
+
+            // setup cache
+            var newCache: { [key: string]: string } = {};
+            getTkbResp.data.data.id_to_hocs.forEach((e) => {
+                var nhom = re[1].data.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+                if (!nhom) return;
+
+                newCache[nhom.ma_mon] = e;
+            });
+            cache.current = newCache;
+
+            setTkbData(getTkbResp.data.data);
 
             setData(re[1].data);
 
@@ -163,7 +192,7 @@ function Tkb() {
                                 <p>Tính chỉ: 0/26</p>
 
                                 <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
-                                    <AddHp />
+                                    <AddHp data={data} onAddHp={addHp} />
                                 </Popup>
                             </div>
 
