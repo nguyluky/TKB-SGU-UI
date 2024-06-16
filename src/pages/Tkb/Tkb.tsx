@@ -15,6 +15,7 @@ import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
 import Popup from 'reactjs-popup';
 import { AddHp } from './AddHp';
+import { NotifyMaster } from '../../components/NotifyPopup';
 
 export const cx = classNames.bind(style);
 
@@ -67,6 +68,38 @@ export interface Tkb {
     th: boolean;
 }
 
+function addSelectedPeriod(tkbs: Tkb[], newSlot: Set<string>) {
+    tkbs.forEach((e) => {
+        var thu = e.thu;
+        for (let index = e.tbd; index < e.tkt; index++) {
+            newSlot.add(thu + '-' + index);
+        }
+    });
+}
+
+function removeSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
+    tkbs.forEach((e) => {
+        var thu = e.thu;
+
+        for (let index = e.tbd; index < e.tkt; index++) {
+            const hash = thu + '-' + index;
+            slotEdit.delete(hash);
+        }
+    });
+}
+
+function checkSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
+    return tkbs.find((e) => {
+        var thu = e.thu;
+
+        for (let index = e.tbd; index < e.tkt; index++) {
+            const hash = thu + '-' + index;
+            if (slotEdit.has(hash)) return true;
+        }
+        return false;
+    });
+}
+
 function Tkb() {
     const setHeaderPar = useContext(headerContent);
 
@@ -76,13 +109,14 @@ function Tkb() {
     const [tkbData, setTkbData] = useState<TKB | undefined>();
     const [data, setData] = useState<DsNhomHocResp | undefined>();
     const cache = useRef<{ [key: string]: string }>({});
+    const slotSelectedPeriod = useRef<Set<string>>(new Set());
 
     const [isLoading, setLoading] = useState(true);
     const [errMsg, setErrMsg] = useState('');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { tkbid } = useParams();
 
     console.log(tkbData);
@@ -99,13 +133,16 @@ function Tkb() {
         });
     };
 
+    console.log(slotSelectedPeriod);
+
     const addNhomHoc = (idToHoc: string) => {
         setTkbData((e) => {
-            if (!e) return;
+            if (!e) return e;
 
             // lấy mã môn học của nhóm đó
-            var ma_mon = data?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc)?.ma_mon;
-            if (!ma_mon) return;
+            var nhomhoc = data?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc);
+            var ma_mon = nhomhoc?.ma_mon;
+            if (!ma_mon || !nhomhoc) return e;
 
             var isExit = tkbData?.id_to_hocs.includes(idToHoc);
 
@@ -114,12 +151,31 @@ function Tkb() {
                 var index = e.id_to_hocs.indexOf(cache.current[ma_mon]);
                 if (index >= 0) e.id_to_hocs.splice(index, 1);
             }
+            // kiểm tra xem môn chọn có bị chùng hay không
+            else if (!isExit) {
+                var overlap = checkSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
 
-            // neu da chon ma nham them lan nua la bo
+                console.log(overlap);
+
+                if (overlap) {
+                    NotifyMaster.error(
+                        'Chùng tiết với ' + overlap.gv + '. Thứ ' + overlap.thu + '. Tiết ' + overlap.tbd,
+                    );
+                    return e;
+                }
+            }
+
+            // nếu môn đó đã chọn thì bỏ
             if (isExit) {
+                // cập nhật slot
+                removeSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
+
                 cache.current[ma_mon] = '';
                 return { ...e };
             }
+
+            // cập nhật slot
+            addSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
 
             // thêm cái mới vào
             cache.current[ma_mon] = idToHoc;
@@ -151,26 +207,26 @@ function Tkb() {
                 return;
             }
 
-            // setup cache
+            // setup cache and slot
             var newCache: { [key: string]: string } = {};
+            var newSlot: Set<string> = slotSelectedPeriod.current;
             getTkbResp.data.data.id_to_hocs.forEach((e) => {
                 var nhom = re[1].data.ds_nhom_to.find((j) => j.id_to_hoc === e);
 
                 if (!nhom) return;
 
+                // slot
+                addSelectedPeriod(nhom.tkb, newSlot);
+
+                // cache
                 newCache[nhom.ma_mon] = e;
             });
             cache.current = newCache;
+            slotSelectedPeriod.current = newSlot;
 
             setTkbData(getTkbResp.data.data);
 
             setData(re[1].data);
-
-            var newCache = {};
-
-            getTkbResp.data.data.id_to_hocs.forEach((e) => {
-                var nhom = re[1].data.ds_nhom_to.find((j) => j.id_to_hoc === e);
-            });
 
             setHeaderPar((e) => {
                 e.center = <ReName defaultName={getTkbResp.data.data.name} />;
