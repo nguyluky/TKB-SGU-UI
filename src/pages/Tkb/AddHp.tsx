@@ -25,13 +25,6 @@ export function AddHp({ data, onAddHp }: { data?: DsNhomHocResp; onAddHp?: (maHo
                 </div>
 
                 <div className="relust">
-                    {/* {relust.map((e) => {
-                        return (
-                            <div className="monhoc" key={e}>
-                                {e}
-                            </div>
-                        );
-                    })} */}
                     {Object.keys(data?.ds_mon_hoc || {}).map((e) => {
                         var display = data?.ds_mon_hoc[e] + ' ' + e;
                         if (!display.includes(search)) return null;

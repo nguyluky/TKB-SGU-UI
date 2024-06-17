@@ -23,7 +23,7 @@ export interface GetTkbResp {
     code: number;
     msg: string;
     success: boolean;
-    data: TKB;
+    data?: TKB;
 }
 
 export interface TKB {
@@ -34,7 +34,7 @@ export interface TKB {
     ma_hoc_phans: string[];
     id_to_hocs: string[];
     rule: number;
-    created: string;
+    created: Date;
 }
 
 export interface DsNhomHocResp {
@@ -71,8 +71,11 @@ export interface Tkb {
 function addSelectedPeriod(tkbs: Tkb[], newSlot: Set<string>) {
     tkbs.forEach((e) => {
         var thu = e.thu;
-        for (let index = e.tbd; index < e.tkt; index++) {
-            newSlot.add(thu + '-' + index);
+        var cs = e.phong.substring(0, 1);
+
+        for (let index = e.tbd; index <= e.tkt; index++) {
+            const hash = thu + '-' + index + '-' + cs;
+            newSlot.add(hash);
         }
     });
 }
@@ -80,9 +83,10 @@ function addSelectedPeriod(tkbs: Tkb[], newSlot: Set<string>) {
 function removeSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
     tkbs.forEach((e) => {
         var thu = e.thu;
+        var cs = e.phong.substring(0, 1);
 
-        for (let index = e.tbd; index < e.tkt; index++) {
-            const hash = thu + '-' + index;
+        for (let index = e.tbd; index <= e.tkt; index++) {
+            const hash = thu + '-' + index + '-' + cs;
             slotEdit.delete(hash);
         }
     });
@@ -91,12 +95,30 @@ function removeSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
 function checkSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
     return tkbs.find((e) => {
         var thu = e.thu;
+        var cs = e.phong.substring(0, 1);
 
-        for (let index = e.tbd; index < e.tkt; index++) {
-            const hash = thu + '-' + index;
+        for (let index = e.tbd; index <= e.tkt; index++) {
+            const hash = thu + '-' + index + '-' + cs;
             if (slotEdit.has(hash)) return true;
         }
         return false;
+    });
+}
+
+function checkIfDifferentLocation(tkbs: Tkb[], slotEdit: Set<string>) {
+    var thuTietCs = Array.from(slotEdit).map((e) => e.split('-'));
+
+    return tkbs.find((e) => {
+        var thu = e.thu;
+        var cs = e.phong.substring(0, 1);
+
+        if (e.tbd < 6) {
+            var a = thuTietCs.find((j) => j[0] === thu && +j[1] < 6 && j[2] !== cs);
+            return !!a;
+        } else {
+            var a = thuTietCs.find((j) => j[0] === thu && +j[1] >= 6 && j[2] !== cs);
+            return !!a;
+        }
     });
 }
 
@@ -118,8 +140,6 @@ function Tkb() {
     const [searchParams, setSearchParams] = useSearchParams();
     // const navigate = useNavigate();
     const { tkbid } = useParams();
-
-    console.log(tkbData);
 
     const addHp = (maHocPhan: string) => {
         setTkbData((e) => {
@@ -148,18 +168,33 @@ function Tkb() {
 
             // nếu môn đó đã có nếu có thì xóa
             if (cache.current[ma_mon]) {
+                var preIdToHoc = cache.current[ma_mon];
+                var preNhomHoc = data?.ds_nhom_to.find((j) => j.id_to_hoc === preIdToHoc);
+
+                if (preNhomHoc) removeSelectedPeriod(preNhomHoc.tkb, slotSelectedPeriod.current);
                 var index = e.id_to_hocs.indexOf(cache.current[ma_mon]);
                 if (index >= 0) e.id_to_hocs.splice(index, 1);
-            }
-            // kiểm tra xem môn chọn có bị chùng hay không
-            else if (!isExit) {
+            } else if (!isExit) {
+                // kiểm tra xem môn chọn có bị chùng hay không
                 var overlap = checkSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
 
-                console.log(overlap);
+                console.info('Tiết bọ chùng', overlap);
 
+                // nếu có boá lỗi
                 if (overlap) {
                     NotifyMaster.error(
                         'Chùng tiết với ' + overlap.gv + '. Thứ ' + overlap.thu + '. Tiết ' + overlap.tbd,
+                    );
+                    return e;
+                }
+
+                // kiểm tra xem có khác cơ sử hay không
+                // NOTE: không thể kiểm tra xem đúng hay sai
+                // NOTE: Tại được
+                var tietCacCoSo = checkIfDifferentLocation(nhomhoc.tkb, slotSelectedPeriod.current);
+                if (tietCacCoSo) {
+                    NotifyMaster.error(
+                        'Khác cơ sở tiêt ' + tietCacCoSo.gv + '. Thứ ' + tietCacCoSo.thu + '. Tiết ' + tietCacCoSo.tbd,
                     );
                     return e;
                 }
@@ -198,19 +233,26 @@ function Tkb() {
 
         Promise.all([getTkb, getData]).then((re) => {
             setLoading(false);
-            console.log(re);
+            console.log('getTkbRep', re[0]);
+            console.log('getDsNhomHocRep', re[1]);
 
             const getTkbResp = re[0];
 
-            if (!getTkbResp.data.success) {
+            if (!getTkbResp.data.success || !getTkbResp.data.data) {
                 setErrMsg(getTkbResp.data.msg);
                 return;
             }
 
+            var tkbDataRep = getTkbResp.data.data;
+            if (!tkbDataRep.id_to_hocs) tkbDataRep.id_to_hocs = [];
+            if (!tkbDataRep.ma_hoc_phans) tkbDataRep.ma_hoc_phans = [];
+            if (!tkbDataRep.tkb_describe) tkbDataRep.tkb_describe = '';
+            tkbDataRep.created = new Date(tkbDataRep.created);
+
             // setup cache and slot
             var newCache: { [key: string]: string } = {};
             var newSlot: Set<string> = slotSelectedPeriod.current;
-            getTkbResp.data.data.id_to_hocs.forEach((e) => {
+            tkbDataRep.id_to_hocs.forEach((e) => {
                 var nhom = re[1].data.ds_nhom_to.find((j) => j.id_to_hoc === e);
 
                 if (!nhom) return;
@@ -224,12 +266,14 @@ function Tkb() {
             cache.current = newCache;
             slotSelectedPeriod.current = newSlot;
 
-            setTkbData(getTkbResp.data.data);
+            setTkbData(tkbDataRep);
 
             setData(re[1].data);
 
+            var tkbName = tkbDataRep.name;
+
             setHeaderPar((e) => {
-                e.center = <ReName defaultName={getTkbResp.data.data.name} />;
+                e.center = <ReName defaultName={tkbName} />;
                 e.left = <HeaderTool />;
                 e.right = <>users</>;
 
@@ -254,7 +298,13 @@ function Tkb() {
 
                             <div className={cx('content')}>
                                 {tkbData?.ma_hoc_phans.map((e) => (
-                                    <HocPhan data={data} maHocPhan={e} key={e} onAddNhomHoc={addNhomHoc} />
+                                    <HocPhan
+                                        data={data}
+                                        maHocPhan={e}
+                                        key={e}
+                                        onAddNhomHoc={addNhomHoc}
+                                        tkb={tkbData}
+                                    />
                                 ))}
                             </div>
                         </div>

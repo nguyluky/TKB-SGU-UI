@@ -8,6 +8,8 @@ import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import style from './DsTkb.module.scss';
 import { NewTkb } from './NewTkb';
+import { useNavigate } from 'react-router-dom';
+import { headerContent } from '../../components/Layout/DefaultLayout';
 
 export const cx = classNames.bind(style);
 
@@ -15,19 +17,83 @@ function Tkb({ className }: { className: string }) {
     return <div className={cx('tkb-item')}></div>;
 }
 
+export interface DsTkbRep {
+    code: number;
+    msg: string;
+    success: boolean;
+    data?: DsTkbData[];
+}
+
+export interface DsTkbData {
+    id: string;
+    name: string;
+    tkb_describe: string;
+    thumbnails: null;
+    ma_hoc_phans: string[];
+    id_to_hocs: string[];
+    rule: number;
+    created: Date; //"2024-06-17T12:22:36.000Z"
+}
+
+function CardTkb({ data }: { data: DsTkbData }) {
+    const [isShow, setShow] = useState(false);
+
+    const nati = useNavigate();
+
+    return (
+        <div
+            className={cx('card')}
+            onClick={() => {
+                nati(data.id);
+            }}
+        >
+            <div className={cx('thumbnail')}>
+                <div className={cx('icon-wrapper')}></div>
+            </div>
+            <div className={cx('info')}>
+                <p className={cx('name')}>{data.name}</p>
+                <p className={cx('name')}>{data.created.toLocaleDateString('en-US')}</p>
+            </div>
+        </div>
+    );
+}
+
 function DsTkb() {
+    const setHeaderPar = useContext(headerContent);
     const [globalState, setGlobalState] = useContext(globalContent);
 
     const [isLoading, setLoading] = useState(true);
 
+    const [dsTkb, setDsTkb] = useState<DsTkbData[]>([]);
+
     useEffect(() => {
-        globalState.client.request.get('/tkbs').then((rep) => {
+        globalState.client.request.get<DsTkbRep>('/tkbs').then((rep) => {
             setLoading(false);
-            console.log(rep);
+
+            // NOTE:
+            // 1. đầu tiên lấy dữ liệu từ server
+            // 2. lấy tkb được lưu trong local
+            // 3. sử lý khi không có data trả về
+            if (!rep.data.success || !rep.data.data) {
+                // TODO: sử lý trường hợp không có data
+                return;
+            }
+
+            rep.data.data.forEach((e) => {
+                e.created = new Date(e.created);
+            });
+
+            setDsTkb(rep.data.data);
         });
-        // setTimeout(() => {
-        //     setLoading(false);
-        // }, 2000);
+
+        console.log('setheader');
+        setHeaderPar((e) => {
+            e.left = <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>;
+            e.center = undefined;
+            e.right = undefined;
+
+            return { ...e };
+        });
     }, []);
 
     return (
@@ -66,7 +132,11 @@ function DsTkb() {
                     </header>
                     <div className={cx('content')}>
                         <Loader isLoading={isLoading}>
-                            <p>hello</p>
+                            <>
+                                {dsTkb.map((e) => {
+                                    return <CardTkb data={e} key={e.id} />;
+                                })}
+                            </>
                         </Loader>
                     </div>
                 </div>

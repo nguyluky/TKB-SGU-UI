@@ -15,31 +15,34 @@
 
     --hover-color: #555;
     --drop-down-box-shadow: 0 12px 28px 0 var(--shadow-2), 0 2px 4px 0 var(--shadow-1);
-    
-    --margin-g : 5px;
+
+    --margin-g: 5px;
     --border-radius-g: 5px;
 
     --primary-color-1: #20b6ae;
 
-    --error-color: #f7675f;
-    --success-color: #5ff764;
+    --error-color: #fc7386;
+    --success-color: #a1e54a;
     --warning-color: #f7c45f;
     --info-color: #5f69f7;
 }
 
-p, a, span, svg, label, input {
+p,
+a,
+span,
+svg,
+label,
+input {
     color: var(--text-color);
 }
 
-
-html[theme=dark] {
+html[theme='dark'] {
     --header-color: #1e1f22;
     --content-color: #2b2d31;
     --content-color-1: #313338;
     --background-btn-hover: #0000000c;
 
     --text-color: #f3f3f3;
-
 }
 
 * {
@@ -51,7 +54,6 @@ html[theme=dark] {
 body {
     height: 100vh;
 }
-
 
 #root {
     height: 100%;

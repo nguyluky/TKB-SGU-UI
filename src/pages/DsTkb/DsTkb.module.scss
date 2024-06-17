@@ -12,7 +12,7 @@
     justify-content: center;
 }
 
-.list-tkb-wrapper ,
+.list-tkb-wrapper,
 .template-wrapper {
     width: calc(var(--column-count) * var(--column-size));
 }
@@ -32,7 +32,7 @@
     width: 30px;
 }
 
-.left span{
+.left span {
     font-size: 16px;
     font-weight: 400;
 }
@@ -53,16 +53,16 @@
 }
 
 .list-tkb {
-    min-height: calc( 100% - 290px);
+    min-height: calc(100% - 290px);
     background-color: var(--header-color);
 }
 
 .list-tkb-wrapper .content {
-    min-height: calc(100% - var(--tkb-header-height));;
+    min-height: calc(100% - var(--tkb-header-height));
+    align-items: start;
 }
 
 .tkb-item {
-
 }
 
 .card {
@@ -70,7 +70,7 @@
     width: var(--column-size);
     padding: 10px;
     .thumbnail {
-        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        box-shadow: 0 1rem 3rem rgba(#000, 0.175);
         border-radius: var(--margin-g);
         background: var(--header-color);
         height: 157px;
@@ -85,11 +85,10 @@
 }
 
 .card.new {
-    .thumbnail .icon-wrapper{
+    .thumbnail .icon-wrapper {
         height: 80%;
         aspect-ratio: 1 / 1;
     }
-
 
     svg {
         height: 100%;
@@ -103,9 +102,8 @@
     label {
         margin: 5px;
     }
-    
 }
 
-.input + .input{
+.input + .input {
     margin-top: 10px;
 }
