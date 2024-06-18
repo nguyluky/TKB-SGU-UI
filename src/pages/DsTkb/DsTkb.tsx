@@ -13,10 +13,6 @@ import { headerContent } from '../../components/Layout/DefaultLayout';
 
 export const cx = classNames.bind(style);
 
-function Tkb({ className }: { className: string }) {
-    return <div className={cx('tkb-item')}></div>;
-}
-
 export interface DsTkbRep {
     code: number;
     msg: string;
@@ -48,7 +44,7 @@ function CardTkb({ data }: { data: DsTkbData }) {
             }}
         >
             <div className={cx('thumbnail')}>
-                <div className={cx('icon-wrapper')}></div>
+                <div className={cx('icon-wrapper')}>{data.thumbnails ? <p>imge</p> : <p>not img</p>}</div>
             </div>
             <div className={cx('info')}>
                 <p className={cx('name')}>{data.name}</p>
@@ -60,7 +56,7 @@ function CardTkb({ data }: { data: DsTkbData }) {
 
 function DsTkb() {
     const setHeaderPar = useContext(headerContent);
-    const [globalState, setGlobalState] = useContext(globalContent);
+    const [globalState] = useContext(globalContent);
 
     const [isLoading, setLoading] = useState(true);
 
@@ -75,7 +71,8 @@ function DsTkb() {
             // 2. lấy tkb được lưu trong local
             // 3. sử lý khi không có data trả về
             if (!rep.data.success || !rep.data.data) {
-                // TODO: sử lý trường hợp không có data
+                // TODO: chưa làm sử lý trường hợp không có data
+
                 return;
             }
 
@@ -94,6 +91,7 @@ function DsTkb() {
 
             return { ...e };
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

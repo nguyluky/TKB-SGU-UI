@@ -1,21 +1,21 @@
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import style from './Tkb.module.scss';
-
+import { useParams, useSearchParams } from 'react-router-dom';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Popup from 'reactjs-popup';
+
 import { headerContent } from '../../components/Layout/DefaultLayout';
+import { NotifyMaster } from '../../components/NotifyPopup';
 import { globalContent } from '../../store/GlobalContent';
+import Error from '../Error';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
-import Error from '../Error';
+import { AddHp } from './AddHp';
 import { HeaderTool } from './HeaderTool';
 import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
-import Popup from 'reactjs-popup';
-import { AddHp } from './AddHp';
-import { NotifyMaster } from '../../components/NotifyPopup';
+import style from './Tkb.module.scss';
 
 export const cx = classNames.bind(style);
 
@@ -51,7 +51,7 @@ export interface DsNhomTo {
     lop: Lop;
     ds_lop: Lop[];
     ds_khoa: Lop[];
-    tkb: Tkb[];
+    tkb: TkbTiet[];
 }
 
 export interface Lop {
@@ -59,7 +59,7 @@ export interface Lop {
     ten: string;
 }
 
-export interface Tkb {
+export interface TkbTiet {
     thu: string;
     tbd: number;
     tkt: number;
@@ -68,7 +68,7 @@ export interface Tkb {
     th: boolean;
 }
 
-function addSelectedPeriod(tkbs: Tkb[], newSlot: Set<string>) {
+function addSelectedPeriod(tkbs: TkbTiet[], newSlot: Set<string>) {
     tkbs.forEach((e) => {
         var thu = e.thu;
         var cs = e.phong.substring(0, 1);
@@ -80,7 +80,7 @@ function addSelectedPeriod(tkbs: Tkb[], newSlot: Set<string>) {
     });
 }
 
-function removeSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
+function removeSelectedPeriod(tkbs: TkbTiet[], slotEdit: Set<string>) {
     tkbs.forEach((e) => {
         var thu = e.thu;
         var cs = e.phong.substring(0, 1);
@@ -92,7 +92,7 @@ function removeSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
     });
 }
 
-function checkSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
+function checkSelectedPeriod(tkbs: TkbTiet[], slotEdit: Set<string>) {
     return tkbs.find((e) => {
         var thu = e.thu;
         var cs = e.phong.substring(0, 1);
@@ -105,7 +105,7 @@ function checkSelectedPeriod(tkbs: Tkb[], slotEdit: Set<string>) {
     });
 }
 
-function checkIfDifferentLocation(tkbs: Tkb[], slotEdit: Set<string>) {
+function checkIfDifferentLocation(tkbs: TkbTiet[], slotEdit: Set<string>) {
     var thuTietCs = Array.from(slotEdit).map((e) => e.split('-'));
 
     return tkbs.find((e) => {
@@ -113,11 +113,9 @@ function checkIfDifferentLocation(tkbs: Tkb[], slotEdit: Set<string>) {
         var cs = e.phong.substring(0, 1);
 
         if (e.tbd < 6) {
-            var a = thuTietCs.find((j) => j[0] === thu && +j[1] < 6 && j[2] !== cs);
-            return !!a;
+            return !!thuTietCs.find((j) => j[0] === thu && +j[1] < 6 && j[2] !== cs);
         } else {
-            var a = thuTietCs.find((j) => j[0] === thu && +j[1] >= 6 && j[2] !== cs);
-            return !!a;
+            return !!thuTietCs.find((j) => j[0] === thu && +j[1] >= 6 && j[2] !== cs);
         }
     });
 }
@@ -280,7 +278,16 @@ function Tkb() {
                 return { ...e };
             });
         });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tkbid]);
+
+    // send update tkb to server
+    useEffect(() => {
+        globalState.client.request.put('/tkbs/' + tkbid, tkbData).then((resp) => {
+            console.log('save ok test');
+        });
+    }, [tkbData]);
 
     return (
         <Loader isLoading={isLoading}>

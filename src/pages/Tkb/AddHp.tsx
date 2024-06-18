@@ -7,30 +7,28 @@ export function AddHp({ data, onAddHp }: { data?: DsNhomHocResp; onAddHp?: (maHo
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [search, setSearch] = useState('');
 
-    // const relust = Object.keys(data?.ds_mon_hoc || {})
-    //     .map((e) => data?.ds_mon_hoc[e] + ' ' + e)
-    //     .filter((e) => e.includes(search));
-
     return (
         <div className={cx('add-popup')}>
-            <div className="header">
-                {/* TODO: nho them giau vao */}
-                <h2 className="title">them hoc phan</h2>
-                <FontAwesomeIcon icon={faClose} />
+            <div className={cx('header')}>
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Thêm học phần"
+                />
+                <button className={cx('filter')}>filter</button>
             </div>
 
-            <div className="body">
-                <div className="search">
-                    <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-                </div>
+            <div className={cx('filter')}>{/* TODO: thêm filter */}</div>
 
-                <div className="relust">
+            <div className={cx('body')}>
+                <div className={cx('relust')}>
                     {Object.keys(data?.ds_mon_hoc || {}).map((e) => {
                         var display = data?.ds_mon_hoc[e] + ' ' + e;
                         if (!display.includes(search)) return null;
                         return (
                             <div
-                                className="monhoc"
+                                className={cx('monhoc')}
                                 key={e}
                                 onClick={() => {
                                     if (onAddHp) onAddHp(e);
