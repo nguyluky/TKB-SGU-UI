@@ -154,57 +154,48 @@ function Tkb() {
     console.log(slotSelectedPeriod);
 
     const addNhomHoc = (idToHoc: string) => {
-        setTkbData((e) => {
-            if (!e) return e;
+        const makeNewTkb = () => {
+            if (!tkbData) return null;
 
-            // lấy mã môn học của nhóm đó
+            // lấy nhóm học và mã môn học
             var nhomhoc = data?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc);
             var ma_mon = nhomhoc?.ma_mon;
-            if (!ma_mon || !nhomhoc) return e;
+            if (!ma_mon || !nhomhoc) return null;
 
-            var isExit = tkbData?.id_to_hocs.includes(idToHoc);
-
-            // nếu môn đó đã có nếu có thì xóa
+            // nếu môn đó đã chọn nhóm học thì xoá nhóm đó
             if (cache.current[ma_mon]) {
                 var preIdToHoc = cache.current[ma_mon];
                 var preNhomHoc = data?.ds_nhom_to.find((j) => j.id_to_hoc === preIdToHoc);
 
                 if (preNhomHoc) removeSelectedPeriod(preNhomHoc.tkb, slotSelectedPeriod.current);
-                var index = e.id_to_hocs.indexOf(cache.current[ma_mon]);
-                if (index >= 0) e.id_to_hocs.splice(index, 1);
-            } else if (!isExit) {
-                // kiểm tra xem môn chọn có bị chùng hay không
-                var overlap = checkSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
-
-                console.info('Tiết bọ chùng', overlap);
-
-                // nếu có boá lỗi
-                if (overlap) {
-                    NotifyMaster.error(
-                        'Chùng tiết với ' + overlap.gv + '. Thứ ' + overlap.thu + '. Tiết ' + overlap.tbd,
-                    );
-                    return e;
+                var index = tkbData.id_to_hocs.indexOf(cache.current[ma_mon]);
+                if (index >= 0) {
+                    tkbData.id_to_hocs.splice(index, 1);
+                    cache.current[ma_mon] = '';
                 }
 
-                // kiểm tra xem có khác cơ sử hay không
-                // NOTE: không thể kiểm tra xem đúng hay sai
-                // NOTE: Tại được
-                var tietCacCoSo = checkIfDifferentLocation(nhomhoc.tkb, slotSelectedPeriod.current);
-                if (tietCacCoSo) {
-                    NotifyMaster.error(
-                        'Khác cơ sở tiêt ' + tietCacCoSo.gv + '. Thứ ' + tietCacCoSo.thu + '. Tiết ' + tietCacCoSo.tbd,
-                    );
-                    return e;
-                }
+                if (preIdToHoc === idToHoc) return { ...tkbData };
             }
 
-            // nếu môn đó đã chọn thì bỏ
-            if (isExit) {
-                // cập nhật slot
-                removeSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
+            // kiểm tra xem môn chọn có bị chùng tiết hay không
+            var overlap = checkSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
 
-                cache.current[ma_mon] = '';
-                return { ...e };
+            // nếu có boá lỗi
+            if (overlap) {
+                console.info('Tiết bọ chùng', overlap);
+                NotifyMaster.error('Chùng tiết với ' + overlap.gv + '. Thứ ' + overlap.thu + '. Tiết ' + overlap.tbd);
+                return null;
+            }
+
+            // kiểm tra xem có khác cơ sử hay không
+            // NOTE: không thể kiểm tra xem đúng hay sai
+            // NOTE: Tại được
+            var tietCacCoSo = checkIfDifferentLocation(nhomhoc.tkb, slotSelectedPeriod.current);
+            if (tietCacCoSo) {
+                NotifyMaster.error(
+                    'Khác cơ sở tiêt ' + tietCacCoSo.gv + '. Thứ ' + tietCacCoSo.thu + '. Tiết ' + tietCacCoSo.tbd,
+                );
+                return null;
             }
 
             // cập nhật slot
@@ -212,7 +203,19 @@ function Tkb() {
 
             // thêm cái mới vào
             cache.current[ma_mon] = idToHoc;
-            e.id_to_hocs.push(idToHoc);
+            tkbData.id_to_hocs.push(idToHoc);
+            return { ...tkbData };
+        };
+
+        var newData = makeNewTkb();
+
+        if (newData) setTkbData(newData);
+    };
+
+    const changeNameHandle = (s: string) => {
+        setTkbData((e) => {
+            if (!e) return e;
+            e.name = s;
             return { ...e };
         });
     };
@@ -271,7 +274,7 @@ function Tkb() {
             var tkbName = tkbDataRep.name;
 
             setHeaderPar((e) => {
-                e.center = <ReName defaultName={tkbName} />;
+                e.center = <ReName defaultName={tkbName} onChangeName={changeNameHandle} />;
                 e.left = <HeaderTool />;
                 e.right = <>users</>;
 
