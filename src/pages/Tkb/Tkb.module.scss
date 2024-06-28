@@ -31,8 +31,14 @@
             height: var(--header-height);
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 5px;
             border-bottom: 1px solid var(--content-color);
+
+            svg {
+                color: var(--primary-color-1);
+                cursor: pointer;
+            }
         }
         .content {
             height: calc(100% - var(--header-height));
@@ -62,8 +68,12 @@
         margin: 5px;
         padding: 3px;
         display: flex;
-        justify-content: space-between;
+        align-items: center;
         border-bottom: 2px solid var(--content-color);
+
+        svg {
+            padding-right: 5px;
+        }
     }
 
     .hocphan-dropdown.show {
@@ -74,11 +84,11 @@
         overflow: hidden;
         max-height: 0px;
         .nhom {
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             padding: 5px;
-            margin-left: 10px;
+            margin-left: 25px;
             border-radius: var(--border-radius-g);
             margin-top: var(--margin-g);
+            background-color: rgba($color: #000000, $alpha: 0.05);
         }
 
         .nhom.check {
@@ -120,20 +130,88 @@
     .body {
         height: calc(100% - 53px);
         .relust {
-            padding: 0 20px;
             height: 100%;
             overflow-y: scroll;
             scrollbar-width: thin;
             scrollbar-color: gray transparent;
             .monhoc {
+                display: block;
+                color: var(--text-color);
+                cursor: pointer;
+                padding: 0 20px;
+                margin: 3px 0;
+                border-left: 3px solid transparent;
+
+                input {
+                    display: none;
+                }
+
+                .ten {
+                    font-weight: bold;
+                }
+
+                .more-info {
+                    font-size: small;
+                    color: var(--text-color-2);
+                }
+            }
+
+            .monhoc:has(input:checked) {
+                border-left: 3px solid var(--primary-color-1);
             }
         }
     }
 }
 
 .rename-header {
+    display: flex;
+    align-items: center;
+
     p {
         padding: 3px 5px;
         cursor: pointer;
+    }
+
+    svg {
+        margin-left: 10px;
+    }
+}
+
+.tools {
+    padding-left: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.tool-item {
+    position: relative;
+
+    .title {
+        display: block;
+        padding: 3px 10px;
+        border-radius: var(--border-radius-g);
+        cursor: pointer;
+        &:hover {
+            background-color: var(--content-color);
+        }
+    }
+
+    .drop-down-item {
+        border-radius: var(--border-radius-g);
+        position: absolute;
+        background-color: var(--header-color);
+        box-shadow: var(--box-shadow-g);
+        width: max-content;
+        padding: 5px;
+    }
+
+    .drop-down-item.bottom {
+        top: 100%;
+        left: 0px;
+    }
+
+    .drop-down-item.Left {
+        left: 100%;
+        top: 0;
     }
 }

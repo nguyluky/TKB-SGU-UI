@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
 :root {
     --header-height: 45px;
 
@@ -14,8 +16,8 @@
     --text-color-selection: #e06c75;
 
     --hover-color: #555;
-    --drop-down-box-shadow: 0 12px 28px 0 var(--shadow-2), 0 2px 4px 0 var(--shadow-1);
 
+    --box-shadow-g: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
     --margin-g: 5px;
     --border-radius-g: 5px;
 
@@ -32,6 +34,9 @@ a,
 span,
 svg,
 label,
+h1,
+h2,
+h3,
 input {
     color: var(--text-color);
 }
@@ -48,7 +53,9 @@ html[theme='dark'] {
 * {
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Source Sans 3', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
 body {
@@ -63,8 +70,16 @@ body {
 .popup-content {
     border-color: transparent;
     outline: none;
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    box-shadow: var(--box-shadow-g);
     border-radius: var(--border-radius-g);
     width: max-content !important;
+}
+
+.popup-content[role='tooltip'] {
+    box-shadow: 0px 0px 10px 0px hsla(0, 0%, 0%, 0.4);
+    background-color: var(--header-color) !important;
+}
+
+.popup-overlay[data-popup='modal'] .popup-content {
     background-color: var(--header-color) !important;
 }

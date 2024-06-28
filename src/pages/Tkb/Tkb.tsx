@@ -16,6 +16,8 @@ import { HeaderTool } from './HeaderTool';
 import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
 import style from './Tkb.module.scss';
+import { textSaveAsFile } from '../../utils';
+import { TkbData } from '../../Service';
 
 export const cx = classNames.bind(style);
 
@@ -23,18 +25,7 @@ export interface GetTkbResp {
     code: number;
     msg: string;
     success: boolean;
-    data?: TKB;
-}
-
-export interface TKB {
-    id: string;
-    name: string;
-    tkb_describe: string;
-    thumbnail?: any;
-    ma_hoc_phans: string[];
-    id_to_hocs: string[];
-    rule: number;
-    created: Date;
+    data?: TkbData;
 }
 
 export interface DsNhomHocResp {
@@ -67,6 +58,8 @@ export interface TkbTiet {
     gv: null | string;
     th: boolean;
 }
+
+var cacheDsNhomHoc: DsNhomHocResp;
 
 function addSelectedPeriod(tkbs: TkbTiet[], newSlot: Set<string>) {
     tkbs.forEach((e) => {
@@ -126,46 +119,47 @@ function Tkb() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [globalState, setGlobalState] = useContext(globalContent);
 
-    const [tkbData, setTkbData] = useState<TKB | undefined>();
-    const [data, setData] = useState<DsNhomHocResp | undefined>();
-    const cache = useRef<{ [key: string]: string }>({});
-    const slotSelectedPeriod = useRef<Set<string>>(new Set());
-
+    const [tkbData, setTkbData] = useState<TkbData | undefined>();
+    const [dsNhomAndMon, setDsNhomAndMon] = useState<DsNhomHocResp | undefined>();
+    const [soTC, setSoTC] = useState<number>(0);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const [canSave, setCanSave] = useState<boolean>(false);
     const [isLoading, setLoading] = useState(true);
     const [errMsg, setErrMsg] = useState('');
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [searchParams, setSearchParams] = useSearchParams();
-    // const navigate = useNavigate();
+    const cache = useRef<{ [key: string]: string }>({});
+    const idTimeOut = useRef<NodeJS.Timeout | undefined>(undefined);
+    const slotSelectedPeriod = useRef<Set<string>>(new Set());
+
+    const [searchParams] = useSearchParams();
     const { tkbid } = useParams();
 
-    const addHp = (maHocPhan: string) => {
-        setTkbData((e) => {
-            if (!e) return e;
-            if (tkbData?.ma_hoc_phans.includes(maHocPhan)) {
-                var index = e?.ma_hoc_phans.indexOf(maHocPhan);
-                e.ma_hoc_phans.splice(index, 1);
-            } else e.ma_hoc_phans.push(maHocPhan);
+    const onAddHphandler = (maHocPhan: string) => {
+        if (!tkbData) return;
+        if (tkbData.ma_hoc_phans.includes(maHocPhan)) {
+            var index = tkbData.ma_hoc_phans.indexOf(maHocPhan);
+            tkbData.ma_hoc_phans.splice(index, 1);
+            if (cache.current[maHocPhan]) {
+                onAddNhomHocHandler(cache.current[maHocPhan]);
+            }
+        } else tkbData.ma_hoc_phans.push(maHocPhan);
 
-            return { ...e };
-        });
+        setTkbData({ ...tkbData });
     };
 
-    console.log(slotSelectedPeriod);
-
-    const addNhomHoc = (idToHoc: string) => {
+    const onAddNhomHocHandler = (idToHoc: string) => {
         const makeNewTkb = () => {
             if (!tkbData) return null;
 
             // lấy nhóm học và mã môn học
-            var nhomhoc = data?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc);
+            var nhomhoc = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc);
             var ma_mon = nhomhoc?.ma_mon;
             if (!ma_mon || !nhomhoc) return null;
 
             // nếu môn đó đã chọn nhóm học thì xoá nhóm đó
             if (cache.current[ma_mon]) {
                 var preIdToHoc = cache.current[ma_mon];
-                var preNhomHoc = data?.ds_nhom_to.find((j) => j.id_to_hoc === preIdToHoc);
+                var preNhomHoc = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === preIdToHoc);
 
                 if (preNhomHoc) removeSelectedPeriod(preNhomHoc.tkb, slotSelectedPeriod.current);
                 var index = tkbData.id_to_hocs.indexOf(cache.current[ma_mon]);
@@ -183,7 +177,14 @@ function Tkb() {
             // nếu có boá lỗi
             if (overlap) {
                 console.info('Tiết bọ chùng', overlap);
-                NotifyMaster.error('Chùng tiết với ' + overlap.gv + '. Thứ ' + overlap.thu + '. Tiết ' + overlap.tbd);
+                NotifyMaster.error(
+                    'Chùng tiết với ' +
+                        overlap.gv +
+                        '. Thứ ' +
+                        overlap.thu +
+                        '. Tiết ' +
+                        overlap.tbd,
+                );
                 return null;
             }
 
@@ -193,7 +194,12 @@ function Tkb() {
             var tietCacCoSo = checkIfDifferentLocation(nhomhoc.tkb, slotSelectedPeriod.current);
             if (tietCacCoSo) {
                 NotifyMaster.error(
-                    'Khác cơ sở tiêt ' + tietCacCoSo.gv + '. Thứ ' + tietCacCoSo.thu + '. Tiết ' + tietCacCoSo.tbd,
+                    'Khác cơ sở tiêt ' +
+                        tietCacCoSo.gv +
+                        '. Thứ ' +
+                        tietCacCoSo.thu +
+                        '. Tiết ' +
+                        tietCacCoSo.tbd,
                 );
                 return null;
             }
@@ -212,7 +218,7 @@ function Tkb() {
         if (newData) setTkbData(newData);
     };
 
-    const changeNameHandle = (s: string) => {
+    const onRenameHandler = (s: string) => {
         setTkbData((e) => {
             if (!e) return e;
             e.name = s;
@@ -221,30 +227,56 @@ function Tkb() {
     };
 
     useEffect(() => {
-        if (searchParams.get('type') === 'local') {
-            // tải từ máy tính
-            // TODO:
-            return;
-        }
+        // // lấy dữ liệu từ client
+        // if (searchParams.get('isclient')) {
 
-        // lấy dữ liệu từ server
-        const getTkb = globalState.client.request.get<GetTkbResp>('/tkbs/' + tkbid);
+        // }
 
-        const getData = globalState.client.request.get<DsNhomHocResp>('/ds-nhom-hoc');
+        const getTkbDataClient = async () => {
+            var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
 
-        Promise.all([getTkb, getData]).then((re) => {
-            setLoading(false);
+            var tkb = dsTkbClient.find((e) => e.id === tkbid);
+
+            var req: GetTkbResp = {
+                code: 200,
+                success: true,
+                msg: '',
+                data: tkb,
+            };
+            return req;
+        };
+
+        const getTkbDataServer = async () => {
+            const getTkb = globalState.client.request.get<GetTkbResp>('/tkbs/' + tkbid);
+
+            return (await getTkb).data;
+        };
+
+        const getDsNhomHoc = async () => {
+            if (cacheDsNhomHoc) return cacheDsNhomHoc;
+
+            const getData = globalState.client.request.get<DsNhomHocResp>('/ds-nhom-hoc');
+
+            cacheDsNhomHoc = (await getData).data;
+
+            return cacheDsNhomHoc;
+        };
+
+        var getTkbData = searchParams.get('isclient') ? getTkbDataClient : getTkbDataServer;
+
+        Promise.all([getTkbData(), getDsNhomHoc()]).then((re) => {
             console.log('getTkbRep', re[0]);
             console.log('getDsNhomHocRep', re[1]);
 
-            const getTkbResp = re[0];
+            const TkbDataResp = re[0];
 
-            if (!getTkbResp.data.success || !getTkbResp.data.data) {
-                setErrMsg(getTkbResp.data.msg);
+            if (!TkbDataResp.success || !TkbDataResp.data) {
+                setErrMsg(TkbDataResp.msg);
+                setLoading(false);
                 return;
             }
 
-            var tkbDataRep = getTkbResp.data.data;
+            var tkbDataRep = TkbDataResp.data;
             if (!tkbDataRep.id_to_hocs) tkbDataRep.id_to_hocs = [];
             if (!tkbDataRep.ma_hoc_phans) tkbDataRep.ma_hoc_phans = [];
             if (!tkbDataRep.tkb_describe) tkbDataRep.tkb_describe = '';
@@ -254,7 +286,7 @@ function Tkb() {
             var newCache: { [key: string]: string } = {};
             var newSlot: Set<string> = slotSelectedPeriod.current;
             tkbDataRep.id_to_hocs.forEach((e) => {
-                var nhom = re[1].data.ds_nhom_to.find((j) => j.id_to_hoc === e);
+                var nhom = re[1].ds_nhom_to.find((j) => j.id_to_hoc === e);
 
                 if (!nhom) return;
 
@@ -268,29 +300,98 @@ function Tkb() {
             slotSelectedPeriod.current = newSlot;
 
             setTkbData(tkbDataRep);
-
-            setData(re[1].data);
-
-            var tkbName = tkbDataRep.name;
-
-            setHeaderPar((e) => {
-                e.center = <ReName defaultName={tkbName} onChangeName={changeNameHandle} />;
-                e.left = <HeaderTool />;
-                e.right = <>users</>;
-
-                return { ...e };
-            });
+            setLoading(false);
+            setDsNhomAndMon(re[1]);
         });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tkbid]);
 
-    // send update tkb to server
-    useEffect(() => {
-        globalState.client.request.put('/tkbs/' + tkbid, tkbData).then((resp) => {
-            console.log('save ok test');
+    const saveAsFile = () => {
+        var a = tkbData?.id_to_hocs.map((e) => {
+            var nhom = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+            return {
+                mhp: nhom?.ma_mon,
+                ten: nhom?.ten_mon,
+                nhom: '?',
+                id_to_hoc: e,
+            };
         });
-    }, [tkbData]);
+
+        const textFile = {
+            name: tkbData?.name,
+            created: tkbData?.created.toString(),
+            data: a,
+        };
+
+        textSaveAsFile(JSON.stringify(textFile));
+    };
+
+    useEffect(() => {
+        if (isLoading) return;
+        if (!errMsg)
+            setHeaderPar((e) => {
+                e.left = <HeaderTool saveAsFile={saveAsFile} />;
+                e.right = <></>;
+                var tkbName = tkbData?.name || '';
+                e.center = (
+                    <ReName
+                        defaultName={tkbName}
+                        onChangeName={onRenameHandler}
+                        isSave={isSaving}
+                    />
+                );
+                return { ...e };
+            });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSaving, tkbData, isLoading]);
+
+    // auto save
+    useEffect(() => {
+        if (!canSave || isLoading) {
+            setCanSave(true);
+            return;
+        }
+
+        if (idTimeOut.current) {
+            clearTimeout(idTimeOut.current);
+            idTimeOut.current = undefined;
+        }
+        idTimeOut.current = setTimeout(() => {
+            if (tkbData?.isClient) {
+                console.log('dosave');
+                setIsSaving(true);
+                var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
+                dsTkbClient.forEach((e) => {
+                    if (e.id === tkbData?.id) {
+                        e.id_to_hocs = tkbData.id_to_hocs;
+                        e.ma_hoc_phans = tkbData.ma_hoc_phans;
+                        e.name = tkbData.name;
+                    }
+                });
+
+                localStorage.setItem('sdTkb', JSON.stringify(dsTkbClient));
+                setIsSaving(false);
+            } else if (globalState.client.islogin()) {
+                setIsSaving(true);
+                globalState.client.request.put('/tkbs/' + tkbid, tkbData).then((resp) => {
+                    setIsSaving(false);
+                    console.log('lưu thành công');
+                });
+            }
+        }, 5000);
+
+        var sCT = 0;
+        tkbData?.id_to_hocs.forEach((e) => {
+            const nhom = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+            if (nhom) sCT += nhom.so_tc;
+        });
+
+        setSoTC(sCT);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [globalState.client, isLoading, tkbData]);
 
     return (
         <Loader isLoading={isLoading}>
@@ -299,20 +400,24 @@ function Tkb() {
                     <div className={cx('side-bar')}>
                         <div className={cx('side-bar-wrapper')}>
                             <div className={cx('header')}>
-                                <p>Tính chỉ: 0/26</p>
+                                <p>Tính chỉ : {soTC} / 26</p>
 
                                 <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
-                                    <AddHp data={data} onAddHp={addHp} />
+                                    <AddHp
+                                        data={dsNhomAndMon}
+                                        onAddHp={onAddHphandler}
+                                        maHocPhans={tkbData?.ma_hoc_phans}
+                                    />
                                 </Popup>
                             </div>
 
                             <div className={cx('content')}>
                                 {tkbData?.ma_hoc_phans.map((e) => (
                                     <HocPhan
-                                        data={data}
+                                        data={dsNhomAndMon}
                                         maHocPhan={e}
                                         key={e}
-                                        onAddNhomHoc={addNhomHoc}
+                                        onAddNhomHoc={onAddNhomHocHandler}
                                         tkb={tkbData}
                                     />
                                 ))}
@@ -320,7 +425,7 @@ function Tkb() {
                         </div>
                     </div>
                     <div className={cx('calendar-wrapper')}>
-                        <Calendar data={data?.ds_nhom_to} idToHocs={tkbData?.id_to_hocs} />
+                        <Calendar data={dsNhomAndMon?.ds_nhom_to} idToHocs={tkbData?.id_to_hocs} />
                     </div>
                 </div>
             ) : (

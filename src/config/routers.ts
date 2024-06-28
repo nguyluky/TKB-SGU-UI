@@ -4,6 +4,7 @@ const routers = {
     tkb: '/tkbs/:tkbid',
     logInUp: '/logInUp',
     test: '/test',
+    changePassword: '/change-password'
 };
 
 export default routers;

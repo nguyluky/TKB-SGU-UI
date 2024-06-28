@@ -1,7 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DsNhomHocResp, TKB, cx } from './Tkb';
-import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { DsNhomHocResp, cx } from './Tkb';
+import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
+import { TkbData } from '../../Service';
 
 export function HocPhan({
     data,
@@ -10,7 +11,7 @@ export function HocPhan({
     onAddNhomHoc,
 }: {
     data?: DsNhomHocResp;
-    tkb?: TKB;
+    tkb?: TkbData;
     maHocPhan: string;
     onAddNhomHoc: (idToHoc: string) => void;
 }) {
@@ -20,8 +21,8 @@ export function HocPhan({
     return (
         <div className={cx('hocphan')}>
             <div className={cx('hocphan-title')} onClick={() => setShow((e) => !e)}>
+                <FontAwesomeIcon icon={show ? faAngleDown : faAngleUp} />
                 <p>{data?.ds_mon_hoc[maHocPhan]}</p>
-                <FontAwesomeIcon icon={faClose} />
             </div>
             <div
                 className={cx('hocphan-dropdown', {
@@ -40,8 +41,15 @@ export function HocPhan({
                             }}
                         >
                             <p>thứ: {j.tkb.map((i) => i.thu).join(', ')}</p>
-                            <p>GV: {Array.from(new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : '')))).join(', ')}</p>
-                            <p>Phong: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}</p>
+                            <p>
+                                GV:{' '}
+                                {Array.from(
+                                    new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : ''))),
+                                ).join(', ')}
+                            </p>
+                            <p>
+                                Phong: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
+                            </p>
                         </div>
                     );
                 })}

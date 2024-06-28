@@ -11,6 +11,19 @@ interface RespApiBase {
     data: object | Array<any> | any;
 }
 
+export interface TkbData {
+    id: string;
+    name: string;
+    tkb_describe: string;
+    thumbnails: null;
+    ma_hoc_phans: string[];
+    id_to_hocs: string[];
+    rule: number;
+    isClient?: boolean;
+    created: Date; //"2024-06-17T12:22:36.000Z"
+}
+
+
 var ClientInstance: Client;
 export class Client {
     public request: AxiosInstance;

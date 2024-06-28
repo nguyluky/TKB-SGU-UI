@@ -1,4 +1,12 @@
-import { ReactElement, useState, useRef, MouseEventHandler, useContext, ChangeEvent, useEffect } from 'react';
+import {
+    ReactElement,
+    useState,
+    useRef,
+    MouseEventHandler,
+    useContext,
+    ChangeEvent,
+    useEffect,
+} from 'react';
 import classNamesBind from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -10,10 +18,19 @@ import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
 import { Link } from 'react-router-dom';
 import routers from '../../../../config/routers';
+import { Client } from '../../../../Service';
 
 const cx = classNamesBind.bind(style);
 
-function Header({ left, center, right }: { left?: ReactElement; center?: ReactElement; right?: ReactElement }) {
+function Header({
+    left,
+    center,
+    right,
+}: {
+    left?: ReactElement;
+    center?: ReactElement;
+    right?: ReactElement;
+}) {
     const [globalState, setGlobalState] = useContext(globalContent);
     const [islogin, setLogin] = useState(false);
 
@@ -97,7 +114,21 @@ function Header({ left, center, right }: { left?: ReactElement; center?: ReactEl
                             {islogin ? (
                                 <>
                                     <div className={cx('user-info')}></div>
-                                    <div className={cx('line', 'change-password')}></div>
+                                    <div className={cx('line', 'change-password')}>
+                                        <Link to={routers.changePassword}>đổi mật khẩu</Link>
+                                    </div>
+                                    <div
+                                        className={cx('line')}
+                                        onClick={() => {
+                                            window.localStorage.setItem('token', '');
+                                            setGlobalState((e) => {
+                                                e.client = new Client();
+                                                return { ...e };
+                                            });
+                                        }}
+                                    >
+                                        đăng xuất
+                                    </div>
                                 </>
                             ) : (
                                 <>

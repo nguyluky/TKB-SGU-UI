@@ -1,15 +1,19 @@
 import classNames from 'classnames/bind';
-
 import { faFolder } from '@fortawesome/free-regular-svg-icons';
 import { faArrowDownAZ, faEllipsisVertical, faGrip } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate } from 'react-router-dom';
+
 import DropDownButton from '../../components/DropDownButton';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import style from './DsTkb.module.scss';
 import { NewTkb } from './NewTkb';
-import { useNavigate } from 'react-router-dom';
 import { headerContent } from '../../components/Layout/DefaultLayout';
+import images from '../../assets/images';
+import Popup from 'reactjs-popup';
+import { TkbData } from '../../Service';
 
 export const cx = classNames.bind(style);
 
@@ -17,22 +21,11 @@ export interface DsTkbRep {
     code: number;
     msg: string;
     success: boolean;
-    data?: DsTkbData[];
+    data?: TkbData[];
 }
 
-export interface DsTkbData {
-    id: string;
-    name: string;
-    tkb_describe: string;
-    thumbnails: null;
-    ma_hoc_phans: string[];
-    id_to_hocs: string[];
-    rule: number;
-    created: Date; //"2024-06-17T12:22:36.000Z"
-}
-
-function CardTkb({ data }: { data: DsTkbData }) {
-    const [isShow, setShow] = useState(false);
+function CardTkb({ data }: { data: TkbData }) {
+    // const [isShow, setShow] = useState(false);
 
     const nati = useNavigate();
 
@@ -40,15 +33,38 @@ function CardTkb({ data }: { data: DsTkbData }) {
         <div
             className={cx('card')}
             onClick={() => {
-                nati(data.id);
+                nati(data.id + (data.isClient ? '?isclient=true' : ''));
             }}
         >
             <div className={cx('thumbnail')}>
-                <div className={cx('icon-wrapper')}>{data.thumbnails ? <p>imge</p> : <p>not img</p>}</div>
+                <div className={cx('icon-wrapper')}>
+                    {data.thumbnails ? (
+                        <p>imge</p>
+                    ) : (
+                        <img src={images.missingPicture} alt="Missing" />
+                    )}
+                </div>
             </div>
-            <div className={cx('info')}>
-                <p className={cx('name')}>{data.name}</p>
-                <p className={cx('name')}>{data.created.toLocaleDateString('en-US')}</p>
+            <div className={cx('body')}>
+                <div className={cx('info')}>
+                    <p className={cx('name')}>{data.name}</p>
+                    <p className={cx('date')}>{data.created.toLocaleDateString('en-US')}</p>
+                </div>
+
+                <Popup
+                    arrow={false}
+                    trigger={
+                        <div className={cx('icon')}>
+                            <FontAwesomeIcon icon={faEllipsisVertical} />
+                        </div>
+                    }
+                >
+                    <div className={cx('content-menu')}>
+                        <span className={cx('item')}>Mở ở thẻ mới</span>
+                        <span className={cx('item')}>Đổi tên</span>
+                        <span className={cx('item')}>Xóa</span>
+                    </div>
+                </Popup>
             </div>
         </div>
     );
@@ -60,27 +76,46 @@ function DsTkb() {
 
     const [isLoading, setLoading] = useState(true);
 
-    const [dsTkb, setDsTkb] = useState<DsTkbData[]>([]);
+    const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
 
     useEffect(() => {
-        globalState.client.request.get<DsTkbRep>('/tkbs').then((rep) => {
-            setLoading(false);
+        setDsTkb([]);
+        console.log('ok');
+        if (globalState.client.islogin())
+            globalState.client.request.get<DsTkbRep>('/tkbs').then((rep) => {
+                setLoading(false);
 
-            // NOTE:
-            // 1. đầu tiên lấy dữ liệu từ server
-            // 2. lấy tkb được lưu trong local
-            // 3. sử lý khi không có data trả về
-            if (!rep.data.success || !rep.data.data) {
-                // TODO: chưa làm sử lý trường hợp không có data
+                // NOTE:
+                // 1. đầu tiên lấy dữ liệu từ server
+                // 2. lấy tkb được lưu trong local
+                // 3. sử lý khi không có data trả về
+                if (!rep.data.success || !rep.data.data) {
+                    // TODO: chưa làm sử lý trường hợp không có data
 
-                return;
-            }
+                    return;
+                }
 
-            rep.data.data.forEach((e) => {
-                e.created = new Date(e.created);
+                rep.data.data.forEach((e) => {
+                    e.created = new Date(e.created);
+                });
+
+                setDsTkb((e) => {
+                    return [...e, ...(rep.data.data || [])];
+                });
             });
+        else {
+            setLoading(false);
+        }
 
-            setDsTkb(rep.data.data);
+        // TODO: ok
+        var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
+        // console.log(dsTkbClient);
+        dsTkbClient.forEach((e) => {
+            e.created = new Date(e.created);
+        });
+
+        setDsTkb((e) => {
+            return [...e, ...dsTkbClient];
         });
 
         console.log('setheader');
@@ -92,7 +127,7 @@ function DsTkb() {
             return { ...e };
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [globalState.client]);
 
     return (
         <div className={cx('DsTkb')}>
@@ -103,7 +138,10 @@ function DsTkb() {
                             <span>Bắt đầu thời khoá biểu mới</span>
                         </div>
                         <div className={cx('right')}>
-                            <DropDownButton icon={faEllipsisVertical} className={cx('activity-btn')}>
+                            <DropDownButton
+                                icon={faEllipsisVertical}
+                                className={cx('activity-btn')}
+                            >
                                 <p>ẩn template</p>
                             </DropDownButton>
                         </div>
@@ -121,8 +159,14 @@ function DsTkb() {
                             <span>Thời khoá biểu đã lưu</span>
                         </div>
                         <div className={cx('right')}>
-                            <DropDownButton className={cx('activity-btn')} icon={faGrip}></DropDownButton>
-                            <DropDownButton className={cx('activity-btn')} icon={faArrowDownAZ}></DropDownButton>
+                            <DropDownButton
+                                className={cx('activity-btn')}
+                                icon={faGrip}
+                            ></DropDownButton>
+                            <DropDownButton
+                                className={cx('activity-btn')}
+                                icon={faArrowDownAZ}
+                            ></DropDownButton>
                             <DropDownButton className={cx('activity-btn')} icon={faFolder}>
                                 <p>ẩn template</p>
                             </DropDownButton>

@@ -3,7 +3,15 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DsNhomHocResp, cx } from './Tkb';
 
-export function AddHp({ data, onAddHp }: { data?: DsNhomHocResp; onAddHp?: (maHocPhan: string) => void }) {
+export function AddHp({
+    data,
+    onAddHp,
+    maHocPhans,
+}: {
+    data?: DsNhomHocResp;
+    onAddHp?: (maHocPhan: string) => void;
+    maHocPhans?: string[];
+}) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [search, setSearch] = useState('');
 
@@ -25,17 +33,19 @@ export function AddHp({ data, onAddHp }: { data?: DsNhomHocResp; onAddHp?: (maHo
                 <div className={cx('relust')}>
                     {Object.keys(data?.ds_mon_hoc || {}).map((e) => {
                         var display = data?.ds_mon_hoc[e] + ' ' + e;
-                        if (!display.includes(search)) return null;
+                        if (!display.toLocaleLowerCase().includes(search.toLocaleLowerCase())) return null;
                         return (
-                            <div
-                                className={cx('monhoc')}
-                                key={e}
-                                onClick={() => {
-                                    if (onAddHp) onAddHp(e);
-                                }}
-                            >
-                                {display}
-                            </div>
+                            <label className={cx('monhoc')} key={e}>
+                                <input
+                                    type="checkbox"
+                                    checked={maHocPhans?.includes(e)}
+                                    onChange={() => {
+                                        if (onAddHp) onAddHp(e);
+                                    }}
+                                />
+                                <div className={cx('ten')}>{data?.ds_mon_hoc[e]}</div>
+                                <div className={cx('more-info')}>{e}</div>
+                            </label>
                         );
                     })}
                 </div>

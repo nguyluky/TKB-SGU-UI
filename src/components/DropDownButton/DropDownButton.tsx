@@ -30,7 +30,6 @@ function DropDownButton({ className, icon, children, onClick }: ActivityItemProp
 
     useEffect(() => {
         if (!children) return;
-        console.log('hello');
         const handleClickOutsSide = (event: globalThis.MouseEvent) => {
             if (!event.target) return;
             if (!dorpDownRef.current?.contains(event.target as Node)) setDropDownShow(false);
