@@ -1,13 +1,15 @@
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Popup from 'reactjs-popup';
 
+import { TkbData } from '../../Service';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { NotifyMaster } from '../../components/NotifyPopup';
 import { globalContent } from '../../store/GlobalContent';
+import { textSaveAsFile } from '../../utils';
 import Error from '../Error';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
@@ -16,8 +18,6 @@ import { HeaderTool } from './HeaderTool';
 import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
 import style from './Tkb.module.scss';
-import { textSaveAsFile } from '../../utils';
-import { TkbData } from '../../Service';
 
 export const cx = classNames.bind(style);
 
@@ -226,12 +226,29 @@ function Tkb() {
         });
     };
 
+    const saveAsFile = () => {
+        var a = tkbData?.id_to_hocs.map((e) => {
+            var nhom = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+            return {
+                mhp: nhom?.ma_mon,
+                ten: nhom?.ten_mon,
+                nhom: '?',
+                id_to_hoc: e,
+            };
+        });
+
+        const textFile = {
+            name: tkbData?.name,
+            created: tkbData?.created.toString(),
+            data: a,
+        };
+
+        textSaveAsFile(JSON.stringify(textFile));
+    };
+
+    // NOTE: Lấy dữ liệu
     useEffect(() => {
-        // // lấy dữ liệu từ client
-        // if (searchParams.get('isclient')) {
-
-        // }
-
         const getTkbDataClient = async () => {
             var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
 
@@ -264,13 +281,20 @@ function Tkb() {
 
         var getTkbData = searchParams.get('isclient') ? getTkbDataClient : getTkbDataServer;
 
+        // sử lý dữ liệu
         Promise.all([getTkbData(), getDsNhomHoc()]).then((re) => {
             console.log('getTkbRep', re[0]);
             console.log('getDsNhomHocRep', re[1]);
 
             const TkbDataResp = re[0];
 
+            // nếu người dùng không có quền vào tkb
             if (!TkbDataResp.success || !TkbDataResp.data) {
+                setHeaderPar((e) => {
+                    e.left = <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>;
+                    return { ...e };
+                });
+
                 setErrMsg(TkbDataResp.msg);
                 setLoading(false);
                 return;
@@ -305,29 +329,9 @@ function Tkb() {
         });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tkbid]);
+    }, [tkbid, globalState.client]);
 
-    const saveAsFile = () => {
-        var a = tkbData?.id_to_hocs.map((e) => {
-            var nhom = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === e);
-
-            return {
-                mhp: nhom?.ma_mon,
-                ten: nhom?.ten_mon,
-                nhom: '?',
-                id_to_hoc: e,
-            };
-        });
-
-        const textFile = {
-            name: tkbData?.name,
-            created: tkbData?.created.toString(),
-            data: a,
-        };
-
-        textSaveAsFile(JSON.stringify(textFile));
-    };
-
+    // update header
     useEffect(() => {
         if (isLoading) return;
         if (!errMsg)
@@ -359,7 +363,9 @@ function Tkb() {
             clearTimeout(idTimeOut.current);
             idTimeOut.current = undefined;
         }
-        idTimeOut.current = setTimeout(() => {
+
+        const doUpdate = () => {
+            console.log(tkbData);
             if (tkbData?.isClient) {
                 console.log('dosave');
                 setIsSaving(true);
@@ -381,7 +387,9 @@ function Tkb() {
                     console.log('lưu thành công');
                 });
             }
-        }, 5000);
+        };
+
+        idTimeOut.current = setTimeout(doUpdate, 5000);
 
         var sCT = 0;
         tkbData?.id_to_hocs.forEach((e) => {
@@ -390,6 +398,11 @@ function Tkb() {
         });
 
         setSoTC(sCT);
+
+        return () => {
+            if (idTimeOut.current) clearTimeout(idTimeOut.current);
+            doUpdate();
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [globalState.client, isLoading, tkbData]);
 

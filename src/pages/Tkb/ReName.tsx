@@ -1,9 +1,10 @@
+import { faCloud, faRotate } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import Popup from 'reactjs-popup';
+
 import PopupModel from '../../components/PopupModel';
 import { cx } from './Tkb';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloud, faRotate } from '@fortawesome/free-solid-svg-icons';
 
 export function ReName({
     defaultName,

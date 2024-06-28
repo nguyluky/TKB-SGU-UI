@@ -1,24 +1,16 @@
-import {
-    ReactElement,
-    useState,
-    useRef,
-    MouseEventHandler,
-    useContext,
-    ChangeEvent,
-    useEffect,
-} from 'react';
-import classNamesBind from 'classnames/bind';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
-
-import style from './Header.module.scss';
-import images from '../../../../assets/images';
 import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faGear, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNamesBind from 'classnames/bind';
+import { ChangeEvent, ReactElement, useContext } from 'react';
+import { Link } from 'react-router-dom';
+
+import { Client } from '../../../../Service';
+import images from '../../../../assets/images';
+import routers from '../../../../config/routers';
 import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
-import { Link } from 'react-router-dom';
-import routers from '../../../../config/routers';
-import { Client } from '../../../../Service';
+import style from './Header.module.scss';
 
 const cx = classNamesBind.bind(style);
 
@@ -32,7 +24,6 @@ function Header({
     right?: ReactElement;
 }) {
     const [globalState, setGlobalState] = useContext(globalContent);
-    const [islogin, setLogin] = useState(false);
 
     const openGitHub = () => {
         window.open('https://github.com/nguyluky/TKB-SGU-UI');
@@ -49,14 +40,6 @@ function Header({
             setGlobalState({ ...globalState });
         }
     };
-
-    useEffect(() => {
-        // TODO:
-        // chỉ là tạm thôi nhớ đổi lại
-        if (globalState.client.islogin()) {
-            setLogin(true);
-        }
-    }, []);
 
     return (
         <header className={cx('wrapper')}>
@@ -111,7 +94,7 @@ function Header({
                     </DropDownButton>
                     <DropDownButton icon={faUser} className={cx('item')}>
                         <div className={cx('user-info')}>
-                            {islogin ? (
+                            {globalState.client.islogin() ? (
                                 <>
                                     <div className={cx('user-info')}></div>
                                     <div className={cx('line', 'change-password')}>

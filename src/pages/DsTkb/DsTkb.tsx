@@ -1,19 +1,19 @@
-import classNames from 'classnames/bind';
 import { faFolder } from '@fortawesome/free-regular-svg-icons';
 import { faArrowDownAZ, faEllipsisVertical, faGrip } from '@fortawesome/free-solid-svg-icons';
-import { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames/bind';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import Popup from 'reactjs-popup';
+import { TkbData } from '../../Service';
+import images from '../../assets/images';
 import DropDownButton from '../../components/DropDownButton';
+import { headerContent } from '../../components/Layout/DefaultLayout';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import style from './DsTkb.module.scss';
 import { NewTkb } from './NewTkb';
-import { headerContent } from '../../components/Layout/DefaultLayout';
-import images from '../../assets/images';
-import Popup from 'reactjs-popup';
-import { TkbData } from '../../Service';
 
 export const cx = classNames.bind(style);
 
@@ -80,7 +80,6 @@ function DsTkb() {
 
     useEffect(() => {
         setDsTkb([]);
-        console.log('ok');
         if (globalState.client.islogin())
             globalState.client.request.get<DsTkbRep>('/tkbs').then((rep) => {
                 setLoading(false);

@@ -45,7 +45,11 @@ function DropDownButton({ className, icon, children, onClick }: ActivityItemProp
                 <FontAwesomeIcon icon={icon} />
             </div>
             <div className={cx('activity-drop-down')}>
-                {isDropDownShow ? <div className={cx('drop-down-wrapper')}>{children}</div> : ''}
+                {isDropDownShow && children ? (
+                    <div className={cx('drop-down-wrapper')}>{children}</div>
+                ) : (
+                    ''
+                )}
             </div>
         </div>
     );

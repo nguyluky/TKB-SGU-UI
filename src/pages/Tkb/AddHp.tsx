@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { faClose } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DsNhomHocResp, cx } from './Tkb';
 
 export function AddHp({
@@ -33,7 +31,8 @@ export function AddHp({
                 <div className={cx('relust')}>
                     {Object.keys(data?.ds_mon_hoc || {}).map((e) => {
                         var display = data?.ds_mon_hoc[e] + ' ' + e;
-                        if (!display.toLocaleLowerCase().includes(search.toLocaleLowerCase())) return null;
+                        if (!display.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+                            return null;
                         return (
                             <label className={cx('monhoc')} key={e}>
                                 <input

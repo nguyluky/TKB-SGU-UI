@@ -1,10 +1,11 @@
 import classNames from 'classnames/bind';
-
-import { headerContent } from '../../components/Layout/DefaultLayout';
-import style from './Home.module.scss';
 import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
 import images from '../../assets/images';
+import { headerContent } from '../../components/Layout/DefaultLayout';
+import style from './Home.module.scss';
+
 const cx = classNames.bind(style);
 
 function Home() {
@@ -16,6 +17,7 @@ function Home() {
             e.left = <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>;
             return { ...e };
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

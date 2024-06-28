@@ -1,18 +1,24 @@
-import { faAt, faLock, faUser, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {
+    faAt,
+    faEnvelopeCircleCheck,
+    faLock,
+    faUser,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import classNames from 'classnames/bind';
 import { useContext, useState } from 'react';
-import axios from 'axios';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Client } from '../../Service';
 import ButtonWithLoading from '../../components/ButtonWithLoading';
 import Input from '../../components/Input';
-import style from './LoginUp.module.scss';
-import api from '../../config/api';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { globalContent } from '../../store/GlobalContent';
-import { Client } from '../../Service';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import routers from '../../config/routers';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import api from '../../config/api';
+import { default as routerConfig, default as routers } from '../../config/routers';
+import { globalContent } from '../../store/GlobalContent';
+import style from './LoginUp.module.scss';
 
 const cx = classNames.bind(style);
 
@@ -104,7 +110,7 @@ function SignIn() {
                 placeholder="Password"
                 icon={faLock}
             />
-            <a>quên mật khẩu ?</a>
+            <a href={routerConfig.forgotPassword}>quên mật khẩu ?</a>
             <ButtonWithLoading className={cx('btn')} onClick={handleLogin} isLoading={isLoading}>
                 SignIn
             </ButtonWithLoading>
@@ -170,16 +176,16 @@ function SignUp() {
                 icon={faUser}
             />
             <Input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 title="Email :"
                 type="text"
                 placeholder="Email"
                 icon={faAt}
             />
             <Input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 title="Password :"
                 type="password"
                 placeholder="Password"
@@ -201,7 +207,8 @@ function LoginUp() {
     if (searchParams.get('verifyEmail')) {
         return (
             <div className={cx('wrapper')}>
-                <div className={cx('content')}>
+                <div className={cx('content', 'verify-email')}>
+                    <FontAwesomeIcon icon={faEnvelopeCircleCheck} size="10x" />
                     <h2>Đăng ký thành công!</h2>
                     <p>{searchParams.get('msg')}</p>
                 </div>

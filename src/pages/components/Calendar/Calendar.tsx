@@ -1,9 +1,10 @@
-import classNames from 'classnames/bind';
-import style from './Calendar.module.scss';
-import { CSSProperties, MouseEvent, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripLines } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames/bind';
+import { CSSProperties, MouseEvent, useState } from 'react';
+
 import { DsNhomTo } from '../../Tkb/Tkb';
+import style from './Calendar.module.scss';
 
 const cx = classNames.bind(style);
 
@@ -94,7 +95,9 @@ function Calendar({ data, idToHocs }: Props) {
                                 left: `calc(((100% - var(--left-m)) / var(--columns)) * ${
                                     +jj.thu - 2
                                 }  + var(--left-m))`,
-                                top: `calc(((100% - var(--top-m)) / var(--rows)) * ${jj.tbd - 1} + var(--top-m))`,
+                                top: `calc(((100% - var(--top-m)) / var(--rows)) * ${
+                                    jj.tbd - 1
+                                } + var(--top-m))`,
                                 height: `calc((100% - var(--top-m)) / var(--rows) * (${
                                     jj.tkt - jj.tbd
                                 } * var(--y-s) + 1) - 5px)`,
@@ -103,7 +106,11 @@ function Calendar({ data, idToHocs }: Props) {
                             };
 
                             return (
-                                <div className={cx('item')} style={itemStyle} key={e + jj.thu + jj.tbd}>
+                                <div
+                                    className={cx('item')}
+                                    style={itemStyle}
+                                    key={e + jj.thu + jj.tbd}
+                                >
                                     <p className={cx('title')}>{tiet?.ten_mon}</p>
                                     <p className={cx('info')}>GV: {jj.gv}</p>
                                     <p className={cx('info')}>Phòng: {jj.phong}</p>

@@ -1,15 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
-import { generateUUID } from '../utils';
 import api from '../config/api';
 
 const ApiEndPoint = api.baseUrl + '/api/v1';
-
-interface RespApiBase {
-    code: number;
-    msg: string;
-    success: boolean;
-    data: object | Array<any> | any;
-}
 
 export interface TkbData {
     id: string;

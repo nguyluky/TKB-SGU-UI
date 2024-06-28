@@ -15,11 +15,13 @@
 
     &:disabled {
         filter: brightness(0.8);
+        backdrop-filter: brightness(0.8);
     }
 }
 
 .btn.nbg {
     background: transparent;
+    color: var(--text-color);
 }
 
 .spinner {
@@ -43,7 +45,7 @@
     width: 3px;
     height: 3px;
     border-radius: 50%;
-    background-color: var(--text-color);
+    background-color: var(--header-color);
 }
 
 @keyframes spin {

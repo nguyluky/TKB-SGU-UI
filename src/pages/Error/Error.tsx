@@ -1,9 +1,8 @@
 import classNames from 'classnames/bind';
 
-import style from './Error.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLinkSlash } from '@fortawesome/free-solid-svg-icons';
-import { useSearchParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import style from './Error.module.scss';
 
 const cx = classNames.bind(style);
 

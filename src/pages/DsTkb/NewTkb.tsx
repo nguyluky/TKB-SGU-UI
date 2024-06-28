@@ -1,12 +1,13 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup';
-import PopupModel from '../../components/PopupModel';
-import { cx } from './DsTkb';
-import { globalContent } from '../../store/GlobalContent';
-import { useNavigate, useNavigation } from 'react-router-dom';
-import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+
 import { TkbData } from '../../Service';
+import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import PopupModel from '../../components/PopupModel';
+import { globalContent } from '../../store/GlobalContent';
 import { generateUUID } from '../../utils';
+import { cx } from './DsTkb';
 
 export interface CreateTkbResp {
     code: number;
@@ -16,7 +17,7 @@ export interface CreateTkbResp {
 }
 
 export function NewTkb() {
-    const [globalState, setGlobalState] = useContext(globalContent);
+    const [globalState] = useContext(globalContent);
 
     const [isShow, setShow] = useState(false);
     const [name, setName] = useState('untitled');
