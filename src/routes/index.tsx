@@ -1,17 +1,17 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import { DefaultLayout } from '../components/Layout';
-import Home from '../pages/Home';
+import { routerConfig } from '../config';
 import DsTkb from '../pages/DsTkb';
 import ErrorPage from '../pages/Error';
-import routersConfig from '../config/routers';
-import Tkb from '../pages/Tkb';
-import Test from '../pages/Test/Test';
+import Home from '../pages/Home';
 import LoginUp from '../pages/LoginUp';
+import Test from '../pages/Test/Test';
+import Tkb from '../pages/Tkb';
 
 const routers = createBrowserRouter([
     {
-        path: routersConfig.home,
+        path: routerConfig.home,
         element: <DefaultLayout />,
         children: [
             {
@@ -19,21 +19,21 @@ const routers = createBrowserRouter([
                 element: <Home />,
             },
             {
-                path: routersConfig.tkbs,
+                path: routerConfig.tkbs,
                 element: <DsTkb />,
             },
             {
-                path: routersConfig.tkb,
+                path: routerConfig.tkb,
                 element: <Tkb />,
             },
             {
-                path: routersConfig.test,
+                path: routerConfig.test,
                 element: <Test />,
             },
         ],
     },
     {
-        path: routersConfig.logInUp,
+        path: routerConfig.logInUp,
         element: <LoginUp />,
     },
     {

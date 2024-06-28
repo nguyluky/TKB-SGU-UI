@@ -15,8 +15,8 @@ import { Client } from '../../Service';
 import ButtonWithLoading from '../../components/ButtonWithLoading';
 import Input from '../../components/Input';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import { routerConfig } from '../../config';
 import api from '../../config/api';
-import { default as routerConfig, default as routers } from '../../config/routers';
 import { globalContent } from '../../store/GlobalContent';
 import style from './LoginUp.module.scss';
 
@@ -72,7 +72,7 @@ function SignIn() {
                         return { ...e };
                     });
 
-                    navigate(routers.tkbs);
+                    navigate(routerConfig.tkbs);
 
                     return;
                 }

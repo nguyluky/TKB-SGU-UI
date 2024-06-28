@@ -8,6 +8,7 @@ import Popup from 'reactjs-popup';
 import { TkbData } from '../../Service';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { NotifyMaster } from '../../components/NotifyPopup';
+import { apiConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
 import Error from '../Error';
@@ -264,7 +265,16 @@ function Tkb() {
         };
 
         const getTkbDataServer = async () => {
-            const getTkb = globalState.client.request.get<GetTkbResp>('/tkbs/' + tkbid);
+            if (!tkbid) {
+                const temp: GetTkbResp = {
+                    code: 400,
+                    msg: 'thời khóa biểu không tồn tại',
+                    success: false,
+                };
+                return temp;
+            }
+
+            const getTkb = globalState.client.request.get<GetTkbResp>(apiConfig.getTkb(tkbid));
 
             return (await getTkb).data;
         };
@@ -272,7 +282,7 @@ function Tkb() {
         const getDsNhomHoc = async () => {
             if (cacheDsNhomHoc) return cacheDsNhomHoc;
 
-            const getData = globalState.client.request.get<DsNhomHocResp>('/ds-nhom-hoc');
+            const getData = globalState.client.request.get<DsNhomHocResp>(apiConfig.getDsNhomHoc());
 
             cacheDsNhomHoc = (await getData).data;
 
@@ -380,9 +390,9 @@ function Tkb() {
 
                 localStorage.setItem('sdTkb', JSON.stringify(dsTkbClient));
                 setIsSaving(false);
-            } else if (globalState.client.islogin()) {
+            } else if (globalState.client.islogin() && tkbid) {
                 setIsSaving(true);
-                globalState.client.request.put('/tkbs/' + tkbid, tkbData).then((resp) => {
+                globalState.client.request.put(apiConfig.updateTkb(tkbid), tkbData).then((resp) => {
                     setIsSaving(false);
                     console.log('lưu thành công');
                 });

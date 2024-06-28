@@ -10,6 +10,7 @@ import { TkbData } from '../../Service';
 import images from '../../assets/images';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
+import { apiConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import style from './DsTkb.module.scss';
@@ -81,7 +82,7 @@ function DsTkb() {
     useEffect(() => {
         setDsTkb([]);
         if (globalState.client.islogin())
-            globalState.client.request.get<DsTkbRep>('/tkbs').then((rep) => {
+            globalState.client.request.get<DsTkbRep>(apiConfig.getDsTkb()).then((rep) => {
                 setLoading(false);
 
                 // NOTE:

@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 
 import { Client } from '../../../../Service';
 import images from '../../../../assets/images';
-import routers from '../../../../config/routers';
+
+import { routerConfig } from '../../../../config';
 import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
 import style from './Header.module.scss';
@@ -98,7 +99,7 @@ function Header({
                                 <>
                                     <div className={cx('user-info')}></div>
                                     <div className={cx('line', 'change-password')}>
-                                        <Link to={routers.changePassword}>đổi mật khẩu</Link>
+                                        <Link to={routerConfig.changePassword}>đổi mật khẩu</Link>
                                     </div>
                                     <div
                                         className={cx('line')}
@@ -116,10 +117,10 @@ function Header({
                             ) : (
                                 <>
                                     <div className={cx('line')}>
-                                        <Link to={routers.logInUp}>Đăng nhập</Link>
+                                        <Link to={routerConfig.logInUp}>Đăng nhập</Link>
                                     </div>
                                     <div className={cx('line')}>
-                                        <Link to={routers.logInUp + '?up=t'}>Đăng ký</Link>
+                                        <Link to={routerConfig.logInUp + '?up=t'}>Đăng ký</Link>
                                     </div>
                                 </>
                             )}
