@@ -4,6 +4,7 @@ const routers = {
     tkb: '/tkbs/:tkbid',
     logInUp: '/logInUp',
     test: '/test',
+    errorPage: '/error',
     changePassword: '/change-password',
     forgotPassword: '/forgot-password'
 };

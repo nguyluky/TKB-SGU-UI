@@ -1,12 +1,18 @@
 import classNames from 'classnames/bind';
 
-import style from './NotifyPopup.module.scss';
-import { faBug, faCheck, faInfo, faTriangleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { NotifyItem } from './NotificationManager';
+import {
+    faBug,
+    faCheck,
+    faInfo,
+    faTriangleExclamation,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { NotifyMaster } from '.';
+import { NotifyItem } from './NotificationManager';
+import style from './NotifyPopup.module.scss';
 
 const cx = classNames.bind(style);
 
@@ -28,9 +34,10 @@ function NotifyElement({ data }: { data: NotifyItem }) {
 
     useLayoutEffect(() => {
         if (countDown < 0) {
-            console.log(data.id);
+            // console.log(data.id);
             NotifyMaster.remove(data.id);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [countDown]);
 
     useEffect(() => {

@@ -1,7 +1,7 @@
 .DsTkb {
     height: 100%;
     --column-count: 5;
-    --column-size: 200px;
+    --column-size: 220px;
     --tkb-header-height: 40px;
 }
 
@@ -57,17 +57,28 @@
     background-color: var(--header-color);
 }
 
+.template-list-wrapper {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    background-color: var(--header-color);
+}
+
 .list-tkb-wrapper .content {
     min-height: calc(100% - var(--tkb-header-height));
+    height: fit-content;
+    flex-wrap: wrap;
+    align-content: flex-start;
     align-items: start;
 }
 
 .card {
     cursor: pointer;
     width: var(--column-size);
+    box-sizing: border-box;
     padding: 10px;
     .thumbnail {
-        box-shadow: 0 1rem 3rem rgba(#000, 0.175);
+        box-shadow: 0 2rem 3rem rgba(#000, 0.175);
         border-radius: var(--margin-g);
         background: var(--header-color);
         height: 157px;
@@ -117,13 +128,21 @@
 
     .date {
         font-size: small;
+
+        svg {
+            margin-right: 10px;
+        }
     }
 }
 
 .content-menu .item {
     display: block;
-    padding: 3px 5px;
+    padding: 3px 10px;
     cursor: pointer;
+
+    &:hover {
+        backdrop-filter: brightness(0.9);
+    }
 }
 
 .card.new {

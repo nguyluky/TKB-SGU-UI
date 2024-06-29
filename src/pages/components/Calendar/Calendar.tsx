@@ -92,12 +92,12 @@ function Calendar({ data, idToHocs }: Props) {
                         var eles = tiet?.tkb.map((jj) => {
                             // TODO: left top không dúng vị trí khi thay đổi chế độ
                             var itemStyle: CSSProperties = {
-                                left: `calc(((100% - var(--left-m)) / var(--columns)) * ${
+                                left: `calc(((100% - var(--left-m)) / var(--columns)) * (${
                                     +jj.thu - 2
-                                }  + var(--left-m))`,
-                                top: `calc(((100% - var(--top-m)) / var(--rows)) * ${
-                                    jj.tbd - 1
-                                } + var(--top-m))`,
+                                } * var(--y-s) + ${jj.tbd - 1} * var(--x-s))  + var(--left-m))`,
+                                top: `calc(((100% - var(--top-m)) / var(--rows)) * (${
+                                    +jj.thu - 2
+                                } * var(--x-s) + ${jj.tbd - 1} * var(--y-s)) + var(--top-m))`,
                                 height: `calc((100% - var(--top-m)) / var(--rows) * (${
                                     jj.tkt - jj.tbd
                                 } * var(--y-s) + 1) - 5px)`,

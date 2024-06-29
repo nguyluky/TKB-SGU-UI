@@ -37,6 +37,10 @@ const routers = createBrowserRouter([
         element: <LoginUp />,
     },
     {
+        path: routerConfig.errorPage,
+        element: <ErrorPage />,
+    },
+    {
         path: '*',
         element: <ErrorPage />,
     },

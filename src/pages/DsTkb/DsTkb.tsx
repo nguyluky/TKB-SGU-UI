@@ -1,18 +1,19 @@
-import { faFolder } from '@fortawesome/free-regular-svg-icons';
-import { faArrowDownAZ, faEllipsisVertical, faGrip } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faArrowDownAZ,
+    faEllipsisVertical,
+    faFolder,
+    faGrip,
+} from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import Popup from 'reactjs-popup';
 import { TkbData } from '../../Service';
-import images from '../../assets/images';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { apiConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
+import { CardTkb } from './CardTkb';
 import style from './DsTkb.module.scss';
 import { NewTkb } from './NewTkb';
 
@@ -25,52 +26,6 @@ export interface DsTkbRep {
     data?: TkbData[];
 }
 
-function CardTkb({ data }: { data: TkbData }) {
-    // const [isShow, setShow] = useState(false);
-
-    const nati = useNavigate();
-
-    return (
-        <div
-            className={cx('card')}
-            onClick={() => {
-                nati(data.id + (data.isClient ? '?isclient=true' : ''));
-            }}
-        >
-            <div className={cx('thumbnail')}>
-                <div className={cx('icon-wrapper')}>
-                    {data.thumbnails ? (
-                        <p>imge</p>
-                    ) : (
-                        <img src={images.missingPicture} alt="Missing" />
-                    )}
-                </div>
-            </div>
-            <div className={cx('body')}>
-                <div className={cx('info')}>
-                    <p className={cx('name')}>{data.name}</p>
-                    <p className={cx('date')}>{data.created.toLocaleDateString('en-US')}</p>
-                </div>
-
-                <Popup
-                    arrow={false}
-                    trigger={
-                        <div className={cx('icon')}>
-                            <FontAwesomeIcon icon={faEllipsisVertical} />
-                        </div>
-                    }
-                >
-                    <div className={cx('content-menu')}>
-                        <span className={cx('item')}>Mở ở thẻ mới</span>
-                        <span className={cx('item')}>Đổi tên</span>
-                        <span className={cx('item')}>Xóa</span>
-                    </div>
-                </Popup>
-            </div>
-        </div>
-    );
-}
-
 function DsTkb() {
     const setHeaderPar = useContext(headerContent);
     const [globalState] = useContext(globalContent);
@@ -78,6 +33,40 @@ function DsTkb() {
     const [isLoading, setLoading] = useState(true);
 
     const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
+
+    const onDeletehandle = (tkbData: TkbData) => {
+        if (!tkbData.isClient) {
+            globalState.client.request.delete(apiConfig.deleteTkb(tkbData.id)).then((resp) => {
+                console.log(resp);
+            });
+            return;
+        }
+    };
+
+    const onRenameHandle = (tkbData: TkbData, newName: string) => {
+        if (tkbData.name === newName) return;
+        if (!tkbData.isClient) {
+            globalState.client.request
+                .put(apiConfig.updateTkb(tkbData.id), {
+                    name: newName,
+                })
+                .catch((e: any) => {
+                    console.error(e);
+                });
+            return;
+        }
+
+        var pre: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
+        console.log(pre);
+
+        pre.forEach((e) => {
+            if (e.id === tkbData.id) {
+                e.name = newName;
+            }
+        });
+
+        localStorage.setItem('sdTkb', JSON.stringify(pre));
+    };
 
     useEffect(() => {
         setDsTkb([]);
@@ -106,8 +95,6 @@ function DsTkb() {
         else {
             setLoading(false);
         }
-
-        // TODO: ok
         var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
         // console.log(dsTkbClient);
         dsTkbClient.forEach((e) => {
@@ -176,7 +163,14 @@ function DsTkb() {
                         <Loader isLoading={isLoading}>
                             <>
                                 {dsTkb.map((e) => {
-                                    return <CardTkb data={e} key={e.id} />;
+                                    return (
+                                        <CardTkb
+                                            data={e}
+                                            key={e.id}
+                                            onDelete={onDeletehandle}
+                                            onRename={onRenameHandle}
+                                        />
+                                    );
                                 })}
                             </>
                         </Loader>

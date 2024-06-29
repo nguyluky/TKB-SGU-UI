@@ -1,7 +1,7 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 
@@ -127,6 +127,8 @@ function Tkb() {
     const [canSave, setCanSave] = useState<boolean>(false);
     const [isLoading, setLoading] = useState(true);
     const [errMsg, setErrMsg] = useState('');
+    // NOTE: vá lỗi
+    const tkbDateRef = useRef<TkbData>();
 
     const cache = useRef<{ [key: string]: string }>({});
     const idTimeOut = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -248,8 +250,34 @@ function Tkb() {
         textSaveAsFile(JSON.stringify(textFile));
     };
 
+    const doUpdate = () => {
+        // console.log(tkbDateRef.current);
+        console.log('dosave');
+        if (!tkbDateRef.current) return;
+        if (tkbDateRef.current?.isClient) {
+            setIsSaving(true);
+            var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
+            dsTkbClient.forEach((e) => {
+                if (e.id === tkbDateRef.current?.id) {
+                    e.id_to_hocs = tkbDateRef.current.id_to_hocs;
+                    e.ma_hoc_phans = tkbDateRef.current.ma_hoc_phans;
+                    e.name = tkbDateRef.current.name;
+                }
+            });
+
+            localStorage.setItem('sdTkb', JSON.stringify(dsTkbClient));
+            setIsSaving(false);
+        } else if (globalState.client.islogin() && tkbid) {
+            setIsSaving(true);
+            globalState.client.request.put(apiConfig.updateTkb(tkbid), tkbData).then((resp) => {
+                setIsSaving(false);
+                console.log('lưu thành công');
+            });
+        }
+    };
+
     // NOTE: Lấy dữ liệu
-    useEffect(() => {
+    useLayoutEffect(() => {
         const getTkbDataClient = async () => {
             var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
 
@@ -338,6 +366,11 @@ function Tkb() {
             setDsNhomAndMon(re[1]);
         });
 
+        return () => {
+            doUpdate();
+            if (idTimeOut.current) clearTimeout(idTimeOut.current);
+        };
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tkbid, globalState.client]);
 
@@ -368,36 +401,14 @@ function Tkb() {
             setCanSave(true);
             return;
         }
+        tkbDateRef.current = tkbData;
+
+        // console.log(tkbDateRef.current);
 
         if (idTimeOut.current) {
             clearTimeout(idTimeOut.current);
             idTimeOut.current = undefined;
         }
-
-        const doUpdate = () => {
-            console.log(tkbData);
-            if (tkbData?.isClient) {
-                console.log('dosave');
-                setIsSaving(true);
-                var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
-                dsTkbClient.forEach((e) => {
-                    if (e.id === tkbData?.id) {
-                        e.id_to_hocs = tkbData.id_to_hocs;
-                        e.ma_hoc_phans = tkbData.ma_hoc_phans;
-                        e.name = tkbData.name;
-                    }
-                });
-
-                localStorage.setItem('sdTkb', JSON.stringify(dsTkbClient));
-                setIsSaving(false);
-            } else if (globalState.client.islogin() && tkbid) {
-                setIsSaving(true);
-                globalState.client.request.put(apiConfig.updateTkb(tkbid), tkbData).then((resp) => {
-                    setIsSaving(false);
-                    console.log('lưu thành công');
-                });
-            }
-        };
 
         idTimeOut.current = setTimeout(doUpdate, 5000);
 
@@ -408,11 +419,6 @@ function Tkb() {
         });
 
         setSoTC(sCT);
-
-        return () => {
-            if (idTimeOut.current) clearTimeout(idTimeOut.current);
-            doUpdate();
-        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [globalState.client, isLoading, tkbData]);
 

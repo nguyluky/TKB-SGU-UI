@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import api from '../config/api';
 
-const ApiEndPoint = api.baseUrl + '/api/v1';
+const ApiEndPoint = api.baseUrl ;
 
 export interface TkbData {
     id: string;

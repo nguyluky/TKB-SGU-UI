@@ -117,7 +117,7 @@ class NotifyMaster extends EventEmitter {
 
     remove(id: string) {
         this.listNotify = this.listNotify.filter((e) => e.id !== id);
-        console.log(this.listNotify, id);
+        // console.log(this.listNotify, id);
         this.emitChange();
     }
 }
