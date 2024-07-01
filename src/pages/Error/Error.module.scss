@@ -26,6 +26,15 @@
     color: #fff;
 }
 
+.context .code {
+    font-size: 50px;
+}
+
+.context .msg {
+    font-size: 17px;
+    text-transform: capitalize;
+}
+
 .context .icon {
     grid-row: 1;
     height: 100%;

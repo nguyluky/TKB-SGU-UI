@@ -1,13 +1,14 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import style from './Input.module.scss';
-import { ChangeEventHandler, HTMLInputTypeAttribute, useState } from 'react';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import classNames from 'classnames/bind';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames/bind';
+import { useState } from 'react';
+import style from './Input.module.scss';
 
 const cx = classNames.bind(style);
 
-interface Prop extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
+interface Prop
+    extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
     icon: IconProp;
     title: string;
 }
@@ -24,7 +25,10 @@ function Input(props: Prop) {
             <input {...prop} type={showPass ? 'text' : type} />
 
             {type === 'password' ? (
-                <FontAwesomeIcon icon={showPass ? faEye : faEyeSlash} onClick={() => setShowPass((e) => !e)} />
+                <FontAwesomeIcon
+                    icon={showPass ? faEye : faEyeSlash}
+                    onClick={() => setShowPass((e) => !e)}
+                />
             ) : (
                 ''
             )}

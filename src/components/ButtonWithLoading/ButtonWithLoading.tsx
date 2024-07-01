@@ -1,10 +1,13 @@
 import classNames from 'classnames/bind';
 import style from './ButtonWithLoading.module.scss';
-import { LoadingSpinner2 } from '../Loading/Loading';
 
 const cx = classNames.bind(style);
 
-interface Props extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+interface Props
+    extends React.DetailedHTMLProps<
+        React.ButtonHTMLAttributes<HTMLButtonElement>,
+        HTMLButtonElement
+    > {
     withoutBackground?: boolean;
     isLoading?: boolean;
 }

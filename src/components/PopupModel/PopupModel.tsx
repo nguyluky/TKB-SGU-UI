@@ -1,5 +1,5 @@
-import { MouseEventHandler, ReactElement } from 'react';
 import classNames from 'classnames/bind';
+import { ReactElement } from 'react';
 
 import style from './PopupModel.module.scss';
 
