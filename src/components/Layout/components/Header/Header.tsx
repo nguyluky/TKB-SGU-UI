@@ -1,5 +1,5 @@
 import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faGear, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBug, faGear, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
 import { ChangeEvent, ReactElement, useContext } from 'react';
@@ -30,6 +30,10 @@ function Header({
         window.open('https://github.com/nguyluky/TKB-SGU-UI');
     };
 
+    const openIssues = () => {
+        window.open('https://github.com/nguyluky/TKB-SGU-UI/issues');
+    };
+
     const openDiscord = () => {
         window.open('https://discord.com/');
     };
@@ -54,6 +58,7 @@ function Header({
             <div className={cx('right')}>
                 {right}
                 <div className={cx('activity')}>
+                    <DropDownButton icon={faBug} onClick={openIssues} className={cx('item')} />
                     <DropDownButton icon={faDiscord} onClick={openDiscord} className={cx('item')} />
                     <DropDownButton icon={faGithub} onClick={openGitHub} className={cx('item')} />
                     <DropDownButton icon={faSun} className={cx('item')}>

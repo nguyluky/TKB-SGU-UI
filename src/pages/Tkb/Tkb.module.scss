@@ -95,6 +95,22 @@
             background-color: #838df4;
         }
     }
+
+    .close-icon {
+        margin-left: auto;
+        cursor: pointer;
+        svg {
+            color: var(--error-color);
+        }
+    }
+
+    .hocphan-name {
+        // max-width: calc(100% -);
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
 }
 
 .add-popup {

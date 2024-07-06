@@ -443,6 +443,7 @@ function Tkb() {
                             <div className={cx('content')}>
                                 {tkbData?.ma_hoc_phans.map((e) => (
                                     <HocPhan
+                                        onRemoveHp={onAddHphandler}
                                         data={dsNhomAndMon}
                                         maHocPhan={e}
                                         key={e}

@@ -1,6 +1,6 @@
-import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { TkbData } from '../../Service';
 import { DsNhomHocResp, cx } from './Tkb';
 
@@ -9,20 +9,44 @@ export function HocPhan({
     tkb,
     maHocPhan,
     onAddNhomHoc,
+    onRemoveHp,
 }: {
     data?: DsNhomHocResp;
     tkb?: TkbData;
     maHocPhan: string;
     onAddNhomHoc: (idToHoc: string) => void;
+    onRemoveHp: (maHocPhan: string) => void;
 }) {
     var nhomHoc = data?.ds_nhom_to.filter((j) => j.ma_mon === maHocPhan);
     const [show, setShow] = useState(true);
+    const [closeShow, setCloseShow] = useState(false);
+    const setTimeOutId = useRef<NodeJS.Timeout>();
 
     return (
         <div className={cx('hocphan')}>
-            <div className={cx('hocphan-title')} onClick={() => setShow((e) => !e)}>
+            <div
+                className={cx('hocphan-title')}
+                onClick={() => setShow((e) => !e)}
+                onMouseEnter={() => {
+                    setTimeOutId.current = setTimeout(() => {
+                        setCloseShow(true);
+                    }, 500);
+                }}
+                onMouseLeave={() => {
+                    clearTimeout(setTimeOutId.current);
+                    setCloseShow(false);
+                }}
+            >
                 <FontAwesomeIcon icon={show ? faAngleDown : faAngleUp} />
-                <p>{data?.ds_mon_hoc[maHocPhan]}</p>
+                <p className={cx('hocphan-name')}>{data?.ds_mon_hoc[maHocPhan]}</p>
+                <div
+                    className={cx('close-icon')}
+                    onClick={() => {
+                        onRemoveHp(maHocPhan);
+                    }}
+                >
+                    {closeShow ? <FontAwesomeIcon icon={faXmark} /> : ''}
+                </div>
             </div>
             <div
                 className={cx('hocphan-dropdown', {
@@ -40,7 +64,9 @@ export function HocPhan({
                                 onAddNhomHoc(j.id_to_hoc);
                             }}
                         >
-                            <p>thứ: {j.tkb.map((i) => i.thu).join(', ')}</p>
+                            <p>
+                                Thứ: {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}
+                            </p>
                             <p>
                                 GV:{' '}
                                 {Array.from(
