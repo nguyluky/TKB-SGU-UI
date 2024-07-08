@@ -1,3 +1,4 @@
-import DefaultLayout from "./DefaultLayout";
+import AuthLayout from './AuthLayout/AuthLayout';
+import DefaultLayout from './DefaultLayout';
 
-export {DefaultLayout}
+export { AuthLayout, DefaultLayout };

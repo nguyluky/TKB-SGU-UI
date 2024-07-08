@@ -32,7 +32,9 @@ function Home() {
                     <h1>Làm chủ thời gian của bạn</h1>
                     <p>Chỉ cần vài phút, là bạn đã có một thời khoá biểu đẹp</p>
 
-                    <Link to={'/tkbs'}>tkbs</Link>
+                    <Link to={'/tkbs'} className={cx('button')}>
+                        Lest go
+                    </Link>
                 </div>
             </div>
         </div>

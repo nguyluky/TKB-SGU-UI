@@ -15,7 +15,7 @@ import { Client } from '../../Service';
 import ButtonWithLoading from '../../components/ButtonWithLoading';
 import Input from '../../components/Input';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
-import { routerConfig } from '../../config';
+import { apiConfig, routerConfig } from '../../config';
 import api from '../../config/api';
 import { globalContent } from '../../store/GlobalContent';
 import style from './LoginUp.module.scss';
@@ -55,7 +55,7 @@ function SignIn() {
         setLoading(true);
 
         axios
-            .post<loginResp>(api.baseUrl + '/api/v1/auth/login', {
+            .post<loginResp>(api.baseUrl + apiConfig.logIn(), {
                 userName: userName,
                 password: password,
             })
@@ -132,7 +132,7 @@ function SignUp() {
         setLoading(true);
 
         axios
-            .post<logupResp>(api.baseUrl + '/api/v1/auth/signup', {
+            .post<logupResp>(api.baseUrl + '/auth/signup', {
                 username: userName,
                 password: password,
                 email: email,

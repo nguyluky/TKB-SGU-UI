@@ -1,7 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 
-import { DefaultLayout } from '../components/Layout';
+import { AuthLayout, DefaultLayout } from '../components/Layout';
 import { routerConfig } from '../config';
+import ChangePassword from '../pages/ChangePassword';
 import DsTkb from '../pages/DsTkb';
 import ErrorPage from '../pages/Error';
 import Home from '../pages/Home';
@@ -33,8 +34,20 @@ const routers = createBrowserRouter([
         ],
     },
     {
+        path: routerConfig.changePassword,
+        element: (
+            <AuthLayout>
+                <ChangePassword />
+            </AuthLayout>
+        ),
+    },
+    {
         path: routerConfig.logInUp,
-        element: <LoginUp />,
+        element: (
+            <AuthLayout>
+                <LoginUp />
+            </AuthLayout>
+        ),
     },
     {
         path: routerConfig.errorPage,

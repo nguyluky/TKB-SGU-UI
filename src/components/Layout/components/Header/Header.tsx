@@ -58,8 +58,8 @@ function Header({
             <div className={cx('right')}>
                 {right}
                 <div className={cx('activity')}>
-                    <DropDownButton icon={faBug} onClick={openIssues} className={cx('item')} />
                     <DropDownButton icon={faDiscord} onClick={openDiscord} className={cx('item')} />
+                    <DropDownButton icon={faBug} onClick={openIssues} className={cx('item')} />
                     <DropDownButton icon={faGithub} onClick={openGitHub} className={cx('item')} />
                     <DropDownButton icon={faSun} className={cx('item')}>
                         <div className={cx('container')}>

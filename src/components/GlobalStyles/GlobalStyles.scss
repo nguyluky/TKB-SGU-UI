@@ -37,6 +37,7 @@ label,
 h1,
 h2,
 h3,
+li,
 input {
     color: var(--text-color);
 }
@@ -82,4 +83,14 @@ body {
 
 .popup-overlay[data-popup='modal'] .popup-content {
     background-color: var(--header-color) !important;
+}
+
+.popup-content.context-popup-content {
+    display: block;
+    box-sizing: unset;
+    height: 0px;
+    width: 0px;
+    padding: 0;
+    box-shadow: none;
+    background-color: transparent !important;
 }

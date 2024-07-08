@@ -179,7 +179,7 @@ function Tkb() {
 
             // nếu có boá lỗi
             if (overlap) {
-                console.info('Tiết bọ chùng', overlap);
+                console.info('Tiết bị chùng', overlap);
                 NotifyMaster.error(
                     'Chùng tiết với ' +
                         overlap.gv +
@@ -269,10 +269,12 @@ function Tkb() {
             setIsSaving(false);
         } else if (globalState.client.islogin() && tkbid) {
             setIsSaving(true);
-            globalState.client.request.put(apiConfig.updateTkb(tkbid), tkbData).then((resp) => {
-                setIsSaving(false);
-                console.log('lưu thành công');
-            });
+            globalState.client.request
+                .put(apiConfig.updateTkb(tkbid), tkbDateRef.current)
+                .then((resp) => {
+                    setIsSaving(false);
+                    console.log('lưu thành công');
+                });
         }
     };
 
