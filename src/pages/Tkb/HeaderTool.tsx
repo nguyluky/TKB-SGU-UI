@@ -106,7 +106,7 @@ function Tool({
 export function HeaderTool({ saveAsFile }: { saveAsFile: () => void }) {
     const tools: TOOL[] = [
         {
-            title: 'file',
+            title: 'Tool',
             icon: undefined,
             pos: 'bottom',
             children: [
