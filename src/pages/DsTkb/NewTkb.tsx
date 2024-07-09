@@ -6,7 +6,6 @@ import { TkbData } from '../../Service';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import PopupModel from '../../components/PopupModel';
 import { globalContent } from '../../store/GlobalContent';
-import { generateUUID } from '../../utils';
 import { cx } from './DsTkb';
 
 export interface CreateTkbResp {
@@ -40,25 +39,13 @@ export function NewTkb() {
             });
 
         if (pos === 'client') {
-            var newTkb: TkbData = {
-                id: generateUUID(),
-                name: name,
-                tkb_describe: '',
-                thumbnails: null,
-                id_to_hocs: [],
-                ma_hoc_phans: [],
-                rule: 0,
-                isClient: true,
-                created: new Date(),
-            };
-
-            var preDsTkb: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
-
-            preDsTkb.push(newTkb);
-
-            localStorage.setItem('sdTkb', JSON.stringify(preDsTkb));
-
-            nav(newTkb.id + '?isclient=true');
+            globalState.client.localApi.createNewTkb(name, '', null, false).then((data) => {
+                if (!data.success || !data.data) {
+                    notifyMaster.error(data.msg);
+                    return;
+                }
+                nav(data.data.id);
+            });
         }
     };
 

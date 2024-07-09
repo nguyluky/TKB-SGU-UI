@@ -1,6 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import api from '../config/api';
 import { apiConfig } from '../config';
+import { addRecord, deleteRecord, getAllRecord, getRecord, updateRecord } from './localDB';
+import { generateUUID } from '../utils';
 
 
 const ApiEndPoint = api.baseUrl ;
@@ -63,7 +65,6 @@ export interface ApiResponse<T> {
 }
 
 interface BaseApi {
-    request: AxiosInstance;
     getDsTkb(): Promise<ApiResponse<TkbData[]>>;
     getTkb(tkbId: string): Promise<ApiResponse<TkbData>>;
     createNewTkb(
@@ -71,7 +72,7 @@ interface BaseApi {
         tkb_describe: string,
         thumbnail: any,
         public_: boolean,
-    ): Promise<ApiResponse<any>>;
+    ): Promise<ApiResponse<TkbData>>;
     updateTkb(tkbData: TkbData): Promise<ApiResponse<null>>;
     deleteTkb(tkbId: string): Promise<ApiResponse<null>>;
 
@@ -100,8 +101,8 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean): Promise<ApiResponse<any>> {
-        var resp = await this.request.post<ApiResponse<any>>(apiConfig.createTkb(), {
+    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean): Promise<ApiResponse<TkbData>> {
+        var resp = await this.request.post<ApiResponse<TkbData>>(apiConfig.createTkb(), {
             name: name,
             tkb_describe: tkb_describe,
             thumbnail: null,
@@ -158,20 +159,86 @@ class ServerApi implements BaseApi {
 }
 
 
-// class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'updateRuleMember'|'removeMember'> {
-    
-// }
+// TODO: getDsNhomHoc nhớ thêm vào lại
+class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'updateRuleMember'|'removeMember' | 'getDsNhomHoc'> {
+    async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
+        var ev = await getAllRecord()
+        
+        return {
+            code: 200,
+            msg: '',
+            success: true,
+            data: ev
+        }
+    }   
+
+    async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
+        var ev = await getRecord(tkbId);
+
+        return {
+            code: 200,
+            msg: '',
+            success: true,
+            data: ev
+        }
+    }
+
+    async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
+        var ev = await updateRecord(tkbData);
+
+        return {
+            code: 200,
+            msg: '',
+            success: true
+        }
+    }
+
+    async deleteTkb(tkbId: string): Promise<ApiResponse<null>> {
+        var ev = await deleteRecord(tkbId);
+
+        return {
+            code: 200,
+            msg: '',
+            success: true
+        }
+    }
+
+    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean): Promise<ApiResponse<TkbData>> {
+        var newTkb : TkbData = {
+            id: generateUUID(),
+            name: name,
+            tkb_describe: tkb_describe,
+            thumbnails: thumbnail,
+            id_to_hocs: [],
+            ma_hoc_phans: [],
+            rule: 0,
+            isClient: true,
+            created: new Date(),
+        }
+
+        await addRecord(newTkb);
+
+        return {
+            code: 200,
+            msg: '',
+            success: true,
+            data: newTkb
+        }
+    }
+}
 
 
 var ClientInstance: Client;
 export class Client {
     public request: AxiosInstance;
     public serverApi: ServerApi;
+    public localApi: localApi;
     private token?: string;
 
     constructor(token?: string) {
         this.token = token;
         ClientInstance = this;
+        this.localApi = new localApi();
         this.request = axios.create({
             baseURL: ApiEndPoint,
             headers: {

@@ -139,7 +139,7 @@ function Tkb() {
             // kiểm tra xem môn chọn có bị chùng tiết hay không
             var overlap = checkSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
 
-            // nếu có boá lỗi
+            // nếu có báo lỗi
             if (overlap) {
                 console.info('Tiết bị chùng', overlap);
                 NotifyMaster.error(
@@ -218,17 +218,15 @@ function Tkb() {
         if (!tkbDateRef.current) return;
         if (tkbDateRef.current?.isClient) {
             setIsSaving(true);
-            var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
-            dsTkbClient.forEach((e) => {
-                if (e.id === tkbDateRef.current?.id) {
-                    e.id_to_hocs = tkbDateRef.current.id_to_hocs;
-                    e.ma_hoc_phans = tkbDateRef.current.ma_hoc_phans;
-                    e.name = tkbDateRef.current.name;
+            setIsSaving(true);
+            globalState.client.localApi.updateTkb(tkbDateRef.current).then((apiresp) => {
+                setIsSaving(false);
+                if (apiresp.success) {
+                    console.log('lưu thành công');
+                } else {
+                    notifyMaster.error(apiresp.msg);
                 }
             });
-
-            localStorage.setItem('sdTkb', JSON.stringify(dsTkbClient));
-            setIsSaving(false);
         } else if (globalState.client.islogin() && tkbid) {
             setIsSaving(true);
             globalState.client.serverApi.updateTkb(tkbDateRef.current).then((apiresp) => {
@@ -245,17 +243,18 @@ function Tkb() {
     // NOTE: Lấy dữ liệu
     useLayoutEffect(() => {
         const getTkbDataClient = async () => {
-            var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
+            if (!tkbid) {
+                const temp: ApiResponse<TkbData> = {
+                    code: 400,
+                    msg: 'thời khóa biểu không tồn tại',
+                    success: false,
+                };
+                return temp;
+            }
 
-            var tkb = dsTkbClient.find((e) => e.id === tkbid);
-
-            var req: ApiResponse<TkbData> = {
-                code: 200,
-                success: true,
-                msg: '',
-                data: tkb,
-            };
-            return req;
+            const getTkb = globalState.client.localApi.getTkb(tkbid);
+            console.log(getTkb);
+            return await getTkb;
         };
 
         const getTkbDataServer = async () => {

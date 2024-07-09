@@ -1,7 +1,7 @@
 .wrapper {
     height: 100%;
     width: 100%;
-    background: #1a1e23;
+    background: #313338;
     margin: 0;
 }
 
@@ -63,7 +63,7 @@ $sway-type: 'sway-left-to-right', 'sway-right-to-left';
             --bubble-radius: #{random_range(1vw, 10vw)};
             --bubble-float-duration: #{random_range(6s, 12s)};
             --bubble-sway-duration: #{random_range(4s, 6s)};
-            --bubble-float-delay: #{random_range(0s, 4s)};
+            --bubble-float-delay: #{random_range(-4s, 0s)};
             --bubble-sway-delay: #{random_range(0s, 4s)};
             --bubble-sway-type: #{sample($sway-type)};
         }
@@ -71,7 +71,11 @@ $sway-type: 'sway-left-to-right', 'sway-right-to-left';
 }
 
 @keyframes float-up {
-    to {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
         transform: translateY(-175vh);
     }
 }

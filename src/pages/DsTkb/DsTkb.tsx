@@ -50,65 +50,63 @@ function DsTkb() {
             });
             return;
         }
+
+        globalState.client.localApi.deleteTkb(tkbData.id).then((e) => {
+            console.log(e);
+            if (!e.success) {
+                notifyMaster.error(e.msg);
+                return;
+            }
+            setDsTkb((j) => {
+                var i = j.findIndex((i) => i.id === tkbData.id);
+                if (i >= 0) j.splice(i, 1);
+                return [...j];
+            });
+        });
     };
 
     const onRenameHandle = (tkbData: TkbData, newName: string) => {
         if (tkbData.name === newName) return;
+        tkbData.name = newName;
         if (!tkbData.isClient) {
-            tkbData.name = newName;
             globalState.client.serverApi.updateTkb(tkbData).then((e) => {
                 console.log(e);
+                if (e.success) {
+                    notifyMaster.success('Đổi tên thành công');
+                }
             });
-            return;
+        } else {
+            globalState.client.localApi.updateTkb(tkbData).then((e) => {
+                console.log(e);
+                if (e.success) {
+                    notifyMaster.success('Đổi tên thành công');
+                }
+            });
         }
-
-        var pre: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
-        console.log(pre);
-
-        pre.forEach((e) => {
-            if (e.id === tkbData.id) {
-                e.name = newName;
-            }
-        });
-
-        localStorage.setItem('sdTkb', JSON.stringify(pre));
     };
 
     useEffect(() => {
         setDsTkb([]);
-        if (globalState.client.islogin())
-            globalState.client.serverApi.getDsTkb().then((data) => {
-                setLoading(false);
+        setLoading(true);
+        var getServerData = async () => {
+            if (!globalState.client.islogin()) return [];
 
-                // NOTE:
-                // 1. đầu tiên lấy dữ liệu từ server
-                // 2. lấy tkb được lưu trong local
-                // 3. sử lý khi không có data trả về
-                if (!data.success || !data.data) {
-                    // TODO: chưa làm sử lý trường hợp không có data
+            var resp = await globalState.client.serverApi.getDsTkb();
 
-                    return;
-                }
-
-                data.data.forEach((e) => {
-                    e.created = new Date(e.created);
-                });
-
-                setDsTkb((e) => {
-                    return [...e, ...(data.data || [])];
-                });
+            return (resp.data || []).map((e) => {
+                e.created = new Date(e.created);
+                return e;
             });
-        else {
-            setLoading(false);
-        }
-        var dsTkbClient: TkbData[] = JSON.parse(localStorage.getItem('sdTkb') || '[]');
-        // console.log(dsTkbClient);
-        dsTkbClient.forEach((e) => {
-            e.created = new Date(e.created);
-        });
+        };
 
-        setDsTkb((e) => {
-            return [...e, ...dsTkbClient];
+        var getLocalData = async () => {
+            var resp = await globalState.client.localApi.getDsTkb();
+            return resp.data || [];
+        };
+
+        Promise.all([getLocalData(), getServerData()]).then(([ld, sd]) => {
+            setLoading(false);
+            setDsTkb([...ld, ...sd]);
         });
 
         console.log('setheader');
