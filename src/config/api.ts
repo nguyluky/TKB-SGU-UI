@@ -23,7 +23,7 @@ const config = {
     createJoinLink: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/invite',
     joinTkb: (invite_id : string) => '/tkbs/join?invite_id=' + encodeURIComponent(invite_id),
     getDsMember: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) +'/friends',
-    updateRuleMember: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends/ae2f8f37-9920-4124-9530-9eaa7dd7791b',
+    updateRuleMember: (tkbId: string, memberId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends/' + encodeURIComponent(memberId),
     removeMember: (tkbId: string, memberId: string) => '/tkbs/'+ encodeURIComponent(tkbId) +'/friends/' + encodeURIComponent(memberId),
 };
 

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { CSSProperties, MouseEvent, useEffect, useRef, useState } from 'react';
 
-import { DsNhomTo } from '../../Tkb/Tkb';
+import { DsNhomTo } from '../../../Service';
 import style from './Calendar.module.scss';
 
 const cx = classNames.bind(style);

@@ -5,10 +5,10 @@ import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 
-import { TkbData } from '../../Service';
+import { ApiResponse, DsNhomHocResp, TkbData, TkbTiet } from '../../Service';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { NotifyMaster } from '../../components/NotifyPopup';
-import { apiConfig } from '../../config';
+import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
 import Error from '../Error';
@@ -21,44 +21,6 @@ import { ReName } from './ReName';
 import style from './Tkb.module.scss';
 
 export const cx = classNames.bind(style);
-
-export interface GetTkbResp {
-    code: number;
-    msg: string;
-    success: boolean;
-    data?: TkbData;
-}
-
-export interface DsNhomHocResp {
-    ds_nhom_to: DsNhomTo[];
-    ds_mon_hoc: { [key: string]: string };
-}
-
-export interface DsNhomTo {
-    id_to_hoc: string;
-    id_mon: string;
-    ma_mon: string;
-    ten_mon: string;
-    so_tc: number;
-    lop: Lop;
-    ds_lop: Lop[];
-    ds_khoa: Lop[];
-    tkb: TkbTiet[];
-}
-
-export interface Lop {
-    ma: string;
-    ten: string;
-}
-
-export interface TkbTiet {
-    thu: string;
-    tbd: number;
-    tkt: number;
-    phong: string;
-    gv: null | string;
-    th: boolean;
-}
 
 var cacheDsNhomHoc: DsNhomHocResp;
 
@@ -269,12 +231,14 @@ function Tkb() {
             setIsSaving(false);
         } else if (globalState.client.islogin() && tkbid) {
             setIsSaving(true);
-            globalState.client.request
-                .put(apiConfig.updateTkb(tkbid), tkbDateRef.current)
-                .then((resp) => {
-                    setIsSaving(false);
+            globalState.client.serverApi.updateTkb(tkbDateRef.current).then((apiresp) => {
+                setIsSaving(false);
+                if (apiresp.success) {
                     console.log('lưu thành công');
-                });
+                } else {
+                    notifyMaster.error(apiresp.msg);
+                }
+            });
         }
     };
 
@@ -285,7 +249,7 @@ function Tkb() {
 
             var tkb = dsTkbClient.find((e) => e.id === tkbid);
 
-            var req: GetTkbResp = {
+            var req: ApiResponse<TkbData> = {
                 code: 200,
                 success: true,
                 msg: '',
@@ -296,7 +260,7 @@ function Tkb() {
 
         const getTkbDataServer = async () => {
             if (!tkbid) {
-                const temp: GetTkbResp = {
+                const temp: ApiResponse<TkbData> = {
                     code: 400,
                     msg: 'thời khóa biểu không tồn tại',
                     success: false,
@@ -304,17 +268,17 @@ function Tkb() {
                 return temp;
             }
 
-            const getTkb = globalState.client.request.get<GetTkbResp>(apiConfig.getTkb(tkbid));
+            const getTkb = globalState.client.serverApi.getTkb(tkbid);
 
-            return (await getTkb).data;
+            return await getTkb;
         };
 
         const getDsNhomHoc = async () => {
             if (cacheDsNhomHoc) return cacheDsNhomHoc;
 
-            const getData = globalState.client.request.get<DsNhomHocResp>(apiConfig.getDsNhomHoc());
+            const getData = globalState.client.serverApi.getDsNhomHoc();
 
-            cacheDsNhomHoc = (await getData).data;
+            cacheDsNhomHoc = await getData;
 
             return cacheDsNhomHoc;
         };
@@ -349,7 +313,7 @@ function Tkb() {
             // setup cache and slot
             var newCache: { [key: string]: string } = {};
             var newSlot: Set<string> = slotSelectedPeriod.current;
-            tkbDataRep.id_to_hocs.forEach((e) => {
+            tkbDataRep.id_to_hocs.forEach((e: string) => {
                 var nhom = re[1].ds_nhom_to.find((j) => j.id_to_hoc === e);
 
                 if (!nhom) return;

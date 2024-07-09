@@ -5,10 +5,10 @@ import classNamesBind from 'classnames/bind';
 import { ChangeEvent, ReactElement, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Client } from '../../../../Service';
 import images from '../../../../assets/images';
 
 import { routerConfig } from '../../../../config';
+import { Client } from '../../../../Service';
 import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
 import style from './Header.module.scss';

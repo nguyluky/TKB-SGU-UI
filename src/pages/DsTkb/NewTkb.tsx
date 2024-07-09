@@ -5,7 +5,6 @@ import Popup from 'reactjs-popup';
 import { TkbData } from '../../Service';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import PopupModel from '../../components/PopupModel';
-import { apiConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import { generateUUID } from '../../utils';
 import { cx } from './DsTkb';
@@ -32,19 +31,13 @@ export function NewTkb() {
         console.log(pos);
 
         if (pos === 'server')
-            globalState.client.request
-                .post<CreateTkbResp>(apiConfig.createTkb(), {
-                    name: name,
-                    thumbnail: null,
-                    public: false,
-                })
-                .then((resp) => {
-                    if (!resp.data.success || !resp.data.data) {
-                        notifyMaster.error(resp.data.msg);
-                        return;
-                    }
-                    nav(resp.data.data.id);
-                });
+            globalState.client.serverApi.createNewTkb(name, '', null, false).then((data) => {
+                if (!data.success || !data.data) {
+                    notifyMaster.error(data.msg);
+                    return;
+                }
+                nav(data.data.id);
+            });
 
         if (pos === 'client') {
             var newTkb: TkbData = {

@@ -11,7 +11,9 @@ const initValue: GlobalContent = {
     client: Client.LoadFromLocal(),
 };
 
-const globalContent = createContext<[GlobalContent, Dispatch<SetStateAction<GlobalContent>>]>(null!);
+const globalContent = createContext<[GlobalContent, Dispatch<SetStateAction<GlobalContent>>]>(
+    null!,
+);
 
 export { initValue };
 export default globalContent;

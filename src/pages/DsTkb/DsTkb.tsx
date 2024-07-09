@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from 'react';
 import { TkbData } from '../../Service';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
-import { apiConfig } from '../../config';
+import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import { CardTkb } from './CardTkb';
@@ -36,8 +36,17 @@ function DsTkb() {
 
     const onDeletehandle = (tkbData: TkbData) => {
         if (!tkbData.isClient) {
-            globalState.client.request.delete(apiConfig.deleteTkb(tkbData.id)).then((resp) => {
-                console.log(resp);
+            globalState.client.serverApi.deleteTkb(tkbData.id).then((e) => {
+                console.log(e);
+                if (!e.success) {
+                    notifyMaster.error(e.msg);
+                    return;
+                }
+                setDsTkb((j) => {
+                    var i = j.findIndex((i) => i.id === tkbData.id);
+                    if (i >= 0) j.splice(i, 1);
+                    return [...j];
+                });
             });
             return;
         }
@@ -46,13 +55,10 @@ function DsTkb() {
     const onRenameHandle = (tkbData: TkbData, newName: string) => {
         if (tkbData.name === newName) return;
         if (!tkbData.isClient) {
-            globalState.client.request
-                .put(apiConfig.updateTkb(tkbData.id), {
-                    name: newName,
-                })
-                .catch((e: any) => {
-                    console.error(e);
-                });
+            tkbData.name = newName;
+            globalState.client.serverApi.updateTkb(tkbData).then((e) => {
+                console.log(e);
+            });
             return;
         }
 
@@ -71,25 +77,25 @@ function DsTkb() {
     useEffect(() => {
         setDsTkb([]);
         if (globalState.client.islogin())
-            globalState.client.request.get<DsTkbRep>(apiConfig.getDsTkb()).then((rep) => {
+            globalState.client.serverApi.getDsTkb().then((data) => {
                 setLoading(false);
 
                 // NOTE:
                 // 1. đầu tiên lấy dữ liệu từ server
                 // 2. lấy tkb được lưu trong local
                 // 3. sử lý khi không có data trả về
-                if (!rep.data.success || !rep.data.data) {
+                if (!data.success || !data.data) {
                     // TODO: chưa làm sử lý trường hợp không có data
 
                     return;
                 }
 
-                rep.data.data.forEach((e) => {
+                data.data.forEach((e) => {
                     e.created = new Date(e.created);
                 });
 
                 setDsTkb((e) => {
-                    return [...e, ...(rep.data.data || [])];
+                    return [...e, ...(data.data || [])];
                 });
             });
         else {

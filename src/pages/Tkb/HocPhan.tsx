@@ -1,8 +1,8 @@
 import { faAngleDown, faAngleUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
-import { TkbData } from '../../Service';
-import { DsNhomHocResp, cx } from './Tkb';
+import { DsNhomHocResp, TkbData } from '../../Service';
+import { cx } from './Tkb';
 
 export function HocPhan({
     data,

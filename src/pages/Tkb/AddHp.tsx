@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { DsNhomHocResp, cx } from './Tkb';
+import { DsNhomHocResp } from '../../Service';
+import { cx } from './Tkb';
 
 export function AddHp({
     data,
