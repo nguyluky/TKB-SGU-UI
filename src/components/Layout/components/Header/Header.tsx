@@ -50,7 +50,9 @@ function Header({
         <header className={cx('wrapper')}>
             <div className={cx('left')}>
                 <div className={cx('icon')}>
-                    <img src={images.logo} alt="logo" />
+                    <Link to={'/'} className={cx('button')}>
+                        <img src={images.logo} alt="logo" />
+                    </Link> 
                 </div>
                 {left}
             </div>
@@ -104,7 +106,7 @@ function Header({
                                 <>
                                     <div className={cx('user-info')}></div>
                                     <div className={cx('line', 'change-password')}>
-                                        <Link to={routerConfig.changePassword}>đổi mật khẩu</Link>
+                                        <Link to={routerConfig.changePassword}>Đổi mật khẩu</Link>
                                     </div>
                                     <div
                                         className={cx('line')}
@@ -116,7 +118,7 @@ function Header({
                                             });
                                         }}
                                     >
-                                        đăng xuất
+                                        Đăng xuất
                                     </div>
                                 </>
                             ) : (

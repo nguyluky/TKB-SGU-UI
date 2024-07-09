@@ -23,7 +23,7 @@ export function AddHp({
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Thêm học phần"
                 />
-                <button className={cx('filter')}>filter</button>
+                <button className={cx('filter')}>Bộ Lọc</button>
             </div>
 
             <div className={cx('filter')}>{/* TODO: thêm filter */}</div>

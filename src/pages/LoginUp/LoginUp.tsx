@@ -110,9 +110,9 @@ function SignIn() {
                 placeholder="Password"
                 icon={faLock}
             />
-            <a href={routerConfig.forgotPassword}>quên mật khẩu ?</a>
+            <a href={routerConfig.forgotPassword}>Quên mật khẩu ?</a>
             <ButtonWithLoading className={cx('btn')} onClick={handleLogin} isLoading={isLoading}>
-                SignIn
+                Sign In
             </ButtonWithLoading>
         </>
     );
@@ -192,7 +192,7 @@ function SignUp() {
                 icon={faLock}
             />
             <ButtonWithLoading className={cx('btn')} isLoading={isLoading} onClick={signUpHandle}>
-                SignUp
+                Sign Up
             </ButtonWithLoading>
         </>
     );
@@ -235,7 +235,7 @@ function LoginUp() {
                                 }
                             }}
                         />
-                        <span className={cx('logo')}>Login</span>
+                        <span className={cx('logo')}>Sign In</span>
                     </label>
 
                     <label>
@@ -253,7 +253,7 @@ function LoginUp() {
                                 }
                             }}
                         />
-                        <span className={cx('logo')}>LogUp</span>
+                        <span className={cx('logo')}>Sign Up</span>
                     </label>
 
                     <div className={cx('selection')}></div>

@@ -38,14 +38,14 @@ export function ReName({
 
             <Popup open={show}>
                 <PopupModel
-                    title="Rename Tkb"
+                    title="Đổi tên TKB"
                     onCancel={() => {
                         setShow(false);
                     }}
                     onOk={renameHandle}
                 >
                     <div className={cx('input')}>
-                        <label form="inputname">New Name: </label>
+                        <label form="inputname">Tên Mới: </label>
                         <input
                             type="text"
                             name="inputname"
