@@ -394,7 +394,7 @@ function Tkb() {
                     <div className={cx('side-bar')}>
                         <div className={cx('side-bar-wrapper')}>
                             <div className={cx('header')}>
-                                <p>Tính chỉ : {soTC} / 26</p>
+                                <p>Tín chỉ : {soTC} / 26</p>
 
                                 <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
                                     <AddHp

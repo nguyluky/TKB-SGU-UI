@@ -74,7 +74,7 @@ export function HocPhan({
                                 ).join(', ')}
                             </p>
                             <p>
-                                Phong: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
+                                Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
                             </p>
                         </div>
                     );

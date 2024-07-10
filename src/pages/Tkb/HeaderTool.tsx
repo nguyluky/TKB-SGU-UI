@@ -106,24 +106,24 @@ function Tool({
 export function HeaderTool({ saveAsFile }: { saveAsFile: () => void }) {
     const tools: TOOL[] = [
         {
-            title: 'file',
+            title: 'Tùy Chọn',
             icon: undefined,
             pos: 'bottom',
             children: [
                 {
-                    title: 'New',
+                    title: 'Tạo Mới',
                     onclick: () => {
                         console.log('hello');
                     },
                     pos: 'Left',
                 },
                 {
-                    title: 'Save As',
+                    title: 'Lưu TKB',
                     onclick: saveAsFile,
                     pos: 'Left',
                 },
                 {
-                    title: 'Open',
+                    title: 'Mở TKB Có Sẵn',
                     onclick: () => {
                         console.log('hello');
                     },

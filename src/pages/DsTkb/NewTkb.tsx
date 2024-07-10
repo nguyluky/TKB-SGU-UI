@@ -92,8 +92,8 @@ export function NewTkb() {
                             value={pos}
                             onChange={(e) => setPos(e.target.value)}
                         >
-                            <option value="client">client</option>
-                            <option value="server">server</option>
+                            <option value="client">Client</option>
+                            <option value="server">Server</option>
                         </select>
                     </div>
                 </PopupModel>

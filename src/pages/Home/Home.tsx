@@ -29,11 +29,11 @@ function Home() {
                         <img src={images.logo} alt="logo" />
                         <span>TKB SGU</span>
                     </div>
-                    <h1>Làm chủ thời gian của bạn</h1>
+                    <h1>Lịch học ngay trong tầm tay</h1>
                     <p>Chỉ cần vài phút, là bạn đã có một thời khoá biểu đẹp</p>
-
+                    <p>Tại sao phải khổ sở trên web, khi ta có thể xài tool 😎</p>
                     <Link to={'/tkbs'} className={cx('button')}>
-                        Lest go
+                        <button className={cx('buttonHome')}>Bắt Đầu</button>
                     </Link>
                 </div>
             </div>
