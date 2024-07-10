@@ -1,5 +1,6 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, RouteObject } from 'react-router-dom';
 
+import { createRef } from 'react';
 import { AuthLayout, DefaultLayout } from '../components/Layout';
 import { routerConfig } from '../config';
 import ChangePassword from '../pages/ChangePassword';
@@ -10,28 +11,42 @@ import LoginUp from '../pages/LoginUp';
 import Test from '../pages/Test/Test';
 import Tkb from '../pages/Tkb';
 
+export const defaultLayoutChildren = [
+    {
+        path: '/',
+        element: <Home />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
+    {
+        path: routerConfig.tkbs,
+        element: <DsTkb />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
+    {
+        path: routerConfig.tkb,
+        element: <Tkb />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
+    {
+        path: routerConfig.test,
+        element: <Test />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
+];
+
 const routers = createBrowserRouter([
     {
         path: routerConfig.home,
         element: <DefaultLayout />,
-        children: [
-            {
-                index: true,
-                element: <Home />,
-            },
-            {
-                path: routerConfig.tkbs,
-                element: <DsTkb />,
-            },
-            {
-                path: routerConfig.tkb,
-                element: <Tkb />,
-            },
-            {
-                path: routerConfig.test,
-                element: <Test />,
-            },
-        ],
+        children: defaultLayoutChildren.map<RouteObject>((route) => {
+            var temp: RouteObject = {
+                index: route.path === '/',
+                path: route.path === '/' ? undefined : route.path,
+                element: route.element,
+            };
+
+            return temp;
+        }),
     },
     {
         path: routerConfig.changePassword,

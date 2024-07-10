@@ -150,8 +150,6 @@ function Calendar({ data, idToHocs }: Props) {
                                         setContextX(event.clientX - x);
                                         setContextY(event.clientY - y);
                                         setContextIsOpen(true);
-
-                                        // TODO:
                                     }}
                                     onClick={(event) => {
                                         setSelected((sel) => {

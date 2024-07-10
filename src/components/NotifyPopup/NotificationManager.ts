@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { createRef, RefObject } from 'react';
 
 const createUUID = () => {
     const pattern = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
@@ -25,6 +26,7 @@ export interface NotifyItem {
     timeOut?: number;
     onClick?: Function;
     priority?: boolean;
+    nodeRef?: RefObject<HTMLDivElement>;
 }
 
 class NotifyMaster extends EventEmitter {
@@ -41,6 +43,7 @@ class NotifyMaster extends EventEmitter {
             title: undefined,
             message: undefined,
             timeOut: 3000,
+            nodeRef: createRef()
         };
         if (!notify.priority) {
             this.listNotify.unshift({
@@ -51,6 +54,7 @@ class NotifyMaster extends EventEmitter {
                 timeOut: notify.timeOut || defaultNotify.timeOut,
                 onClick: notify.onClick,
                 priority: notify.priority,
+                nodeRef: defaultNotify.nodeRef,
             });
         } else {
             this.listNotify.push({
@@ -61,6 +65,7 @@ class NotifyMaster extends EventEmitter {
                 timeOut: notify.timeOut || defaultNotify.timeOut,
                 onClick: notify.onClick,
                 priority: notify.priority,
+                nodeRef: defaultNotify.nodeRef,
             });
         }
 

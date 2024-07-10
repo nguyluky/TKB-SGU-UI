@@ -60,7 +60,8 @@ html[theme='dark'] {
 }
 
 body {
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
     height: 100vh;
 }
 

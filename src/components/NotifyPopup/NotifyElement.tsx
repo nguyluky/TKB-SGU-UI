@@ -23,7 +23,6 @@ interface Icons {
 function NotifyElement({ data }: { data: NotifyItem }) {
     const type: string = data.notifyType;
     const [countDown, setCountDown] = useState<number>(data.timeOut || 0);
-    const [isClose, setIsclose] = useState<boolean>(false);
     const timerId = useRef<NodeJS.Timer>();
 
     const icons: Icons = {
@@ -56,33 +55,23 @@ function NotifyElement({ data }: { data: NotifyItem }) {
     }, []);
 
     const closeHandel = () => {
-        setIsclose(true);
-
-        setTimeout(() => {
-            NotifyMaster.remove(data.id);
-        }, 199);
+        NotifyMaster.remove(data.id);
     };
 
     return (
-        <div
-            className={cx('animation-wrapper', {
-                onclose: isClose,
-            })}
-        >
-            <div className={cx('popup-element', type)}>
-                <div className={cx('header')}>
-                    <FontAwesomeIcon icon={icons[type]} size="2xl" className={cx('icon')} />
-                    <p className={cx('title')}>{data.title}</p>
-                    <FontAwesomeIcon icon={faXmark} onClick={closeHandel} className={cx('close')} />
-                </div>
-                <div className={cx('body')}>{data.message}</div>
-                <div
-                    className={cx('loading')}
-                    style={{
-                        width: data.timeOut ? (countDown / data.timeOut) * 100 + '%' : '100%',
-                    }}
-                ></div>
+        <div className={cx('popup-element', type)}>
+            <div className={cx('header')}>
+                <FontAwesomeIcon icon={icons[type]} size="2xl" className={cx('icon')} />
+                <p className={cx('title')}>{data.title}</p>
+                <FontAwesomeIcon icon={faXmark} onClick={closeHandel} className={cx('close')} />
             </div>
+            <div className={cx('body')}>{data.message}</div>
+            <div
+                className={cx('loading')}
+                style={{
+                    width: data.timeOut ? (countDown / data.timeOut) * 100 + '%' : '100%',
+                }}
+            ></div>
         </div>
     );
 }
