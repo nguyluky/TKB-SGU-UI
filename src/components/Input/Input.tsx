@@ -20,18 +20,20 @@ function Input(props: Prop) {
 
     return (
         <label className={cx('ct-input')}>
-            <p className={cx('title')}>{title}</p>
-            <FontAwesomeIcon icon={icon} />
-            <input {...prop} type={showPass ? 'text' : type} />
+            <div className={cx('input-icon-wrapper')}>
+                <FontAwesomeIcon icon={icon} />
+                <input {...prop} type={showPass ? 'text' : type} required />
 
-            {type === 'password' ? (
-                <FontAwesomeIcon
-                    icon={showPass ? faEye : faEyeSlash}
-                    onClick={() => setShowPass((e) => !e)}
-                />
-            ) : (
-                ''
-            )}
+                {type === 'password' ? (
+                    <FontAwesomeIcon
+                        icon={showPass ? faEye : faEyeSlash}
+                        onClick={() => setShowPass((e) => !e)}
+                    />
+                ) : (
+                    ''
+                )}
+            </div>
+            <p className={cx('title')}>{title}</p>
         </label>
     );
 }

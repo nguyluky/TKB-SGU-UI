@@ -1,10 +1,4 @@
-import {
-    faAt,
-    faEnvelopeCircleCheck,
-    faLock,
-    faUser,
-    faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAt, faEnvelopeCircleCheck, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import classNames from 'classnames/bind';
 import { useContext, useState } from 'react';
@@ -48,7 +42,6 @@ function SignIn() {
 
     const navigate = useNavigate();
 
-    const [err, setErr] = useState('');
     const [isLoading, setLoading] = useState(false);
 
     const handleLogin = () => {
@@ -76,8 +69,7 @@ function SignIn() {
 
                     return;
                 }
-
-                setErr(resp.data.msg || '');
+                notifyMaster.error(resp.data.msg || '', undefined, -1);
             })
             .catch((e) => {
                 notifyMaster.error(String(e));
@@ -86,28 +78,20 @@ function SignIn() {
 
     return (
         <>
-            {err ? (
-                <div className={cx('err')}>
-                    <p>{err}</p>
-                    <FontAwesomeIcon icon={faXmark} onClick={() => setErr('')} />
-                </div>
-            ) : (
-                ''
-            )}
             <Input
+                autoComplete="off"
                 value={userName}
                 onChange={(event) => setUserName(event.target.value)}
-                title="User Name :"
+                title="User Name"
                 type="text"
-                placeholder="Your name"
                 icon={faUser}
             />
             <Input
+                autoComplete="off"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                title="Password :"
+                title="Password"
                 type="password"
-                placeholder="Password"
                 icon={faLock}
             />
             <a href={routerConfig.forgotPassword}>quên mật khẩu ?</a>
@@ -125,7 +109,6 @@ function SignUp() {
 
     const navigate = useNavigate();
 
-    const [err, setErr] = useState('');
     const [isLoading, setLoading] = useState(false);
 
     const signUpHandle = () => {
@@ -150,7 +133,8 @@ function SignUp() {
                     return;
                 }
 
-                setErr(resp.data.msg);
+                notifyMaster.error(resp.data.msg, undefined, -1);
+                // setErr(resp.data.msg);
             })
             .catch((e) => {
                 notifyMaster.error(String(e));
@@ -159,15 +143,8 @@ function SignUp() {
 
     return (
         <>
-            {err ? (
-                <div className={cx('err')}>
-                    <p>{err}</p>
-                    <FontAwesomeIcon icon={faXmark} onClick={() => setErr('')} />
-                </div>
-            ) : (
-                ''
-            )}
             <Input
+                autoComplete="off"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
                 title="User Name :"
@@ -176,6 +153,7 @@ function SignUp() {
                 icon={faUser}
             />
             <Input
+                autoComplete="off"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 title="Email :"
@@ -184,6 +162,7 @@ function SignUp() {
                 icon={faAt}
             />
             <Input
+                autoComplete="off"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 title="Password :"
@@ -235,7 +214,7 @@ function LoginUp() {
                                 }
                             }}
                         />
-                        <span className={cx('logo')}>Login</span>
+                        <span className={cx('logo')}>Sign In</span>
                     </label>
 
                     <label>
@@ -253,7 +232,7 @@ function LoginUp() {
                                 }
                             }}
                         />
-                        <span className={cx('logo')}>LogUp</span>
+                        <span className={cx('logo')}>Sign Up</span>
                     </label>
 
                     <div className={cx('selection')}></div>

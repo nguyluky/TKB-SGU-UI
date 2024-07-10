@@ -1,18 +1,39 @@
 .ct-input {
-    margin-top: 20px;
     position: relative;
-    display: flex;
-    align-items: center;
 
-    padding-left: 10px;
     .title {
-        top: 0;
-        left: 0;
-        transform: translateY(-100%);
+        top: 50%;
+        left: 36px;
+        transform: translateY(-50%);
+        color: var(--text-color-2);
+        // transform: translateY(-100%);
         position: absolute;
+        transition: all 0.2s ease;
     }
 
+    .input-icon-wrapper {
+        margin: 10px 0;
+        box-sizing: border-box;
+        border-radius: var(--border-radius-g);
+        border: 1px solid var(--content-color);
+        padding: 5px 10px;
+        align-items: center;
+        display: flex;
+        width: 100%;
+    }
 
+    .input-icon-wrapper:has(input:valid) ~ .title,
+    .input-icon-wrapper:has(input:focus) ~ .title {
+        top: -5px;
+        left: 0;
+        position: absolute;
+        color: var(--text-color);
+    }
+
+    .input-icon-wrapper:has(input:focus) {
+        border-color: var(--primary-color-1);
+        // transform: translateX();
+    }
 
     input {
         flex: 1;

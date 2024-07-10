@@ -23,6 +23,7 @@ interface Icons {
 function NotifyElement({ data }: { data: NotifyItem }) {
     const type: string = data.notifyType;
     const [countDown, setCountDown] = useState<number>(data.timeOut || 0);
+    const [isClose, setIsclose] = useState<boolean>(false);
     const timerId = useRef<NodeJS.Timer>();
 
     const icons: Icons = {
@@ -33,14 +34,16 @@ function NotifyElement({ data }: { data: NotifyItem }) {
     };
 
     useLayoutEffect(() => {
-        if (countDown < 0) {
+        if ((data.timeOut || 5000) > 0 && countDown < 0) {
             // console.log(data.id);
-            NotifyMaster.remove(data.id);
+            closeHandel();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [countDown]);
 
     useEffect(() => {
+        if ((data.timeOut || 5000) < 0) return;
+
         timerId.current = setInterval(() => {
             setCountDown((e) => e - 10);
         }, 10);
@@ -48,26 +51,38 @@ function NotifyElement({ data }: { data: NotifyItem }) {
         return () => {
             clearInterval(timerId.current);
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const closeHandel = () => {
-        NotifyMaster.remove(data.id);
+        setIsclose(true);
+
+        setTimeout(() => {
+            NotifyMaster.remove(data.id);
+        }, 199);
     };
 
     return (
-        <div className={cx('popup-element', type)}>
-            <div className={cx('header')}>
-                <FontAwesomeIcon icon={icons[type]} size="2xl" className={cx('icon')} />
-                <p className={cx('title')}>{data.title}</p>
-                <FontAwesomeIcon icon={faXmark} onClick={closeHandel} className={cx('close')} />
+        <div
+            className={cx('animation-wrapper', {
+                onclose: isClose,
+            })}
+        >
+            <div className={cx('popup-element', type)}>
+                <div className={cx('header')}>
+                    <FontAwesomeIcon icon={icons[type]} size="2xl" className={cx('icon')} />
+                    <p className={cx('title')}>{data.title}</p>
+                    <FontAwesomeIcon icon={faXmark} onClick={closeHandel} className={cx('close')} />
+                </div>
+                <div className={cx('body')}>{data.message}</div>
+                <div
+                    className={cx('loading')}
+                    style={{
+                        width: data.timeOut ? (countDown / data.timeOut) * 100 + '%' : '100%',
+                    }}
+                ></div>
             </div>
-            <div className={cx('body')}>{data.message}</div>
-            <div
-                className={cx('loading')}
-                style={{
-                    width: data.timeOut ? (countDown / data.timeOut) * 100 + '%' : '100%',
-                }}
-            ></div>
         </div>
     );
 }

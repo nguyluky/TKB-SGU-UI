@@ -1,12 +1,12 @@
 .popup-area {
+    overlay: 1;
     position: absolute;
     bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    
+    right: 10px;
+    z-index: 1;
 }
 
-.popup-element + .popup-element {
+.animation-wrapper + .animation-wrapper {
     margin-top: calc(var(--margin-g) * 2);
 }
 
@@ -30,24 +30,47 @@
 }
 
 .body {
-    padding: 10px;
+    padding: 5px;
     margin-left: 15px;
-    color: rgba($color: #000000, $alpha: 0.5);
+    color: rgba($color: #000000, $alpha: 0.6);
 }
 
-.icon, .close, .title {
+.icon,
+.close,
+.title {
+    box-sizing: border-box;
+    height: 32px;
+    width: 32px;
     text-transform: uppercase;
     color: rgba($color: #000000, $alpha: 0.7);
 }
 
 .close {
+    height: 22px;
+    width: 22px;
+    padding: 10px;
     cursor: pointer;
 }
 
+.animation-wrapper {
+    overflow: visible;
+    max-height: 200px;
+    height: fit-content;
+    animation-name: Notifymount;
+    animation-duration: 0.2s;
+    animation-iteration-count: 1;
+    transform-origin: bottom right;
+}
+
+.animation-wrapper.onclose {
+    animation-name: Notifyunmount;
+    animation-duration: 0.2s;
+    animation-iteration-count: 1;
+}
 
 .popup-element {
     &.info {
-        background: var(--info-color );
+        background: var(--info-color);
     }
 
     &.success {
@@ -55,11 +78,9 @@
     }
     &.warning {
         background: var(--warning-color);
-
     }
     &.error {
         background: var(--error-color);
-
     }
 }
 
@@ -68,6 +89,32 @@
     bottom: 0;
     left: 0;
     height: 2px;
-    background: inherit ;
+    background: inherit;
     filter: brightness(0.8);
+}
+
+@keyframes Notifyunmount {
+    from {
+        max-height: 200px;
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        max-height: 0px;
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes Notifymount {
+    from {
+        // max-height: 0px;
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0%);
+        // max-height: 100px;
+    }
 }

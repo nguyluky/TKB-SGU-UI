@@ -44,7 +44,7 @@ export function NewTkb() {
                     notifyMaster.error(data.msg);
                     return;
                 }
-                nav(data.data.id);
+                nav(data.data.id + '?isclient=true');
             });
         }
     };

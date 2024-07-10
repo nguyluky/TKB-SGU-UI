@@ -42,7 +42,7 @@ class NotifyMaster extends EventEmitter {
             message: undefined,
             timeOut: 3000,
         };
-        if (notify.priority) {
+        if (!notify.priority) {
             this.listNotify.unshift({
                 id: defaultNotify.id,
                 notifyType: notify.notifyType || defaultNotify.notifyType,
