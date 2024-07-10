@@ -48,20 +48,34 @@ function removeSelectedPeriod(tkbs: TkbTiet[], slotEdit: Set<string>) {
     });
 }
 
-function checkSelectedPeriod(tkbs: TkbTiet[], slotEdit: Set<string>) {
+function kTCoBiChungTiet(tkbs: TkbTiet[], slotEdit: Set<string>, ignore: TkbTiet[]) {
+    // tại ignore list
+    var ignoreList: string[] = [];
+    ignore.forEach((e) => {
+        var thu = e.thu;
+        var cs = e.phong.substring(0, 1);
+
+        for (let index = e.tbd; index <= e.tkt; index++) {
+            const hash = thu + '-' + index + '-' + cs;
+            ignoreList.push(hash);
+        }
+    });
+
     return tkbs.find((e) => {
         var thu = e.thu;
         var cs = e.phong.substring(0, 1);
 
         for (let index = e.tbd; index <= e.tkt; index++) {
             const hash = thu + '-' + index + '-' + cs;
-            if (slotEdit.has(hash)) return true;
+            if (slotEdit.has(hash) && !ignoreList.includes(hash)) return e;
         }
         return false;
     });
 }
 
-function checkIfDifferentLocation(tkbs: TkbTiet[], slotEdit: Set<string>) {
+// kiểm tra xem có bị khác cơ sở hay không
+function kTKhacCS(tkbs: TkbTiet[], slotEdit: Set<string>, ignore: TkbTiet[]) {
+    // TODO: thêm phần bỏ quan kiểm tra các môn cùng mã học phần
     var thuTietCs = Array.from(slotEdit).map((e) => e.split('-'));
 
     return tkbs.find((e) => {
@@ -94,11 +108,12 @@ function Tkb() {
 
     const cache = useRef<{ [key: string]: string }>({});
     const idTimeOut = useRef<NodeJS.Timeout | undefined>(undefined);
-    const slotSelectedPeriod = useRef<Set<string>>(new Set());
+    const cacTietHocDaChon = useRef<Set<string>>(new Set());
 
     const [searchParams] = useSearchParams();
     const { tkbid } = useParams();
 
+    // thêm hôm học
     const onAddHphandler = (maHocPhan: string) => {
         if (!tkbData) return;
         if (tkbData.ma_hoc_phans.includes(maHocPhan)) {
@@ -112,6 +127,7 @@ function Tkb() {
         setTkbData({ ...tkbData });
     };
 
+    // chọn nhóm học
     const onAddNhomHocHandler = (idToHoc: string) => {
         const makeNewTkb = () => {
             if (!tkbData) return null;
@@ -122,41 +138,23 @@ function Tkb() {
             if (!ma_mon || !nhomhoc) return null;
 
             // nếu môn đó đã chọn nhóm học thì xoá nhóm đó
-            if (cache.current[ma_mon]) {
-                var preIdToHoc = cache.current[ma_mon];
-                var preNhomHoc = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === preIdToHoc);
-
-                if (preNhomHoc) removeSelectedPeriod(preNhomHoc.tkb, slotSelectedPeriod.current);
-                var index = tkbData.id_to_hocs.indexOf(cache.current[ma_mon]);
-                if (index >= 0) {
-                    tkbData.id_to_hocs.splice(index, 1);
-                    cache.current[ma_mon] = '';
-                }
-
-                if (preIdToHoc === idToHoc) return { ...tkbData };
-            }
+            var preIdToHoc = cache.current[ma_mon];
+            var preNhomHoc = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === preIdToHoc);
+            var preTkb = preNhomHoc?.tkb || [];
 
             // kiểm tra xem môn chọn có bị chùng tiết hay không
-            var overlap = checkSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
-
-            // nếu có báo lỗi
+            var overlap = kTCoBiChungTiet(nhomhoc.tkb, cacTietHocDaChon.current, preTkb);
             if (overlap) {
+                console.log(overlap);
                 console.info('Tiết bị chùng', overlap);
-                NotifyMaster.error(
-                    'Chùng tiết với ' +
-                        overlap.gv +
-                        '. Thứ ' +
-                        overlap.thu +
-                        '. Tiết ' +
-                        overlap.tbd,
-                );
+                NotifyMaster.error('Chùng tiết thứ ' + overlap.thu + ' tiết ' + overlap.tbd);
                 return null;
             }
 
             // kiểm tra xem có khác cơ sử hay không
             // NOTE: không thể kiểm tra xem đúng hay sai
             // NOTE: Tại được
-            var tietCacCoSo = checkIfDifferentLocation(nhomhoc.tkb, slotSelectedPeriod.current);
+            var tietCacCoSo = kTKhacCS(nhomhoc.tkb, cacTietHocDaChon.current, preTkb);
             if (tietCacCoSo) {
                 NotifyMaster.error(
                     'Khác cơ sở tiêt ' +
@@ -169,8 +167,17 @@ function Tkb() {
                 return null;
             }
 
+            if (preNhomHoc) removeSelectedPeriod(preNhomHoc.tkb, cacTietHocDaChon.current);
+            var index = tkbData.id_to_hocs.indexOf(cache.current[ma_mon]);
+            if (index >= 0) {
+                tkbData.id_to_hocs.splice(index, 1);
+                cache.current[ma_mon] = '';
+            }
+
+            if (preIdToHoc === idToHoc) return { ...tkbData };
+
             // cập nhật slot
-            addSelectedPeriod(nhomhoc.tkb, slotSelectedPeriod.current);
+            addSelectedPeriod(nhomhoc.tkb, cacTietHocDaChon.current);
 
             // thêm cái mới vào
             cache.current[ma_mon] = idToHoc;
@@ -311,7 +318,7 @@ function Tkb() {
 
             // setup cache and slot
             var newCache: { [key: string]: string } = {};
-            var newSlot: Set<string> = slotSelectedPeriod.current;
+            var newSlot: Set<string> = cacTietHocDaChon.current;
             tkbDataRep.id_to_hocs.forEach((e: string) => {
                 var nhom = re[1].ds_nhom_to.find((j) => j.id_to_hoc === e);
 
@@ -324,7 +331,7 @@ function Tkb() {
                 newCache[nhom.ma_mon] = e;
             });
             cache.current = newCache;
-            slotSelectedPeriod.current = newSlot;
+            cacTietHocDaChon.current = newSlot;
 
             setTkbData(tkbDataRep);
             setLoading(false);

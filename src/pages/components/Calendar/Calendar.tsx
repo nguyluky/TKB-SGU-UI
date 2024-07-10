@@ -1,8 +1,17 @@
 import { faGripLines } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
-import { CSSProperties, MouseEvent, useEffect, useRef, useState } from 'react';
+import {
+    createRef,
+    CSSProperties,
+    MouseEvent,
+    RefObject,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { DsNhomTo } from '../../../Service';
 import style from './Calendar.module.scss';
 
@@ -18,6 +27,17 @@ interface Props {
     idToHocs?: string[];
 }
 
+interface TietDisplay {
+    gv: string;
+    phong: string;
+    ten_mon: string;
+    id_mon: string;
+    style: CSSProperties;
+    id_to_hoc: string;
+    key: string;
+    nodeRef: RefObject<HTMLDivElement>;
+}
+
 function Calendar({ data, idToHocs }: Props) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const bodyRef = useRef<HTMLDivElement>(null!);
@@ -27,12 +47,14 @@ function Calendar({ data, idToHocs }: Props) {
     const [direction, setDirectiom] = useState(false);
     const [selected, setSelected] = useState<string[]>([]);
     const [isMouseDown, setMouseDown] = useState<boolean>(false);
+    const [tietDisplay, setTietDisplay] = useState<TietDisplay[]>([]);
+
     const [contextX, setContextX] = useState<number>(0);
     const [contextY, setContextY] = useState<number>(0);
-
     const [contextIsOpen, setContextIsOpen] = useState<boolean>(false);
 
     const handleMouseDown = (event: CustomEvent) => {
+        setSelected([]);
         console.log(event.thu, event.tiet);
         setMouseDown(true);
     };
@@ -63,6 +85,47 @@ function Calendar({ data, idToHocs }: Props) {
             document.removeEventListener('click', onClickHanled);
         };
     }, []);
+
+    useEffect(() => {
+        var temp: TietDisplay[] = [];
+        idToHocs?.forEach((e) => {
+            var tiet = data?.find((j) => j.id_to_hoc === e);
+
+            tiet?.tkb.forEach((jj, i) => {
+                var itemStyle: CSSProperties = {
+                    left: `calc(((100% - var(--left-m)) / var(--columns)) * (${
+                        +jj.thu - 2
+                    } * var(--y-s) + ${jj.tbd - 1} * var(--x-s))  + var(--left-m))`,
+                    top: `calc(((100% - var(--top-m)) / var(--rows)) * (${
+                        +jj.thu - 2
+                    } * var(--x-s) + ${jj.tbd - 1} * var(--y-s)) + var(--top-m))`,
+                    height: `calc((100% - var(--top-m)) / var(--rows) * (${
+                        jj.tkt - jj.tbd
+                    } * var(--y-s) + 1) - 5px)`,
+                    width: `calc((100% - var(--left-m)) / var(--columns) * (var(--x-s) + 1) - 5px)`,
+                    background: `hsl(${Math.abs(+(tiet?.ma_mon || 1))}, 60%, 50%)`,
+                };
+
+                var nodeRef =
+                    tietDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef ||
+                    createRef();
+
+                temp.push({
+                    gv: jj.gv || '',
+                    phong: jj.phong,
+                    ten_mon: tiet?.ten_mon || '',
+                    id_mon: tiet?.ma_mon || '',
+                    style: itemStyle,
+                    id_to_hoc: tiet?.id_to_hoc || '',
+                    key: (tiet?.ma_mon || '') + i,
+                    nodeRef: nodeRef,
+                });
+            });
+        });
+
+        setTietDisplay(temp);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(idToHocs)]);
 
     return (
         <div
@@ -113,73 +176,66 @@ function Calendar({ data, idToHocs }: Props) {
                     );
                 })}
                 <div className={cx('display-tiet')}>
-                    {idToHocs?.map((e) => {
-                        // console.log(e);
-                        var tiet = data?.find((j) => j.id_to_hoc === e);
+                    <TransitionGroup>
+                        {tietDisplay.map((tr) => (
+                            <CSSTransition key={tr.key} nodeRef={tr.nodeRef} timeout={100}>
+                                {(state) => {
+                                    return (
+                                        <div
+                                            ref={tr.nodeRef}
+                                            key={tr.key}
+                                            onContextMenu={(event) => {
+                                                event.preventDefault();
+                                                var { x, y } =
+                                                    bodyRef.current.getBoundingClientRect();
+                                                console.log();
+                                                console.log(event.clientX - x, event.clientY - y);
 
-                        var eles = tiet?.tkb.map((jj) => {
-                            var itemStyle: CSSProperties = {
-                                left: `calc(((100% - var(--left-m)) / var(--columns)) * (${
-                                    +jj.thu - 2
-                                } * var(--y-s) + ${jj.tbd - 1} * var(--x-s))  + var(--left-m))`,
-                                top: `calc(((100% - var(--top-m)) / var(--rows)) * (${
-                                    +jj.thu - 2
-                                } * var(--x-s) + ${jj.tbd - 1} * var(--y-s)) + var(--top-m))`,
-                                height: `calc((100% - var(--top-m)) / var(--rows) * (${
-                                    jj.tkt - jj.tbd
-                                } * var(--y-s) + 1) - 5px)`,
-                                width: `calc((100% - var(--left-m)) / var(--columns) * (var(--x-s) + 1) - 5px)`,
-                                background: `hsl(${Math.abs(+e)}, 60%, 50%)`,
-                            };
-
-                            var tr = (
-                                <div
-                                    onContextMenu={(event) => {
-                                        event.preventDefault();
-                                        var { x, y } = bodyRef.current.getBoundingClientRect();
-                                        console.log();
-                                        console.log(event.clientX - x, event.clientY - y);
-
-                                        setSelected((ses) => {
-                                            if (!ses.length) {
-                                                lastSelecion.current = e;
-                                                return [e, ...ses];
-                                            }
-                                            return [...ses];
-                                        });
-                                        setContextX(event.clientX - x);
-                                        setContextY(event.clientY - y);
-                                        setContextIsOpen(true);
-                                    }}
-                                    onClick={(event) => {
-                                        setSelected((sel) => {
-                                            if (event.ctrlKey) {
-                                                if (sel.includes(e)) sel.splice(sel.indexOf(e), 1);
-                                                else sel.push(e);
-                                                return [...sel];
-                                            }
-                                            if (sel.length === 1 && sel.includes(e)) {
-                                                return [];
-                                            }
-                                            return [e];
-                                        });
-                                    }}
-                                    className={cx('item', {
-                                        'tiet-selected': selected.includes(e),
-                                    })}
-                                    style={itemStyle}
-                                    key={e + jj.thu + jj.tbd}
-                                >
-                                    <p className={cx('title')}>{tiet?.ten_mon}</p>
-                                    <p className={cx('info')}>GV: {jj.gv}</p>
-                                    <p className={cx('info')}>Phòng: {jj.phong}</p>
-                                </div>
-                            );
-
-                            return tr;
-                        });
-                        return eles;
-                    })}
+                                                setSelected((ses) => {
+                                                    if (!ses.length) {
+                                                        lastSelecion.current = tr.id_to_hoc;
+                                                        return [tr.id_to_hoc, ...ses];
+                                                    }
+                                                    return [...ses];
+                                                });
+                                                setContextX(event.clientX - x);
+                                                setContextY(event.clientY - y);
+                                                setContextIsOpen(true);
+                                            }}
+                                            onClick={(event) => {
+                                                setSelected((sel) => {
+                                                    if (event.ctrlKey) {
+                                                        if (sel.includes(tr.id_to_hoc))
+                                                            sel.splice(
+                                                                sel.indexOf(tr.id_to_hoc),
+                                                                1,
+                                                            );
+                                                        else sel.push(tr.id_to_hoc);
+                                                        return [...sel];
+                                                    }
+                                                    if (
+                                                        sel.length === 1 &&
+                                                        sel.includes(tr.id_to_hoc)
+                                                    ) {
+                                                        return [];
+                                                    }
+                                                    return [tr.id_to_hoc];
+                                                });
+                                            }}
+                                            className={cx('item', state, {
+                                                'tiet-selected': selected.includes(tr.id_to_hoc),
+                                            })}
+                                            style={tr.style}
+                                        >
+                                            <p className={cx('title')}>{tr.ten_mon}</p>
+                                            <p className={cx('info')}>GV: {tr.gv}</p>
+                                            <p className={cx('info')}>Phòng: {tr.phong}</p>
+                                        </div>
+                                    );
+                                }}
+                            </CSSTransition>
+                        ))}
+                    </TransitionGroup>
 
                     <div
                         ref={contextRef}

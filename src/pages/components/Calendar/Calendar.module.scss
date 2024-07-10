@@ -1,7 +1,9 @@
 .thu:first-child .day-name:first-child {
+    cursor: pointer;
+
     svg {
+        padding: 5px;
         color: var(--primary-color-1);
-        cursor: pointer;
     }
 }
 
@@ -194,6 +196,7 @@
     box-sizing: border-box;
     padding: var(--margin-g);
     position: absolute;
+    transition: all 0.1s ease-in-out;
 
     &.tiet-selected {
         outline: solid var(--success-color);
@@ -207,6 +210,27 @@
         -webkit-box-orient: vertical;
         font-size: large;
         font-weight: bold;
+        // background: transparent;
+    }
+
+    &.entering {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    &.entered {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    &.exiting {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    &.exited {
+        transform: scale(0.5);
+        opacity: 0;
     }
 }
 
@@ -222,6 +246,12 @@
 
     p {
         padding: 3px 20px;
+        cursor: pointer;
+        border-radius: var(--border-radius-g);
+
+        &:hover {
+            background-color: var(--hover-color);
+        }
     }
 }
 

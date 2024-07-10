@@ -25,7 +25,6 @@ function DefaultLayout() {
 
     const { nodeRef } = defaultLayoutChildren.find((e) => e.path === location.pathname) || {};
 
-    console.log(nodeRef);
     return (
         <headerContent.Provider value={setHeaderPar}>
             <NotifyPopup>

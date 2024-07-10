@@ -57,8 +57,13 @@ export function HocPhan({
                     return (
                         <div
                             className={cx('nhom', {
-                                check: tkb?.id_to_hocs.includes(j.id_to_hoc),
+                                // check: tkb?.id_to_hocs.includes(j.id_to_hoc),
                             })}
+                            style={{
+                                background: tkb?.id_to_hocs.includes(j.id_to_hoc)
+                                    ? `hsl(${Math.abs(+(maHocPhan || 1))}, 60%, 50%)`
+                                    : 'transparent',
+                            }}
                             key={j.id_to_hoc}
                             onClick={() => {
                                 onAddNhomHoc(j.id_to_hoc);

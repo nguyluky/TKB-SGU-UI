@@ -40,7 +40,6 @@ function NotifyPopup({ children }: { children: ReactElement | ReactElement[] }) 
                                 }}
                             >
                                 {(state) => {
-                                    console.log(state);
                                     return (
                                         <div
                                             className={cx('animation-wrapper', state)}
