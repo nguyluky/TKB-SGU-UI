@@ -182,8 +182,18 @@ export function ReplaceView({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // !!!!this work do touch !!!!!!!!!
     const onAddNhomHocHandler = (idNhomTo: string) => {
-        console.log(itemSele.current, itemRemove.current);
+        // TODO:
+
+        // xóa cái được chọn ra khỏi id_to_hocs
+        // thêm các item trong itemRemove vào id_to_hocs
+
+        // kiểm tra xem chùng với tiết nào
+        // thêm vào itemRemove rồi xóa khỏi ds id_to_hocs
+        // add mới vòa id_to_hocs
+
+        // TODO: nếu mà không chùng tiết là lại chùng môn học thì xao
 
         if (itemSele.current) {
             onAddNhomHoc(itemSele.current);
@@ -210,9 +220,16 @@ export function ReplaceView({
                 }
             });
 
+            if (tkbData?.ma_hoc_phans.includes(nhom.ma_mon)) {
+                var a = tkbData.id_to_hocs.find(
+                    (e) => data?.ds_nhom_to.find((j) => j.id_to_hoc === e)?.ma_mon == nhom?.ma_mon,
+                );
+                if (a) itemRemove.current.push(a);
+            }
+
             Object.keys(cacheNhomHoc.current).forEach((e) => {
                 if (idNhomTo === e) {
-                    itemRemove.current.push(e);
+                    if (!itemRemove.current.includes(e)) itemRemove.current.push(e);
                     return;
                 }
                 var tkbs = cacheNhomHoc.current[e];
@@ -226,14 +243,15 @@ export function ReplaceView({
                 });
 
                 if (biTrung) {
-                    console.log(e);
-                    itemRemove.current.push(e);
+                    if (!itemRemove.current.includes(e)) itemRemove.current.push(e);
                     onAddNhomHoc(e);
                 }
             });
 
+            if (idNhomTo !== itemSele.current) onAddNhomHoc(idNhomTo);
             itemSele.current = idNhomTo;
-            onAddNhomHoc(idNhomTo);
+
+            console.log(itemSele.current, itemRemove.current);
         }
     };
 
@@ -247,8 +265,8 @@ export function ReplaceView({
                         if (itemSele.current) {
                             onAddNhomHoc(itemSele.current);
                         }
-                        nhomHocReplaced.forEach((e) => {
-                            onAddNhomHoc(e);
+                        itemRemove.current.forEach((e) => {
+                            if (!tkbData?.id_to_hocs.includes(e)) onAddNhomHoc(e);
                         });
                         onClose();
                     }}
