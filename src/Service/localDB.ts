@@ -2,24 +2,34 @@ import { TkbData } from ".";
 
 var db: IDBDatabase;
 
-const resp = window.indexedDB.open('tkbStorage', 1);
-resp.onerror = function(ev) {
-    console.error(ev)
-    alert('lỗi khi mở kết nối với database indexedDB: ');
+
+async function createDataBase() {
+    const temp = new Promise<IDBDatabase>((resolve, reject) => {
+        const resp = window.indexedDB.open('tkbStorage', 1);
+        resp.onerror = function(ev) {
+            console.error(ev)
+            reject(ev);
+        }
+    
+        resp.onupgradeneeded = (ev) => {
+            db = resp.result;
+            db.createObjectStore('tkbStorage', {keyPath: 'id'});
+        }
+        
+        resp.onsuccess = (ev) => {
+            db = resp.result;
+            resolve(db);
+        }
+    })
+
+    return await temp;
 }
 
-resp.onupgradeneeded = (ev) => {
-    db = resp.result;
-    db.createObjectStore('tkbStorage', {keyPath: 'id'});
-}
-
-resp.onsuccess = (ev) => {
-    db = resp.result;
-}
-
-export function addRecord(data : TkbData) {
-    return new Promise<IDBValidKey>(function (resolve, reject) {
-        if (!db) return;
+export async function addRecord(data : TkbData) {
+    if (!db) await 
+        createDataBase();
+    
+    const addRecordPromise =  await (new Promise<IDBValidKey>(function (resolve, reject) {
         var tran = db.transaction(['tkbStorage'], 'readwrite');
         var objStore = tran.objectStore('tkbStorage');
         
@@ -34,13 +44,16 @@ export function addRecord(data : TkbData) {
             reject(ev)
         }
 
-    })
+    }))
     
+    return addRecordPromise;
 }
 
-export function updateRecord(data: TkbData) {
-    return new Promise<IDBValidKey>(function (resolve, reject) {
-        if (!db) return;
+export async function updateRecord(data: TkbData) {
+
+    if (!db) await createDataBase();
+
+    var updateRecord = await new Promise<IDBValidKey>(function (resolve, reject) {
         var tran = db.transaction(['tkbStorage'], 'readwrite');
         var objStore = tran.objectStore('tkbStorage');
         
@@ -55,12 +68,15 @@ export function updateRecord(data: TkbData) {
             reject(ev)
         }
     })
+
+    return updateRecord;
 }
 
 
-export function deleteRecord(tkbId: string) {
-    return new Promise<undefined>(function (resolve, reject) {
-        if (!db) return;
+export async function deleteRecord(tkbId: string) {
+
+    if (!db) await createDataBase();
+    const deleteRecordPromise = await new Promise<undefined>(function (resolve, reject) {
         var tran = db.transaction(['tkbStorage'], 'readwrite');
         var objStore = tran.objectStore('tkbStorage');
         
@@ -75,11 +91,16 @@ export function deleteRecord(tkbId: string) {
             reject(ev)
         }
     })
+
+    return deleteRecordPromise;
 }
 
-export function getRecord(tkbId: string) {
-    return new Promise<TkbData>(function (resolve, reject) {
-        if (!db) return;
+export async function getRecord(tkbId: string) {
+
+    if (!db) await createDataBase();
+
+    var getRecord = await new Promise<TkbData>(function (resolve, reject) {
+    
         var tran = db.transaction(['tkbStorage'], 'readonly');
         var objStore = tran.objectStore('tkbStorage');
         
@@ -93,12 +114,14 @@ export function getRecord(tkbId: string) {
             reject(ev)
         }
     })
+
+    return getRecord;
 }
 
 
-export function getAllRecord() {
-    return new Promise<TkbData[]>(function (resolve, reject) {
-        if (!db) return;
+export async function getAllRecord() {
+    if (!db) await createDataBase();
+    var getALlRecord = await new Promise<TkbData[]>(function (resolve, reject) {
         var tran = db.transaction(['tkbStorage'], 'readonly');
         var objStore = tran.objectStore('tkbStorage');
         
@@ -112,5 +135,7 @@ export function getAllRecord() {
             reject(ev)
         }
     })
+
+    return getALlRecord
 }
 

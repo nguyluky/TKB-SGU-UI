@@ -1,11 +1,8 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import Popup from 'reactjs-popup';
 
-import { ApiResponse, DsNhomHocResp, TkbData, TkbTiet } from '../../Service';
+import { ApiResponse, DsNhomHocResp, DsNhomTo, TkbData, TkbTiet } from '../../Service';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { NotifyMaster } from '../../components/NotifyPopup';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
@@ -14,10 +11,9 @@ import { textSaveAsFile } from '../../utils';
 import Error from '../Error';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
-import { AddHp } from './AddHp';
 import { HeaderTool } from './HeaderTool';
-import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
+import { ReplaceView, SelestionView } from './SelestionView';
 import style from './Tkb.module.scss';
 
 export const cx = classNames.bind(style);
@@ -90,6 +86,41 @@ function kTKhacCS(tkbs: TkbTiet[], slotEdit: Set<string>, ignore: TkbTiet[]) {
     });
 }
 
+function timNhomHocTuongTu(tkbs: TkbTiet[], fromDS: DsNhomTo[]) {
+    var listTiet: string[] = [];
+
+    tkbs.forEach((e) => {
+        for (let index = e.tbd; index < e.tkt; index++) {
+            listTiet.push(`${e.thu}${index}`);
+        }
+    });
+
+    // kết quả chả về
+    var nhomHocCanFix: DsNhomTo[] = [];
+
+    fromDS.forEach((e) => {
+        var listTietCurr: string[] = [];
+        e.tkb.forEach((jj) => {
+            for (let index = jj.tbd; index < jj.tkt; index++) {
+                listTietCurr.push(`${jj.thu}${index}`);
+            }
+        });
+
+        var laCon = true;
+        for (let index = 0; index < listTietCurr.length; index++) {
+            const element = listTietCurr[index];
+
+            if (!listTiet.includes(element)) laCon = false;
+        }
+
+        if (laCon) {
+            nhomHocCanFix.push(e);
+        }
+    });
+
+    return nhomHocCanFix;
+}
+
 function Tkb() {
     const setHeaderPar = useContext(headerContent);
 
@@ -99,10 +130,15 @@ function Tkb() {
     const [tkbData, setTkbData] = useState<TkbData | undefined>();
     const [dsNhomAndMon, setDsNhomAndMon] = useState<DsNhomHocResp | undefined>();
     const [soTC, setSoTC] = useState<number>(0);
+
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [canSave, setCanSave] = useState<boolean>(false);
     const [isLoading, setLoading] = useState(true);
     const [errMsg, setErrMsg] = useState('');
+
+    const [sideBarTool, setSideBarTool] = useState<string>();
+    const [dsTuTu, setDsTuTu] = useState<DsNhomTo[]>();
+
     // NOTE: vá lỗi
     const tkbDateRef = useRef<TkbData>();
 
@@ -247,6 +283,33 @@ function Tkb() {
         }
     };
 
+    // tìm môn tương tự
+    const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
+        // TODO: gửi Hiếu tương lai
+        // chuyển selestion thành ds các tkb
+        // tìm trong các môn mình học có môn nào mà tkb của nó trùng hoặc là con của cái ds phía trên hay không
+        // hiển thị ds các môn học có thể thay thế qua phía bên phải
+
+        var tkbs: TkbTiet[] = [];
+
+        idToHocs.forEach((e) => {
+            var nhomHoc = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+            nhomHoc?.tkb.forEach((jj) => {
+                tkbs.push(jj);
+            });
+        });
+
+        var listAllNhomHocs: DsNhomTo[] =
+            dsNhomAndMon?.ds_nhom_to.filter((jjj) => tkbData?.ma_hoc_phans.includes(jjj.ma_mon)) ||
+            [];
+
+        var dsNhomHoc = timNhomHocTuongTu(tkbs, listAllNhomHocs);
+
+        setDsTuTu(dsNhomHoc);
+        setSideBarTool('tutu');
+    };
+
     // NOTE: Lấy dữ liệu
     useLayoutEffect(() => {
         const getTkbDataClient = async () => {
@@ -259,9 +322,8 @@ function Tkb() {
                 return temp;
             }
 
-            const getTkb = globalState.client.localApi.getTkb(tkbid);
-            console.log(getTkb);
-            return await getTkb;
+            const getTkb = await globalState.client.localApi.getTkb(tkbid);
+            return getTkb;
         };
 
         const getTkbDataServer = async () => {
@@ -274,9 +336,9 @@ function Tkb() {
                 return temp;
             }
 
-            const getTkb = globalState.client.serverApi.getTkb(tkbid);
+            const getTkb = await globalState.client.serverApi.getTkb(tkbid);
 
-            return await getTkb;
+            return getTkb;
         };
 
         const getDsNhomHoc = async () => {
@@ -399,35 +461,33 @@ function Tkb() {
             {!errMsg ? (
                 <div className={cx('wrapper')}>
                     <div className={cx('side-bar')}>
-                        <div className={cx('side-bar-wrapper')}>
-                            <div className={cx('header')}>
-                                <p>Tín chỉ : {soTC} / 26</p>
-
-                                <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
-                                    <AddHp
-                                        data={dsNhomAndMon}
-                                        onAddHp={onAddHphandler}
-                                        maHocPhans={tkbData?.ma_hoc_phans}
-                                    />
-                                </Popup>
-                            </div>
-
-                            <div className={cx('content')}>
-                                {tkbData?.ma_hoc_phans.map((e) => (
-                                    <HocPhan
-                                        onRemoveHp={onAddHphandler}
-                                        data={dsNhomAndMon}
-                                        maHocPhan={e}
-                                        key={e}
-                                        onAddNhomHoc={onAddNhomHocHandler}
-                                        tkb={tkbData}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        {sideBarTool !== 'tutu' ? (
+                            <SelestionView
+                                dsNhomAndMon={dsNhomAndMon}
+                                onAddHphandler={onAddHphandler}
+                                onAddNhomHocHandler={onAddNhomHocHandler}
+                                tkbData={tkbData}
+                                soTC={soTC}
+                            />
+                        ) : (
+                            <ReplaceView
+                                dsNhomHoc={dsTuTu || []}
+                                onAddNhomHoc={onAddNhomHocHandler}
+                                tkbData={tkbData}
+                                data={dsNhomAndMon}
+                                onClose={() => {
+                                    setSideBarTool('');
+                                }}
+                            />
+                        )}
                     </div>
                     <div className={cx('calendar-wrapper')}>
-                        <Calendar data={dsNhomAndMon?.ds_nhom_to} idToHocs={tkbData?.id_to_hocs} />
+                        <Calendar
+                            data={dsNhomAndMon?.ds_nhom_to}
+                            idToHocs={tkbData?.id_to_hocs}
+                            onDeleteMHP={onAddNhomHocHandler}
+                            onTimMonHocTuTu={timNhomHocTuongTuHandel}
+                        />
                     </div>
                 </div>
             ) : (
