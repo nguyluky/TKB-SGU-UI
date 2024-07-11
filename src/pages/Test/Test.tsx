@@ -1,10 +1,8 @@
 import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import Popup from 'reactjs-popup';
-import ButtonWithLoading from '../../components/ButtonWithLoading';
 import Input from '../../components/Input';
 import PopupModel from '../../components/PopupModel';
-import { routerConfig } from '../../config';
 
 function Test() {
     const [changePasswordShow, setChangePasswordShow] = useState(false);
@@ -13,16 +11,32 @@ function Test() {
         <div>
             <Popup open={true}>
                 <PopupModel
-                    noFooter
-                    title=""
+                    title="Đổi mật khẩu"
                     onCancel={() => {
                         console.log('ok');
                     }}
                 >
-                    <Input autoComplete="off" title="User Name" type="text" icon={faUser} />
-                    <Input autoComplete="off" title="Password" type="password" icon={faLock} />
-                    <a href={routerConfig.forgotPassword}>Quên mật khẩu ?</a>
-                    <ButtonWithLoading>Sign In</ButtonWithLoading>
+                    <Input
+                        className="line"
+                        autoComplete="off"
+                        title="Mật khẩu hiện tại"
+                        type="password"
+                        icon={faUser}
+                    />
+                    <Input
+                        autoComplete="off"
+                        title="Mật khẩu mới"
+                        type="password"
+                        icon={faLock}
+                        className="line"
+                    />
+                    <Input
+                        autoComplete="off"
+                        title="Xác nhận mật khẩu"
+                        type="password"
+                        icon={faLock}
+                        className="line"
+                    />
                 </PopupModel>
             </Popup>
         </div>

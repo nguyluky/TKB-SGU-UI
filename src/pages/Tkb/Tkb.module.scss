@@ -45,6 +45,23 @@
             overflow-y: scroll;
         }
 
+        .content.footer {
+            height: calc(100% - var(--header-height) - 40px);
+            overflow-y: scroll;
+        }
+
+        .footer-content {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            button {
+                padding: 2px 7px;
+                margin-right: 10px;
+            }
+        }
+
         .content::-webkit-scrollbar {
             width: 7px;
         }

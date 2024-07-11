@@ -1,7 +1,8 @@
 import { faAngleDown, faAngleUp, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
+import ButtonWithLoading from '../../components/ButtonWithLoading';
 import { DsNhomHocResp, DsNhomTo, TkbData } from '../../Service';
 import { AddHp } from './AddHp';
 import { HocPhan } from './HocPhan';
@@ -146,14 +147,95 @@ export function ReplaceView({
     onAddNhomHoc,
     data,
     onClose,
+    nhomHocReplaced,
 }: {
     dsNhomHoc: DsNhomTo[];
     tkbData?: TkbData;
     onAddNhomHoc: (idToHoc: string) => void;
     data?: DsNhomHocResp;
     onClose: () => void;
+    nhomHocReplaced: string[];
 }) {
     var dsMaHocPhan = Array.from(new Set(dsNhomHoc.map((e) => e.ma_mon)));
+    var cacheNhomHoc = useRef<{ [Key: string]: string[] }>({});
+    var itemRemove = useRef<string[]>([]);
+    var itemSele = useRef<string>('');
+
+    useEffect(() => {
+        var tempCache: { [Key: string]: string[] } = {};
+        nhomHocReplaced.forEach((e) => {
+            var temp: string[] = [];
+            var nhom = data?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+            nhom?.tkb.forEach((jj) => {
+                var cs = jj.phong.substring(0, 1);
+                for (let index = jj.tbd; index <= jj.tkt; index++) {
+                    const hash = jj.thu + '-' + index + '-' + cs;
+                    temp.push(hash);
+                }
+            });
+
+            tempCache[e] = temp;
+        });
+
+        cacheNhomHoc.current = tempCache;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const onAddNhomHocHandler = (idNhomTo: string) => {
+        console.log(itemSele.current, itemRemove.current);
+
+        if (itemSele.current) {
+            onAddNhomHoc(itemSele.current);
+        }
+
+        itemRemove.current.forEach((e) => {
+            if (e === idNhomTo) {
+                return;
+            }
+            onAddNhomHoc(e);
+        });
+
+        itemRemove.current = [];
+
+        var nhom = data?.ds_nhom_to.find((e) => e.id_to_hoc === idNhomTo);
+
+        if (nhom) {
+            var temp: string[] = [];
+            nhom.tkb.forEach((jj) => {
+                var cs = jj.phong.substring(0, 1);
+                for (let index = jj.tbd; index <= jj.tkt; index++) {
+                    const hash = jj.thu + '-' + index + '-' + cs;
+                    temp.push(hash);
+                }
+            });
+
+            Object.keys(cacheNhomHoc.current).forEach((e) => {
+                if (idNhomTo === e) {
+                    itemRemove.current.push(e);
+                    return;
+                }
+                var tkbs = cacheNhomHoc.current[e];
+
+                var biTrung = false;
+
+                tkbs.forEach((jj) => {
+                    if (temp.includes(jj)) {
+                        biTrung = true;
+                    }
+                });
+
+                if (biTrung) {
+                    console.log(e);
+                    itemRemove.current.push(e);
+                    onAddNhomHoc(e);
+                }
+            });
+
+            itemSele.current = idNhomTo;
+            onAddNhomHoc(idNhomTo);
+        }
+    };
 
     return (
         <div className={cx('side-bar-wrapper')}>
@@ -162,21 +244,38 @@ export function ReplaceView({
                 <FontAwesomeIcon
                     icon={faXmark}
                     onClick={() => {
+                        if (itemSele.current) {
+                            onAddNhomHoc(itemSele.current);
+                        }
+                        nhomHocReplaced.forEach((e) => {
+                            onAddNhomHoc(e);
+                        });
                         onClose();
                     }}
                 />
             </div>
 
-            <div className={cx('content')}>
-                {dsMaHocPhan.map((e) => (
+            <div className={cx('content', 'footer')}>
+                {dsMaHocPhan.map((e, i) => (
                     <Temp
+                        key={i}
                         data={data}
                         tkbData={tkbData}
                         maMonHoc={e}
                         dsNhomHoc={dsNhomHoc}
-                        onAddNhomHoc={onAddNhomHoc}
+                        onAddNhomHoc={onAddNhomHocHandler}
                     />
                 ))}
+            </div>
+
+            <div className={cx('footer-content')}>
+                <ButtonWithLoading
+                    onClick={() => {
+                        onClose();
+                    }}
+                >
+                    Lưu
+                </ButtonWithLoading>
             </div>
         </div>
     );

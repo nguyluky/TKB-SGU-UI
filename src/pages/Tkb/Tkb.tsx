@@ -130,6 +130,7 @@ function Tkb() {
     const [tkbData, setTkbData] = useState<TkbData | undefined>();
     const [dsNhomAndMon, setDsNhomAndMon] = useState<DsNhomHocResp | undefined>();
     const [soTC, setSoTC] = useState<number>(0);
+    const [nhomHocReplace, setNhomHocReplace] = useState<string[]>([]);
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [canSave, setCanSave] = useState<boolean>(false);
@@ -285,11 +286,6 @@ function Tkb() {
 
     // tìm môn tương tự
     const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
-        // TODO: gửi Hiếu tương lai
-        // chuyển selestion thành ds các tkb
-        // tìm trong các môn mình học có môn nào mà tkb của nó trùng hoặc là con của cái ds phía trên hay không
-        // hiển thị ds các môn học có thể thay thế qua phía bên phải
-
         var tkbs: TkbTiet[] = [];
 
         idToHocs.forEach((e) => {
@@ -306,6 +302,7 @@ function Tkb() {
 
         var dsNhomHoc = timNhomHocTuongTu(tkbs, listAllNhomHocs);
 
+        setNhomHocReplace(idToHocs);
         setDsTuTu(dsNhomHoc);
         setSideBarTool('tutu');
     };
@@ -471,6 +468,7 @@ function Tkb() {
                             />
                         ) : (
                             <ReplaceView
+                                nhomHocReplaced={nhomHocReplace}
                                 dsNhomHoc={dsTuTu || []}
                                 onAddNhomHoc={onAddNhomHocHandler}
                                 tkbData={tkbData}
