@@ -1,4 +1,8 @@
-function Cloudy() {
+import { SVGAttributes } from 'react';
+
+interface IconSvgProps extends SVGAttributes<SVGSVGElement> {}
+
+function Cloudy(props: IconSvgProps) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -8,6 +12,7 @@ function Cloudy() {
             height={560}
             preserveAspectRatio="none"
             viewBox="0 0 1440 560"
+            {...props}
         >
             <g mask='url("#SvgjsMask1144")' fill="none">
                 <rect width={1440} height={560} x={0} y={0} fill="#1e3266" />
@@ -37,6 +42,70 @@ function Cloudy() {
     );
 }
 
-const svgs = { Cloudy };
+function Cloud(props: IconSvgProps) {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={24}
+            height={24}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-cloud"
+            {...props}
+        >
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+        </svg>
+    );
+}
+
+function CloudOff(props: IconSvgProps) {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={24}
+            height={24}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-cloud-off"
+            {...props}
+        >
+            <path d="m2 2 20 20" />
+            <path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193" />
+            <path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07" />
+        </svg>
+    );
+}
+
+function CloudUpload(props: IconSvgProps) {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={24}
+            height={24}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-cloud-upload"
+            {...props}
+        >
+            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+            <path d="M12 12v9" />
+            <path d="m16 16-4-4-4 4" />
+        </svg>
+    );
+}
+
+const svgs = { Cloud, Cloudy, CloudOff, CloudUpload };
 
 export default svgs;

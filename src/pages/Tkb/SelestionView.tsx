@@ -1,51 +1,77 @@
-import { faAngleDown, faAngleUp, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {
+    faAngleDown,
+    faAngleUp,
+    faPlus,
+    faSquareMinus,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
-import ButtonWithLoading from '../../components/ButtonWithLoading';
-import { DsNhomHocResp, DsNhomTo, TkbData } from '../../Service';
+import { DsNhomHocResp, DsNhomTo, TkbData, TkbTiet } from '../../Service';
 import { AddHp } from './AddHp';
 import { HocPhan } from './HocPhan';
 import { cx } from './Tkb';
 
 interface selestionViewPro {
-    dsNhomAndMon?: DsNhomHocResp;
-    onAddHphandler: (maHocPhan: string) => void;
+    dsNhomHoc?: DsNhomHocResp;
     tkbData?: TkbData;
-    onAddNhomHocHandler: (idToHoc: string) => void;
     soTC: number;
+    onRemoveHp: (maHocPhan: string) => void;
+    onAddHp: (maHocPhan: string) => void;
+    onAddNhomHoc: (idToHoc: string, isTimeLine?: boolean, replay?: boolean) => void;
+    onRemoveNhomHoc: (idToHoc: string) => void;
 }
 
 export function SelestionView({
-    dsNhomAndMon,
-    onAddHphandler,
+    dsNhomHoc,
+    onAddHp,
+    onRemoveHp,
+    onRemoveNhomHoc,
     tkbData,
-    onAddNhomHocHandler,
+    onAddNhomHoc,
     soTC,
 }: selestionViewPro) {
+    const [mini, setMini] = useState<number>(0);
+    const toggleHp = (mhp: string) => {
+        if (!tkbData) return;
+        if (tkbData?.ma_hoc_phans.includes(mhp)) onRemoveHp(mhp);
+        else onAddHp(mhp);
+    };
+
+    const toggleNhomHoc = (idToHoc: string) => {
+        if (!tkbData) return;
+        if (tkbData?.id_to_hocs.includes(idToHoc)) onRemoveNhomHoc(idToHoc);
+        else onAddNhomHoc(idToHoc);
+    };
+
     return (
         <div className={cx('side-bar-wrapper')}>
             <div className={cx('header')}>
                 <p>Tín chỉ : {soTC} / 26</p>
 
+                <FontAwesomeIcon
+                    icon={faSquareMinus}
+                    className={cx('mini')}
+                    onClick={() => {
+                        setMini((e) => e + 1);
+                    }}
+                />
                 <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
-                    <AddHp
-                        data={dsNhomAndMon}
-                        onAddHp={onAddHphandler}
-                        maHocPhans={tkbData?.ma_hoc_phans}
-                    />
+                    <AddHp data={dsNhomHoc} onAddHp={toggleHp} maHocPhans={tkbData?.ma_hoc_phans} />
                 </Popup>
             </div>
 
             <div className={cx('content')}>
                 {tkbData?.ma_hoc_phans.map((e) => (
                     <HocPhan
-                        onRemoveHp={onAddHphandler}
-                        data={dsNhomAndMon}
-                        maHocPhan={e}
+                        mini={mini}
                         key={e}
-                        onAddNhomHoc={onAddNhomHocHandler}
                         tkb={tkbData}
+                        data={dsNhomHoc}
+                        maHocPhan={e}
+                        onRemoveHp={onRemoveHp}
+                        onAddNhomHoc={toggleNhomHoc}
                     />
                 ))}
             </div>
@@ -141,119 +167,88 @@ function Temp({
     );
 }
 
+function timNhomHocTuongTu(tkbs: TkbTiet[], fromDS: DsNhomTo[]) {
+    var listTiet: string[] = [];
+
+    tkbs.forEach((e) => {
+        for (let index = e.tbd; index < e.tkt; index++) {
+            listTiet.push(`${e.thu}${index}`);
+        }
+    });
+
+    // kết quả chả về
+    var nhomHocCanFix: DsNhomTo[] = [];
+
+    fromDS.forEach((e) => {
+        var listTietCurr: string[] = [];
+        e.tkb.forEach((jj) => {
+            for (let index = jj.tbd; index < jj.tkt; index++) {
+                listTietCurr.push(`${jj.thu}${index}`);
+            }
+        });
+
+        var laCon = true;
+        for (let index = 0; index < listTietCurr.length; index++) {
+            const element = listTietCurr[index];
+
+            if (!listTiet.includes(element)) laCon = false;
+        }
+
+        if (laCon) {
+            nhomHocCanFix.push(e);
+        }
+    });
+
+    return nhomHocCanFix;
+}
+
+interface ReplaceViewProps {
+    idNhomHocToReplace: string[];
+    dsNhomHoc?: DsNhomHocResp;
+    tkbData?: TkbData;
+    onAddNhomHoc: (idToHoc: string, isTimeLine?: boolean, replay?: boolean) => void;
+    onRemoveNhomHoc: (idToHoc: string) => void;
+    onClose: () => void;
+}
+
 export function ReplaceView({
+    idNhomHocToReplace,
     dsNhomHoc,
     tkbData,
     onAddNhomHoc,
-    data,
+    onRemoveNhomHoc,
     onClose,
-    nhomHocReplaced,
-}: {
-    dsNhomHoc: DsNhomTo[];
-    tkbData?: TkbData;
-    onAddNhomHoc: (idToHoc: string) => void;
-    data?: DsNhomHocResp;
-    onClose: () => void;
-    nhomHocReplaced: string[];
-}) {
-    var dsMaHocPhan = Array.from(new Set(dsNhomHoc.map((e) => e.ma_mon)));
-    var cacheNhomHoc = useRef<{ [Key: string]: string[] }>({});
-    var itemRemove = useRef<string[]>([]);
-    var itemSele = useRef<string>('');
+}: ReplaceViewProps) {
+    const [replayItem, setReplayItem] = useState<DsNhomTo[]>([]);
+    const [dsMaHocPhan, setDsMaHocPhan] = useState<string[]>([]);
+
+    const toggleHp = (mhp: string) => {
+        console.log(mhp);
+        if (!tkbData) return;
+        if (tkbData?.ma_hoc_phans.includes(mhp)) onRemoveNhomHoc(mhp);
+        else onAddNhomHoc(mhp, false, true);
+    };
 
     useEffect(() => {
-        var tempCache: { [Key: string]: string[] } = {};
-        nhomHocReplaced.forEach((e) => {
-            var temp: string[] = [];
-            var nhom = data?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+        var tkbs: TkbTiet[] = [];
 
-            nhom?.tkb.forEach((jj) => {
-                var cs = jj.phong.substring(0, 1);
-                for (let index = jj.tbd; index <= jj.tkt; index++) {
-                    const hash = jj.thu + '-' + index + '-' + cs;
-                    temp.push(hash);
-                }
+        idNhomHocToReplace.forEach((e) => {
+            var nhomHoc = dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+            nhomHoc?.tkb.forEach((jj) => {
+                tkbs.push(jj);
             });
-
-            tempCache[e] = temp;
         });
 
-        cacheNhomHoc.current = tempCache;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        var listAllNhomHocs: DsNhomTo[] =
+            dsNhomHoc?.ds_nhom_to.filter((jjj) => tkbData?.ma_hoc_phans.includes(jjj.ma_mon)) || [];
 
-    // !!!!this work do touch !!!!!!!!!
-    const onAddNhomHocHandler = (idNhomTo: string) => {
-        // TODO:
+        var dsNhomHoc_ = timNhomHocTuongTu(tkbs, listAllNhomHocs);
 
-        // xóa cái được chọn ra khỏi id_to_hocs
-        // thêm các item trong itemRemove vào id_to_hocs
-
-        // kiểm tra xem chùng với tiết nào
-        // thêm vào itemRemove rồi xóa khỏi ds id_to_hocs
-        // add mới vòa id_to_hocs
-
-        // TODO: nếu mà không chùng tiết là lại chùng môn học thì xao
-
-        if (itemSele.current) {
-            onAddNhomHoc(itemSele.current);
-        }
-
-        itemRemove.current.forEach((e) => {
-            if (e === idNhomTo) {
-                return;
-            }
-            onAddNhomHoc(e);
-        });
-
-        itemRemove.current = [];
-
-        var nhom = data?.ds_nhom_to.find((e) => e.id_to_hoc === idNhomTo);
-
-        if (nhom) {
-            var temp: string[] = [];
-            nhom.tkb.forEach((jj) => {
-                var cs = jj.phong.substring(0, 1);
-                for (let index = jj.tbd; index <= jj.tkt; index++) {
-                    const hash = jj.thu + '-' + index + '-' + cs;
-                    temp.push(hash);
-                }
-            });
-
-            if (tkbData?.ma_hoc_phans.includes(nhom.ma_mon)) {
-                var a = tkbData.id_to_hocs.find(
-                    (e) => data?.ds_nhom_to.find((j) => j.id_to_hoc === e)?.ma_mon == nhom?.ma_mon,
-                );
-                if (a) itemRemove.current.push(a);
-            }
-
-            Object.keys(cacheNhomHoc.current).forEach((e) => {
-                if (idNhomTo === e) {
-                    if (!itemRemove.current.includes(e)) itemRemove.current.push(e);
-                    return;
-                }
-                var tkbs = cacheNhomHoc.current[e];
-
-                var biTrung = false;
-
-                tkbs.forEach((jj) => {
-                    if (temp.includes(jj)) {
-                        biTrung = true;
-                    }
-                });
-
-                if (biTrung) {
-                    if (!itemRemove.current.includes(e)) itemRemove.current.push(e);
-                    onAddNhomHoc(e);
-                }
-            });
-
-            if (idNhomTo !== itemSele.current) onAddNhomHoc(idNhomTo);
-            itemSele.current = idNhomTo;
-
-            console.log(itemSele.current, itemRemove.current);
-        }
-    };
+        // console.log(dsNhomHoc_);
+        setReplayItem(dsNhomHoc_);
+        setDsMaHocPhan(Array.from(new Set(dsNhomHoc_.map((e) => e.ma_mon))));
+    }, [idNhomHocToReplace]);
 
     return (
         <div className={cx('side-bar-wrapper')}>
@@ -262,38 +257,21 @@ export function ReplaceView({
                 <FontAwesomeIcon
                     icon={faXmark}
                     onClick={() => {
-                        if (itemSele.current) {
-                            onAddNhomHoc(itemSele.current);
-                        }
-                        itemRemove.current.forEach((e) => {
-                            if (!tkbData?.id_to_hocs.includes(e)) onAddNhomHoc(e);
-                        });
                         onClose();
                     }}
                 />
             </div>
-
-            <div className={cx('content', 'footer')}>
+            <div className={cx('content')}>
                 {dsMaHocPhan.map((e, i) => (
                     <Temp
                         key={i}
-                        data={data}
+                        data={dsNhomHoc}
                         tkbData={tkbData}
                         maMonHoc={e}
-                        dsNhomHoc={dsNhomHoc}
-                        onAddNhomHoc={onAddNhomHocHandler}
+                        dsNhomHoc={replayItem}
+                        onAddNhomHoc={toggleHp}
                     />
                 ))}
-            </div>
-
-            <div className={cx('footer-content')}>
-                <ButtonWithLoading
-                    onClick={() => {
-                        onClose();
-                    }}
-                >
-                    Lưu
-                </ButtonWithLoading>
             </div>
         </div>
     );

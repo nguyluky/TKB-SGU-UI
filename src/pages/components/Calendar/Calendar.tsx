@@ -25,7 +25,7 @@ interface CustomEvent extends MouseEvent {
 interface Props {
     data?: DsNhomTo[];
     idToHocs?: string[];
-    onDeleteMHP: (idToHoc: string) => void;
+    onDeleteNhomHoc: (idToHoc: string) => void;
     onTimMonHocTuTu: (idToHocs: string[]) => void;
 }
 
@@ -40,7 +40,7 @@ interface TietDisplay {
     nodeRef: RefObject<HTMLDivElement>;
 }
 
-function Calendar({ data, idToHocs, onDeleteMHP, onTimMonHocTuTu }: Props) {
+function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const bodyRef = useRef<HTMLDivElement>(null!);
     const contextRef = useRef<HTMLDivElement>(null!);
@@ -71,7 +71,7 @@ function Calendar({ data, idToHocs, onDeleteMHP, onTimMonHocTuTu }: Props) {
         setSelected([]);
         setContextIsOpen(false);
         selected.forEach((e) => {
-            onDeleteMHP(e);
+            onDeleteNhomHoc(e);
         });
     };
 
@@ -83,8 +83,6 @@ function Calendar({ data, idToHocs, onDeleteMHP, onTimMonHocTuTu }: Props) {
                 if (e.nodeRef.current?.contains(event.target as HTMLElement))
                     isClickOutSide = false;
             });
-
-            console.log(isClickOutSide);
 
             if (isClickOutSide) {
                 setSelected([]);

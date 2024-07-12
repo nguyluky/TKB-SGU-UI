@@ -31,13 +31,20 @@
             height: var(--header-height);
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 0 5px;
             border-bottom: 1px solid var(--content-color);
 
             svg {
                 color: var(--primary-color-1);
                 cursor: pointer;
+            }
+
+            svg + svg {
+                margin-left: 10px;
+            }
+
+            svg.mini {
+                margin-left: auto;
             }
         }
         .content {
