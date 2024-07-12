@@ -1,26 +1,27 @@
 import { faAngleDown, faAngleUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DsNhomHocResp, TkbData } from '../../Service';
 import { cx } from './Tkb';
 
-export function HocPhan({
-    data,
-    tkb,
-    maHocPhan,
-    onAddNhomHoc,
-    onRemoveHp,
-}: {
+interface HocPhanProps {
     data?: DsNhomHocResp;
     tkb?: TkbData;
     maHocPhan: string;
+    mini: number;
     onAddNhomHoc: (idToHoc: string) => void;
     onRemoveHp: (maHocPhan: string) => void;
-}) {
+}
+
+export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }: HocPhanProps) {
     var nhomHoc = data?.ds_nhom_to.filter((j) => j.ma_mon === maHocPhan);
     const [show, setShow] = useState(true);
     const [closeShow, setCloseShow] = useState(false);
     const setTimeOutId = useRef<NodeJS.Timeout>();
+
+    useEffect(() => {
+        setShow(false);
+    }, [mini]);
 
     return (
         <div className={cx('hocphan')}>

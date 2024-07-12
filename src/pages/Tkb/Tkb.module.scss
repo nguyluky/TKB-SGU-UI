@@ -31,7 +31,6 @@
             height: var(--header-height);
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 0 5px;
             border-bottom: 1px solid var(--content-color);
 
@@ -39,10 +38,35 @@
                 color: var(--primary-color-1);
                 cursor: pointer;
             }
+
+            svg + svg {
+                margin-left: 10px;
+            }
+
+            svg.mini {
+                margin-left: auto;
+            }
         }
         .content {
             height: calc(100% - var(--header-height));
             overflow-y: scroll;
+        }
+
+        .content.footer {
+            height: calc(100% - var(--header-height) - 40px);
+            overflow-y: scroll;
+        }
+
+        .footer-content {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            button {
+                padding: 2px 7px;
+                margin-right: 10px;
+            }
         }
 
         .content::-webkit-scrollbar {

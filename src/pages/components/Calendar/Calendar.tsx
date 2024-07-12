@@ -25,6 +25,8 @@ interface CustomEvent extends MouseEvent {
 interface Props {
     data?: DsNhomTo[];
     idToHocs?: string[];
+    onDeleteNhomHoc: (idToHoc: string) => void;
+    onTimMonHocTuTu: (idToHocs: string[]) => void;
 }
 
 interface TietDisplay {
@@ -38,7 +40,7 @@ interface TietDisplay {
     nodeRef: RefObject<HTMLDivElement>;
 }
 
-function Calendar({ data, idToHocs }: Props) {
+function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const bodyRef = useRef<HTMLDivElement>(null!);
     const contextRef = useRef<HTMLDivElement>(null!);
@@ -54,9 +56,7 @@ function Calendar({ data, idToHocs }: Props) {
     const [contextIsOpen, setContextIsOpen] = useState<boolean>(false);
 
     const handleMouseDown = (event: CustomEvent) => {
-        setSelected([]);
         console.log(event.thu, event.tiet);
-        setMouseDown(true);
     };
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -65,8 +65,30 @@ function Calendar({ data, idToHocs }: Props) {
         // console.log(event.clientX, event.clientY, event.buttons);
     };
 
+    const onDeleteHandel = (event: MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        // onDeleteMHP
+        setSelected([]);
+        setContextIsOpen(false);
+        selected.forEach((e) => {
+            onDeleteNhomHoc(e);
+        });
+    };
+
     useEffect(() => {
         const onClickHanled = (event: globalThis.MouseEvent) => {
+            var isClickOutSide = true;
+
+            tietDisplay.forEach((e) => {
+                if (e.nodeRef.current?.contains(event.target as HTMLElement))
+                    isClickOutSide = false;
+            });
+
+            if (isClickOutSide) {
+                setSelected([]);
+                setMouseDown(true);
+            }
+
             if (!(event.target as HTMLDivElement).contains(contextRef.current)) {
                 if (lastSelecion.current)
                     setSelected((ses) => {
@@ -79,12 +101,21 @@ function Calendar({ data, idToHocs }: Props) {
             }
         };
 
+        const onKeyDownHandled = (event: KeyboardEvent) => {
+            if (event.keyCode === 65 && event.ctrlKey) {
+                setSelected(idToHocs || []);
+            }
+        };
+
+        document.addEventListener('keydown', onKeyDownHandled);
         document.addEventListener('click', onClickHanled);
 
         return () => {
             document.removeEventListener('click', onClickHanled);
+            document.removeEventListener('keydown', onKeyDownHandled);
         };
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tietDisplay]);
 
     useEffect(() => {
         var temp: TietDisplay[] = [];
@@ -247,10 +278,18 @@ function Calendar({ data, idToHocs }: Props) {
                             left: contextX + 'px',
                         }}
                     >
-                        <p>Auto Fill</p>
-                        <p>Replace</p>
-                        <p>Delete</p>
-                        <p>Make to templa</p>
+                        <p onClick={(e) => alert('chưa làm')}>Auto Fill</p>
+                        <p
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setContextIsOpen(false);
+                                onTimMonHocTuTu(selected);
+                            }}
+                        >
+                            Replace
+                        </p>
+                        <p onClick={onDeleteHandel}>Delete</p>
+                        <p onClick={(e) => alert('chưa làm')}>Make to templa</p>
                     </div>
                 </div>
             </div>

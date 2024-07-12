@@ -1,206 +1,98 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import Popup from 'reactjs-popup';
 
-import { ApiResponse, DsNhomHocResp, TkbData, TkbTiet } from '../../Service';
+import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { NotifyMaster } from '../../components/NotifyPopup';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import { ApiResponse, DsNhomHocResp, DsNhomTo, TkbData, TkbTiet } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
-import Error from '../Error';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
-import { AddHp } from './AddHp';
+import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
-import { HocPhan } from './HocPhan';
 import { ReName } from './ReName';
+import { ReplaceView, SelestionView } from './SelestionView';
 import style from './Tkb.module.scss';
 
 export const cx = classNames.bind(style);
 
-var cacheDsNhomHoc: DsNhomHocResp;
+interface eventTkb {
+    type:
+        | 'addHocPhan'
+        | 'addNhomHoc'
+        | 'removeHocPhan'
+        | 'removeNhomHoc'
+        | 'switchNhomHoc'
+        | 'replayNhomHoc';
+    valueId: string;
+}
 
-function addSelectedPeriod(tkbs: TkbTiet[], newSlot: Set<string>) {
+function tkbToKey(tkbs: TkbTiet[]): string {
+    var temp: string[] = [];
     tkbs.forEach((e) => {
         var thu = e.thu;
         var cs = e.phong.substring(0, 1);
 
         for (let index = e.tbd; index <= e.tkt; index++) {
-            const hash = thu + '-' + index + '-' + cs;
-            newSlot.add(hash);
+            const hash = `${thu}${index}|${cs}`;
+            temp.push(hash);
         }
     });
+    return temp.join('-');
 }
 
-function removeSelectedPeriod(tkbs: TkbTiet[], slotEdit: Set<string>) {
-    tkbs.forEach((e) => {
-        var thu = e.thu;
-        var cs = e.phong.substring(0, 1);
-
-        for (let index = e.tbd; index <= e.tkt; index++) {
-            const hash = thu + '-' + index + '-' + cs;
-            slotEdit.delete(hash);
-        }
-    });
-}
-
-function kTCoBiChungTiet(tkbs: TkbTiet[], slotEdit: Set<string>, ignore: TkbTiet[]) {
-    // tại ignore list
-    var ignoreList: string[] = [];
-    ignore.forEach((e) => {
-        var thu = e.thu;
-        var cs = e.phong.substring(0, 1);
-
-        for (let index = e.tbd; index <= e.tkt; index++) {
-            const hash = thu + '-' + index + '-' + cs;
-            ignoreList.push(hash);
-        }
-    });
-
-    return tkbs.find((e) => {
-        var thu = e.thu;
-        var cs = e.phong.substring(0, 1);
-
-        for (let index = e.tbd; index <= e.tkt; index++) {
-            const hash = thu + '-' + index + '-' + cs;
-            if (slotEdit.has(hash) && !ignoreList.includes(hash)) return e;
-        }
-        return false;
-    });
-}
-
-// kiểm tra xem có bị khác cơ sở hay không
-function kTKhacCS(tkbs: TkbTiet[], slotEdit: Set<string>, ignore: TkbTiet[]) {
-    // TODO: thêm phần bỏ quan kiểm tra các môn cùng mã học phần
-    var thuTietCs = Array.from(slotEdit).map((e) => e.split('-'));
-
-    return tkbs.find((e) => {
-        var thu = e.thu;
-        var cs = e.phong.substring(0, 1);
-
-        if (e.tbd < 6) {
-            return !!thuTietCs.find((j) => j[0] === thu && +j[1] < 6 && j[2] !== cs);
-        } else {
-            return !!thuTietCs.find((j) => j[0] === thu && +j[1] >= 6 && j[2] !== cs);
-        }
-    });
-}
-
-function Tkb() {
+export default function Tkb() {
+    // context
     const setHeaderPar = useContext(headerContent);
+    const [globalState] = useContext(globalContent);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [globalState, setGlobalState] = useContext(globalContent);
-
-    const [tkbData, setTkbData] = useState<TkbData | undefined>();
-    const [dsNhomAndMon, setDsNhomAndMon] = useState<DsNhomHocResp | undefined>();
+    // state
+    const [tkbData, setTkbData] = useState<TkbData>();
+    const [dsNhomHoc, setDsNhomHoc] = useState<DsNhomHocResp>();
     const [soTC, setSoTC] = useState<number>(0);
-    const [isSaving, setIsSaving] = useState<boolean>(false);
-    const [canSave, setCanSave] = useState<boolean>(false);
-    const [isLoading, setLoading] = useState(true);
-    const [errMsg, setErrMsg] = useState('');
-    // NOTE: vá lỗi
-    const tkbDateRef = useRef<TkbData>();
+    const [iconSaveing, setIconSaveing] = useState<'saved' | 'notsave' | 'saving'>('saved');
+    const [errMsg, setErrMsg] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [sideBar, setSideBar] = useState<string>('');
+    const [replayIdToHoc, setReplayIdToHoc] = useState<string[]>([]);
+    // ref
+    const cacheMhpIdToHoc = useRef<{ [Key: string]: string }>({});
+    const cacheTietNhom = useRef<{ [Key: string]: DsNhomTo }>({});
+    const tkbDataRef = useRef<TkbData>();
+    const idAutoSaveTimeOut = useRef<NodeJS.Timeout>();
+    const timeLine = useRef<eventTkb[]>([]);
 
-    const cache = useRef<{ [key: string]: string }>({});
-    const idTimeOut = useRef<NodeJS.Timeout | undefined>(undefined);
-    const cacTietHocDaChon = useRef<Set<string>>(new Set());
-
-    const [searchParams] = useSearchParams();
+    // useParams
     const { tkbid } = useParams();
+    const [searchParams] = useSearchParams();
 
-    // thêm hôm học
-    const onAddHphandler = (maHocPhan: string) => {
-        if (!tkbData) return;
-        if (tkbData.ma_hoc_phans.includes(maHocPhan)) {
-            var index = tkbData.ma_hoc_phans.indexOf(maHocPhan);
-            tkbData.ma_hoc_phans.splice(index, 1);
-            if (cache.current[maHocPhan]) {
-                onAddNhomHocHandler(cache.current[maHocPhan]);
-            }
-        } else tkbData.ma_hoc_phans.push(maHocPhan);
+    // funstion
+    const getTkbData = async () => {
+        if (!tkbid) {
+            var resp: ApiResponse<TkbData> = {
+                code: 500,
+                msg: 'không tìm thấy Tkb',
+                success: false,
+            };
 
-        setTkbData({ ...tkbData });
+            return resp;
+        }
+
+        if (searchParams.get('isclient')) {
+            return await globalState.client.localApi.getTkb(tkbid);
+        }
+        return await globalState.client.serverApi.getTkb(tkbid);
     };
 
-    // chọn nhóm học
-    const onAddNhomHocHandler = (idToHoc: string) => {
-        const makeNewTkb = () => {
-            if (!tkbData) return null;
-
-            // lấy nhóm học và mã môn học
-            var nhomhoc = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === idToHoc);
-            var ma_mon = nhomhoc?.ma_mon;
-            if (!ma_mon || !nhomhoc) return null;
-
-            // nếu môn đó đã chọn nhóm học thì xoá nhóm đó
-            var preIdToHoc = cache.current[ma_mon];
-            var preNhomHoc = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === preIdToHoc);
-            var preTkb = preNhomHoc?.tkb || [];
-
-            // kiểm tra xem môn chọn có bị chùng tiết hay không
-            var overlap = kTCoBiChungTiet(nhomhoc.tkb, cacTietHocDaChon.current, preTkb);
-            if (overlap) {
-                console.log(overlap);
-                console.info('Tiết bị chùng', overlap);
-                NotifyMaster.error('Trùng thứ ' + overlap.thu + ' tiết ' + overlap.tbd);
-                return null;
-            }
-
-            // kiểm tra xem có khác cơ sử hay không
-            // NOTE: không thể kiểm tra xem đúng hay sai
-            // NOTE: Tại được
-            var tietCacCoSo = kTKhacCS(nhomhoc.tkb, cacTietHocDaChon.current, preTkb);
-            if (tietCacCoSo) {
-                NotifyMaster.error(
-                    'Khác cơ sở tiêt ' +
-                        tietCacCoSo.gv +
-                        '. Thứ ' +
-                        tietCacCoSo.thu +
-                        '. Tiết ' +
-                        tietCacCoSo.tbd,
-                );
-                return null;
-            }
-
-            if (preNhomHoc) removeSelectedPeriod(preNhomHoc.tkb, cacTietHocDaChon.current);
-            var index = tkbData.id_to_hocs.indexOf(cache.current[ma_mon]);
-            if (index >= 0) {
-                tkbData.id_to_hocs.splice(index, 1);
-                cache.current[ma_mon] = '';
-            }
-
-            if (preIdToHoc === idToHoc) return { ...tkbData };
-
-            // cập nhật slot
-            addSelectedPeriod(nhomhoc.tkb, cacTietHocDaChon.current);
-
-            // thêm cái mới vào
-            cache.current[ma_mon] = idToHoc;
-            tkbData.id_to_hocs.push(idToHoc);
-            return { ...tkbData };
-        };
-
-        var newData = makeNewTkb();
-
-        if (newData) setTkbData(newData);
-    };
-
-    const onRenameHandler = (s: string) => {
-        setTkbData((e) => {
-            if (!e) return e;
-            e.name = s;
-            return { ...e };
-        });
+    const getDsNhomHoc = async () => {
+        return await globalState.client.serverApi.getDsNhomHoc();
     };
 
     const saveAsFile = () => {
         var a = tkbData?.id_to_hocs.map((e) => {
-            var nhom = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+            var nhom = dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
 
             return {
                 mhp: nhom?.ma_mon,
@@ -219,15 +111,144 @@ function Tkb() {
         textSaveAsFile(JSON.stringify(textFile));
     };
 
+    const onRenameHandler = (s: string) => {
+        setTkbData((e) => {
+            if (!e) return e;
+            e.name = s;
+            return { ...e };
+        });
+    };
+
+    const onAddHphandler = useCallback(
+        (mhp: string, isTimeLine?: boolean) => {
+            if (tkbData && !tkbData.ma_hoc_phans.includes(mhp)) {
+                tkbData.ma_hoc_phans.push(mhp);
+                setTkbData({ ...tkbData });
+                if (!isTimeLine) timeLine.current.push({ type: 'addHocPhan', valueId: mhp });
+            }
+        },
+        [tkbData],
+    );
+
+    const onRemoveHphandeler = useCallback(
+        (mhp: string, isTimeLine?: boolean) => {
+            if (tkbData && tkbData?.ma_hoc_phans.includes(mhp)) {
+                var index = tkbData.ma_hoc_phans.indexOf(mhp);
+                tkbData.ma_hoc_phans.splice(index, 1);
+                setTkbData({ ...tkbData });
+                if (!isTimeLine) timeLine.current.push({ type: 'removeHocPhan', valueId: mhp });
+            } else {
+                console.log('hp không tồn tại trong ds hoặc tkb chưa tải xong');
+            }
+        },
+        [tkbData],
+    );
+
+    const onRemoveNhomHocHandler = useCallback(
+        (idToHoc: string, isTimeLine?: boolean) => {
+            var nhom = dsNhomHoc?.ds_nhom_to.find((e) => e.id_to_hoc === idToHoc);
+            if (tkbData && nhom && tkbData.id_to_hocs.includes(idToHoc)) {
+                var index = tkbData.id_to_hocs.indexOf(idToHoc);
+                tkbData.id_to_hocs.splice(index, 1);
+                setTkbData({ ...tkbData });
+                if (!isTimeLine) timeLine.current.push({ type: 'removeNhomHoc', valueId: idToHoc });
+
+                delete cacheMhpIdToHoc.current[nhom.ma_mon];
+                delete cacheTietNhom.current[tkbToKey(nhom.tkb)];
+            }
+        },
+        [dsNhomHoc?.ds_nhom_to, tkbData],
+    );
+
+    const onAddNhomHocHandler = useCallback(
+        (idToHoc: string, isTimeLine?: boolean, replay?: boolean) => {
+            if (!tkbData) return;
+            var nhom = dsNhomHoc?.ds_nhom_to.find((e) => e.id_to_hoc === idToHoc);
+
+            if (!nhom) {
+                console.error('không có nhóm học id: ' + idToHoc);
+                NotifyMaster.error('không có nhóm học id: ' + idToHoc);
+                return;
+            }
+
+            var maMon = nhom.ma_mon;
+
+            var tiet = tkbToKey(nhom.tkb).split('-');
+
+            var overlap = Object.keys(cacheTietNhom.current).filter((e) => {
+                if (cacheTietNhom.current[e].ma_mon === maMon) return false;
+                var i = false;
+
+                tiet.forEach((j) => {
+                    if (e.includes(j)) i = true;
+                });
+
+                return i;
+            });
+
+            var ov = overlap.map((e) => cacheTietNhom.current[e]);
+            if (replay) {
+                var tietString: string[] = [];
+                tietString.push(idToHoc);
+
+                ov.forEach((e) => {
+                    tietString.push(e.id_to_hoc);
+                    onRemoveNhomHocHandler(e.id_to_hoc, true);
+                });
+
+                if (cacheMhpIdToHoc.current[maMon]) {
+                    tietString.push(cacheMhpIdToHoc.current[maMon]);
+                    onRemoveNhomHocHandler(cacheMhpIdToHoc.current[maMon], true);
+                }
+
+                timeLine.current.push({ type: 'replayNhomHoc', valueId: tietString.join('|') });
+                cacheMhpIdToHoc.current[maMon] = idToHoc;
+                cacheTietNhom.current[tkbToKey(nhom.tkb)] = nhom;
+                tkbData.id_to_hocs.push(idToHoc);
+                setTkbData({ ...tkbData });
+            } else {
+                if (ov.length) {
+                    console.log(ov);
+                    // ông xem nên để cái thông báo lỗi như thế nào cho hợi lý
+
+                    NotifyMaster.error('Trùng tiết');
+                    return;
+                }
+
+                if (cacheMhpIdToHoc.current[maMon]) {
+                    if (!isTimeLine)
+                        timeLine.current.push({
+                            type: 'switchNhomHoc',
+                            valueId: cacheMhpIdToHoc.current[maMon] + '|' + idToHoc,
+                        });
+                    onRemoveNhomHocHandler(cacheMhpIdToHoc.current[maMon], true);
+                } else {
+                    if (!isTimeLine)
+                        timeLine.current.push({ type: 'addNhomHoc', valueId: idToHoc });
+                }
+
+                cacheMhpIdToHoc.current[maMon] = idToHoc;
+                cacheTietNhom.current[tkbToKey(nhom.tkb)] = nhom;
+                tkbData.id_to_hocs.push(idToHoc);
+                setTkbData({ ...tkbData });
+            }
+        },
+        [dsNhomHoc?.ds_nhom_to, onRemoveNhomHocHandler, tkbData],
+    );
+
+    const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
+        setSideBar('tutu');
+        setReplayIdToHoc(idToHocs);
+    };
+
     const doUpdate = () => {
         // console.log(tkbDateRef.current);
         console.log('dosave');
-        if (!tkbDateRef.current) return;
-        if (tkbDateRef.current?.isClient) {
-            setIsSaving(true);
-            setIsSaving(true);
-            globalState.client.localApi.updateTkb(tkbDateRef.current).then((apiresp) => {
-                setIsSaving(false);
+        if (!tkbDataRef.current) return;
+        if (tkbDataRef.current?.isClient) {
+            setIconSaveing('saving');
+            globalState.client.localApi.updateTkb(tkbDataRef.current).then((apiresp) => {
+                setIconSaveing('saved');
                 if (apiresp.success) {
                     console.log('lưu thành công');
                 } else {
@@ -235,9 +256,9 @@ function Tkb() {
                 }
             });
         } else if (globalState.client.islogin() && tkbid) {
-            setIsSaving(true);
-            globalState.client.serverApi.updateTkb(tkbDateRef.current).then((apiresp) => {
-                setIsSaving(false);
+            setIconSaveing('saving');
+            globalState.client.serverApi.updateTkb(tkbDataRef.current).then((apiresp) => {
+                setIconSaveing('saved');
                 if (apiresp.success) {
                     console.log('lưu thành công');
                 } else {
@@ -247,194 +268,168 @@ function Tkb() {
         }
     };
 
-    // NOTE: Lấy dữ liệu
-    useLayoutEffect(() => {
-        const getTkbDataClient = async () => {
-            if (!tkbid) {
-                const temp: ApiResponse<TkbData> = {
-                    code: 400,
-                    msg: 'thời khóa biểu không tồn tại',
-                    success: false,
-                };
-                return temp;
+    // event handle
+    useEffect(() => {
+        const check = (e: KeyboardEvent) => {
+            if (e.keyCode === 90 && e.ctrlKey) {
+                const event = timeLine.current.pop();
+
+                console.log(timeLine.current);
+                console.log(event);
+                if (!event) return;
+                switch (event.type) {
+                    case 'addHocPhan':
+                        onRemoveHphandeler(event.valueId, true);
+                        break;
+
+                    case 'addNhomHoc':
+                        onRemoveNhomHocHandler(event.valueId, true);
+                        break;
+
+                    case 'removeHocPhan':
+                        onAddHphandler(event.valueId, true);
+                        break;
+
+                    case 'removeNhomHoc':
+                        onAddNhomHocHandler(event.valueId, true);
+                        break;
+                    case 'switchNhomHoc':
+                        onAddNhomHocHandler(event.valueId.split('|')[0], true);
+                        break;
+
+                    case 'replayNhomHoc':
+                        var [a, ...b] = event.valueId.split('|');
+                        console.log(a, b);
+                        onRemoveNhomHocHandler(a, true);
+                        b.forEach((e) => {
+                            onAddNhomHocHandler(e, true);
+                        });
+                }
             }
-
-            const getTkb = globalState.client.localApi.getTkb(tkbid);
-            console.log(getTkb);
-            return await getTkb;
         };
 
-        const getTkbDataServer = async () => {
-            if (!tkbid) {
-                const temp: ApiResponse<TkbData> = {
-                    code: 400,
-                    msg: 'thời khóa biểu không tồn tại',
-                    success: false,
-                };
-                return temp;
-            }
+        document.addEventListener('keydown', check);
 
-            const getTkb = globalState.client.serverApi.getTkb(tkbid);
-
-            return await getTkb;
+        return () => {
+            document.removeEventListener('keydown', check);
         };
+    }, [onAddHphandler, onAddNhomHocHandler, onRemoveHphandeler, onRemoveNhomHocHandler]);
 
-        const getDsNhomHoc = async () => {
-            if (cacheDsNhomHoc) return cacheDsNhomHoc;
+    // getTkbData và dsNhomHoc
+    useEffect(() => {
+        Promise.all([getTkbData(), getDsNhomHoc()]).then(([tkbDataResp, dsNhomHocResp]) => {
+            console.log('getTkbRep', tkbDataResp);
+            console.log('getDsNhomHocRep', dsNhomHocResp);
 
-            const getData = globalState.client.serverApi.getDsNhomHoc();
-
-            cacheDsNhomHoc = await getData;
-
-            return cacheDsNhomHoc;
-        };
-
-        var getTkbData = searchParams.get('isclient') ? getTkbDataClient : getTkbDataServer;
-
-        // sử lý dữ liệu
-        Promise.all([getTkbData(), getDsNhomHoc()]).then((re) => {
-            console.log('getTkbRep', re[0]);
-            console.log('getDsNhomHocRep', re[1]);
-
-            const TkbDataResp = re[0];
-
-            // nếu người dùng không có quền vào tkb
-            if (!TkbDataResp.success || !TkbDataResp.data) {
-                setHeaderPar((e) => {
-                    e.left = <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>;
-                    return { ...e };
-                });
-
-                setErrMsg(TkbDataResp.msg);
-                setLoading(false);
+            setIsLoading(false);
+            if (tkbDataResp.success) {
+                setTkbData(tkbDataResp.data);
+            } else {
+                setErrMsg(tkbDataResp.msg);
                 return;
             }
 
-            var tkbDataRep = TkbDataResp.data;
-            if (!tkbDataRep.id_to_hocs) tkbDataRep.id_to_hocs = [];
-            if (!tkbDataRep.ma_hoc_phans) tkbDataRep.ma_hoc_phans = [];
-            if (!tkbDataRep.tkb_describe) tkbDataRep.tkb_describe = '';
-            tkbDataRep.created = new Date(tkbDataRep.created);
+            setDsNhomHoc(dsNhomHocResp);
+            tkbDataResp.data?.id_to_hocs.forEach((idToHoc) => {
+                var nhomHoc = dsNhomHocResp.ds_nhom_to.find((e) => e.id_to_hoc === idToHoc);
 
-            // setup cache and slot
-            var newCache: { [key: string]: string } = {};
-            var newSlot: Set<string> = cacTietHocDaChon.current;
-            tkbDataRep.id_to_hocs.forEach((e: string) => {
-                var nhom = re[1].ds_nhom_to.find((j) => j.id_to_hoc === e);
+                if (!nhomHoc) return;
 
-                if (!nhom) return;
+                cacheMhpIdToHoc.current[nhomHoc.ma_mon] = idToHoc;
+                var key = tkbToKey(nhomHoc.tkb);
+                cacheTietNhom.current[key] = nhomHoc;
 
-                // slot
-                addSelectedPeriod(nhom.tkb, newSlot);
-
-                // cache
-                newCache[nhom.ma_mon] = e;
+                console.log(cacheMhpIdToHoc, cacheTietNhom);
             });
-            cache.current = newCache;
-            cacTietHocDaChon.current = newSlot;
-
-            setTkbData(tkbDataRep);
-            setLoading(false);
-            setDsNhomAndMon(re[1]);
         });
 
         return () => {
             doUpdate();
-            if (idTimeOut.current) clearTimeout(idTimeOut.current);
         };
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tkbid, globalState.client]);
+    }, [tkbid]);
 
-    // update header
+    // updateHeader
     useEffect(() => {
-        if (isLoading) return;
-        if (!errMsg)
-            setHeaderPar((e) => {
-                e.left = <HeaderTool saveAsFile={saveAsFile} />;
-                e.right = <></>;
-                var tkbName = tkbData?.name || '';
-                e.center = (
-                    <ReName
-                        defaultName={tkbName}
-                        onChangeName={onRenameHandler}
-                        isSave={isSaving}
-                    />
-                );
-                return { ...e };
-            });
-
+        setHeaderPar((e) => {
+            e.left = <HeaderTool saveAsFile={saveAsFile} />;
+            e.right = <></>;
+            var tkbName = tkbData?.name || '';
+            e.center = (
+                <ReName defaultName={tkbName} onChangeName={onRenameHandler} isSave={iconSaveing} />
+            );
+            return { ...e };
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSaving, tkbData, isLoading]);
+    }, [tkbData?.name, iconSaveing]);
 
     // auto save
     useEffect(() => {
-        if (!canSave || isLoading) {
-            setCanSave(true);
-            return;
-        }
-        tkbDateRef.current = tkbData;
-
-        // console.log(tkbDateRef.current);
-
-        if (idTimeOut.current) {
-            clearTimeout(idTimeOut.current);
-            idTimeOut.current = undefined;
-        }
-
-        idTimeOut.current = setTimeout(doUpdate, 5000);
-
         var sCT = 0;
         tkbData?.id_to_hocs.forEach((e) => {
-            const nhom = dsNhomAndMon?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+            const nhom = dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
             if (nhom) sCT += nhom.so_tc;
         });
 
         setSoTC(sCT);
+
+        if (!tkbDataRef.current) {
+            tkbDataRef.current = tkbData;
+            return;
+        }
+        setIconSaveing('notsave');
+        tkbDataRef.current = tkbData;
+        if (idAutoSaveTimeOut.current) clearTimeout(idAutoSaveTimeOut.current);
+        idAutoSaveTimeOut.current = setTimeout(doUpdate, 5000);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [globalState.client, isLoading, tkbData]);
+    }, [tkbData]);
+
+    const sideBars: { [Key: string]: ReactNode } = {
+        tutu: (
+            <ReplaceView
+                tkbData={tkbData}
+                dsNhomHoc={dsNhomHoc}
+                onAddNhomHoc={onAddNhomHocHandler}
+                onRemoveNhomHoc={onRemoveNhomHocHandler}
+                idNhomHocToReplace={replayIdToHoc}
+                onClose={() => {
+                    setSideBar('');
+                }}
+            />
+        ),
+    };
+
+    // console.log(cacheMhpIdToHoc.current, cacheTietNhom.current);
 
     return (
         <Loader isLoading={isLoading}>
-            {!errMsg ? (
+            {errMsg ? (
+                <Error msg={errMsg} />
+            ) : (
                 <div className={cx('wrapper')}>
                     <div className={cx('side-bar')}>
-                        <div className={cx('side-bar-wrapper')}>
-                            <div className={cx('header')}>
-                                <p>Tín chỉ : {soTC} / 26</p>
-
-                                <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
-                                    <AddHp
-                                        data={dsNhomAndMon}
-                                        onAddHp={onAddHphandler}
-                                        maHocPhans={tkbData?.ma_hoc_phans}
-                                    />
-                                </Popup>
-                            </div>
-
-                            <div className={cx('content')}>
-                                {tkbData?.ma_hoc_phans.map((e) => (
-                                    <HocPhan
-                                        onRemoveHp={onAddHphandler}
-                                        data={dsNhomAndMon}
-                                        maHocPhan={e}
-                                        key={e}
-                                        onAddNhomHoc={onAddNhomHocHandler}
-                                        tkb={tkbData}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        {sideBars[sideBar] || (
+                            <SelestionView
+                                dsNhomHoc={dsNhomHoc}
+                                onAddHp={onAddHphandler}
+                                onRemoveHp={onRemoveHphandeler}
+                                onRemoveNhomHoc={onRemoveNhomHocHandler}
+                                onAddNhomHoc={onAddNhomHocHandler}
+                                tkbData={tkbData}
+                                soTC={soTC}
+                            />
+                        )}
                     </div>
                     <div className={cx('calendar-wrapper')}>
-                        <Calendar data={dsNhomAndMon?.ds_nhom_to} idToHocs={tkbData?.id_to_hocs} />
+                        <Calendar
+                            data={dsNhomHoc?.ds_nhom_to}
+                            idToHocs={tkbData?.id_to_hocs}
+                            onDeleteNhomHoc={onRemoveNhomHocHandler}
+                            onTimMonHocTuTu={timNhomHocTuongTuHandel}
+                        />
                     </div>
                 </div>
-            ) : (
-                <Error msg={errMsg} />
             )}
         </Loader>
     );
 }
-
-export default Tkb;

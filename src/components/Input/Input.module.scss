@@ -1,5 +1,7 @@
 .ct-input {
+    padding: 10px 0;
     position: relative;
+    display: block;
 
     .title {
         top: 50%;
@@ -9,10 +11,10 @@
         // transform: translateY(-100%);
         position: absolute;
         transition: all 0.2s ease;
+        text-wrap: nowrap;
     }
 
     .input-icon-wrapper {
-        margin: 10px 0;
         box-sizing: border-box;
         border-radius: var(--border-radius-g);
         border: 1px solid var(--content-color);
@@ -39,8 +41,8 @@
         flex: 1;
         font-size: 16px;
         margin-left: 5px;
-        background: transparent;
-        border: transparent;
+        background: transparent !important;
+        border: transparent !important;
         outline: none;
         padding: var(--margin-g);
     }

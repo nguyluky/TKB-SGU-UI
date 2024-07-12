@@ -1,10 +1,15 @@
-import { faCloud, faRotate } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import Popup from 'reactjs-popup';
-
+import SvgIcon from '../../assets/svg/index';
 import PopupModel from '../../components/PopupModel';
+
 import { cx } from './Tkb';
+
+const icons = {
+    saved: <SvgIcon.Cloud />,
+    notsave: <SvgIcon.CloudOff />,
+    saving: <SvgIcon.CloudUpload />,
+};
 
 export function ReName({
     defaultName,
@@ -13,7 +18,7 @@ export function ReName({
 }: {
     defaultName: string;
     onChangeName?: (s: string) => void;
-    isSave: boolean;
+    isSave: 'saved' | 'notsave' | 'saving';
 }) {
     const [lastName, setLastName] = useState(defaultName);
     const [show, setShow] = useState(false);
@@ -34,7 +39,7 @@ export function ReName({
                 {defaultName}
             </p>
 
-            <FontAwesomeIcon icon={isSave ? faRotate : faCloud} />
+            {icons[isSave]}
 
             <Popup open={show}>
                 <PopupModel

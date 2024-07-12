@@ -14,12 +14,11 @@ interface Prop
 }
 
 function Input(props: Prop) {
-    const { icon, title, type, ...prop } = props;
+    const { icon, title, type, className, ...prop } = props;
 
     const [showPass, setShowPass] = useState(false);
-
     return (
-        <label className={cx('ct-input')}>
+        <label className={cx('ct-input', className)}>
             <div className={cx('input-icon-wrapper')}>
                 <FontAwesomeIcon icon={icon} />
                 <input {...prop} type={showPass ? 'text' : type} required />

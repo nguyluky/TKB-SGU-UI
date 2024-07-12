@@ -1,11 +1,20 @@
-import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import { useEffect } from 'react';
+
+function Test2() {
+    useEffect(() => {
+        console.log('mouse');
+
+        return () => {
+            console.log('unmouse');
+        };
+    }, []);
+
+    return <div>test2</div>;
+}
 
 function Test() {
-    return (
-        <div>
-            <button onClick={() => notifyMaster.info('ok', 'ok', -1)}>info</button>
-        </div>
-    );
+    var a = <Test2 />;
+    return <div>{a}</div>;
 }
 
 export default Test;
