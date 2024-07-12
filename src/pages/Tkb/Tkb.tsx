@@ -209,6 +209,8 @@ export default function Tkb() {
             } else {
                 if (ov.length) {
                     console.log(ov);
+                    // ông xem nên để cái thông báo lỗi như thế nào cho hợi lý
+
                     NotifyMaster.error('Trùng tiết');
                     return;
                 }
