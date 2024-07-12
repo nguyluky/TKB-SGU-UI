@@ -147,7 +147,7 @@ function Tkb() {
             if (overlap) {
                 console.log(overlap);
                 console.info('Tiết bị chùng', overlap);
-                NotifyMaster.error('Chùng tiết thứ ' + overlap.thu + ' tiết ' + overlap.tbd);
+                NotifyMaster.error('Trùng thứ ' + overlap.thu + ' tiết ' + overlap.tbd);
                 return null;
             }
 

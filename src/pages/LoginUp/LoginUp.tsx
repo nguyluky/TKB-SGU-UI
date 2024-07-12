@@ -147,27 +147,24 @@ function SignUp() {
                 autoComplete="off"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                title="User Name :"
+                title="User Name"
                 type="text"
-                placeholder="Your name"
                 icon={faUser}
             />
             <Input
                 autoComplete="off"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                title="Email :"
+                title="Email"
                 type="text"
-                placeholder="Email"
                 icon={faAt}
             />
             <Input
                 autoComplete="off"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                title="Password :"
+                title="Password"
                 type="password"
-                placeholder="Password"
                 icon={faLock}
             />
             <ButtonWithLoading className={cx('btn')} isLoading={isLoading} onClick={signUpHandle}>

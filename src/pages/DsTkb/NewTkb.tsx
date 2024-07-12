@@ -73,7 +73,7 @@ export function NewTkb() {
             </div>
 
             <Popup open={isShow} onClose={() => setShow(false)}>
-                <PopupModel title="Tại mới" onCancel={() => setShow(false)} onOk={sendCreateTkbReq}>
+                <PopupModel title="Tạo mới" onCancel={() => setShow(false)} onOk={sendCreateTkbReq}>
                     <div className={cx('input')}>
                         <label form="inputname">Name</label>
                         <input
