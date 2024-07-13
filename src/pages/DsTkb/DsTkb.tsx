@@ -9,10 +9,12 @@ import classNames from 'classnames/bind';
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import Popup from 'reactjs-popup';
 import { TkbData } from '../../Service';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import PopupModel from '../../components/PopupModel';
 import { routerConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
@@ -50,6 +52,8 @@ function DsTkb() {
     const [isLoading, setLoading] = useState(true);
     const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
     const [isRow, setIsRow] = useState<boolean>(false);
+    const [pos, setPos] = useState('client');
+    const [uploadTkbShow, setUploadTkbShow] = useState<boolean>(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -117,7 +121,33 @@ function DsTkb() {
             if (!reader.result) return;
             try {
                 var fileTkb = Convert.toFileTkb(reader.result as string);
-                console.log(fileTkb);
+
+                (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
+                    .createNewTkb(
+                        fileTkb.name,
+                        '',
+                        null,
+                        false,
+                        fileTkb.data.map((e) => e.id_to_hoc),
+                        fileTkb.data.map((e) => e.mhp),
+                    )
+                    .then((e) => {
+                        setUploadTkbShow(false);
+                        if (!e.success) {
+                            notifyMaster.error(e.msg);
+                            return;
+                        }
+
+                        setDsTkb((j) => {
+                            if (e.data) return [e.data, ...j];
+                            return [...j];
+                        });
+                        notifyMaster.success('Upload tkb thành công');
+                    })
+                    .catch((e) => {
+                        setUploadTkbShow(false);
+                        notifyMaster.success('Không thể kết upload tkb không biết lý do');
+                    });
             } catch {
                 notifyMaster.error('Format file không hợp lệ');
             }
@@ -131,11 +161,7 @@ function DsTkb() {
             if (!globalState.client.islogin()) return [];
 
             var resp = await globalState.client.serverApi.getDsTkb();
-
-            return (resp.data || []).map((e) => {
-                e.created = new Date(e.created);
-                return e;
-            });
+            return resp.data || [];
         };
 
         var getLocalData = async () => {
@@ -197,24 +223,15 @@ function DsTkb() {
                                 className={cx('activity-btn')}
                                 icon={isRow ? faGrip : faList}
                                 onClick={() => setIsRow((e) => !e)}
-                            ></DropDownButton>
+                            />
+                            <DropDownButton className={cx('activity-btn')} icon={faArrowDownAZ} />
                             <DropDownButton
                                 className={cx('activity-btn')}
-                                icon={faArrowDownAZ}
-                            ></DropDownButton>
-
-                            <label className={cx('upload-file')}>
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    accept=".json"
-                                    onChange={onUpdateFileHandle}
-                                />
-                                <DropDownButton
-                                    className={cx('activity-btn')}
-                                    icon={faFolderOpen}
-                                ></DropDownButton>
-                            </label>
+                                icon={faFolderOpen}
+                                onClick={() => {
+                                    setUploadTkbShow(true);
+                                }}
+                            />
                         </div>
                     </header>
                     <div className={cx('content')}>
@@ -234,6 +251,33 @@ function DsTkb() {
                             </>
                         </Loader>
                     </div>
+
+                    <Popup open={uploadTkbShow}>
+                        <PopupModel
+                            title="Upload tkb"
+                            onCancel={() => {
+                                setUploadTkbShow(false);
+                            }}
+                            onOk={onUpdateFileHandle}
+                        >
+                            <div className={cx('input', 'upload-file')}>
+                                <label form="inputname">Name</label>
+                                <input type="file" ref={fileInputRef} accept=".json" />
+                            </div>
+                            <div className={cx('input')}>
+                                <label>Vị trí lưu</label>
+                                <select
+                                    name="pos"
+                                    id="pos"
+                                    value={pos}
+                                    onChange={(e) => setPos(e.target.value)}
+                                >
+                                    <option value="client">Client</option>
+                                    <option value="server">Server</option>
+                                </select>
+                            </div>
+                        </PopupModel>
+                    </Popup>
                 </div>
             </div>
         </div>
