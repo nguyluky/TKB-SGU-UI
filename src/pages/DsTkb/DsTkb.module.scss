@@ -3,6 +3,18 @@
     --column-count: 5;
     --column-size: 220px;
     --tkb-header-height: 40px;
+
+    @media screen and (max-width: 1100px) {
+        --column-count: 4;
+    }
+
+    @media screen and (max-width: 880px) {
+        --column-count: 3;
+    }
+
+    @media screen and (max-width: 660px) {
+        --column-count: 2;
+    }
 }
 
 .list-tkb,

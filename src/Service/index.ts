@@ -191,7 +191,7 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
     }
 
     async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
-        var ev = await updateRecord(tkbData);
+        await updateRecord(tkbData);
 
         return {
             code: 200,
@@ -201,7 +201,7 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
     }
 
     async deleteTkb(tkbId: string): Promise<ApiResponse<null>> {
-        var ev = await deleteRecord(tkbId);
+        await deleteRecord(tkbId);
 
         return {
             code: 200,

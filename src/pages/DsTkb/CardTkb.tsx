@@ -85,6 +85,7 @@ export function CardTkb({
                     </PopupModel>
                 </Popup>
 
+                {/* Popup delete */}
                 <Popup open={deletePopup} onClose={() => setDeletePopup(false)}>
                     <PopupModel
                         title="Delete Thời Khóa Biểu"
@@ -102,9 +103,22 @@ export function CardTkb({
                             <FontAwesomeIcon icon={faEllipsisVertical} />
                         </div>
                     }
+                    position={'right bottom'}
                 >
                     <div className={cx('content-menu')}>
-                        <span className={cx('item')}>Mở ở thẻ mới</span>
+                        <span
+                            className={cx('item')}
+                            onClick={() => {
+                                window.open(
+                                    window.location.origin +
+                                        '/tkbs/' +
+                                        data.id +
+                                        (data.isClient ? '?isclient=true' : ''),
+                                );
+                            }}
+                        >
+                            Mở ở thẻ mới
+                        </span>
                         <span
                             className={cx('item')}
                             onClick={() => {

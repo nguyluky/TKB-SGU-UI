@@ -135,6 +135,8 @@ export default function Tkb() {
             if (tkbData && tkbData?.ma_hoc_phans.includes(mhp)) {
                 var index = tkbData.ma_hoc_phans.indexOf(mhp);
                 tkbData.ma_hoc_phans.splice(index, 1);
+                if (cacheMhpIdToHoc.current[mhp])
+                    onRemoveNhomHocHandler(cacheMhpIdToHoc.current[mhp]);
                 setTkbData({ ...tkbData });
                 if (!isTimeLine) timeLine.current.push({ type: 'removeHocPhan', valueId: mhp });
             } else {
