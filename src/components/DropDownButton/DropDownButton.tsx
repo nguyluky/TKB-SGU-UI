@@ -2,7 +2,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import classNamesBind from 'classnames/bind';
-import { MouseEvent, MouseEventHandler, ReactElement, useEffect, useRef, useState } from 'react';
+import { MouseEvent, MouseEventHandler, ReactNode, useEffect, useRef, useState } from 'react';
 
 import style from './DropDownButton.module.scss';
 
@@ -11,7 +11,7 @@ const cx = classNamesBind.bind(style);
 interface ActivityItemProps {
     className?: string;
     icon: IconProp;
-    children?: ReactElement;
+    children?: ReactNode | ReactNode[];
     onClick?: MouseEventHandler;
 }
 

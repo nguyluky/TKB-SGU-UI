@@ -1,23 +1,40 @@
 import {
     faArrowDownAZ,
     faEllipsisVertical,
-    faFolder,
+    faFolderOpen,
     faGrip,
+    faList,
 } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
-import { useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { TkbData } from '../../Service';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import { routerConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import { CardTkb } from './CardTkb';
 import style from './DsTkb.module.scss';
+import { Convert } from './FileTkb';
 import { NewTkb } from './NewTkb';
 
 export const cx = classNames.bind(style);
+
+export interface FileTkb {
+    name: string;
+    created: string;
+    data: Datum[];
+}
+
+export interface Datum {
+    mhp: string;
+    ten: string;
+    nhom: string;
+    id_to_hoc: string;
+}
 
 export interface DsTkbRep {
     code: number;
@@ -31,8 +48,10 @@ function DsTkb() {
     const [globalState] = useContext(globalContent);
 
     const [isLoading, setLoading] = useState(true);
-
     const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
+    const [isRow, setIsRow] = useState<boolean>(false);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const onDeletehandle = (tkbData: TkbData) => {
         if (!tkbData.isClient) {
@@ -85,6 +104,26 @@ function DsTkb() {
         }
     };
 
+    const onUpdateFileHandle = (e: ChangeEvent<HTMLInputElement>) => {
+        if (!fileInputRef.current || !fileInputRef.current.files) return;
+        var file = fileInputRef.current.files[0];
+
+        if (!file) return;
+        const reader = new FileReader();
+
+        reader.readAsText(file, 'utf-8');
+
+        reader.onload = () => {
+            if (!reader.result) return;
+            try {
+                var fileTkb = Convert.toFileTkb(reader.result as string);
+                console.log(fileTkb);
+            } catch {
+                notifyMaster.error('Format file không hợp lệ');
+            }
+        };
+    };
+
     useEffect(() => {
         setDsTkb([]);
         setLoading(true);
@@ -111,7 +150,11 @@ function DsTkb() {
 
         console.log('setheader');
         setHeaderPar((e) => {
-            e.left = <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>;
+            e.left = (
+                <Link to={routerConfig.home} style={{ textDecoration: 'none' }}>
+                    <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>
+                </Link>
+            );
             e.center = undefined;
             e.right = undefined;
 
@@ -152,15 +195,26 @@ function DsTkb() {
                         <div className={cx('right')}>
                             <DropDownButton
                                 className={cx('activity-btn')}
-                                icon={faGrip}
+                                icon={isRow ? faGrip : faList}
+                                onClick={() => setIsRow((e) => !e)}
                             ></DropDownButton>
                             <DropDownButton
                                 className={cx('activity-btn')}
                                 icon={faArrowDownAZ}
                             ></DropDownButton>
-                            <DropDownButton className={cx('activity-btn')} icon={faFolder}>
-                                <p>ẩn template</p>
-                            </DropDownButton>
+
+                            <label className={cx('upload-file')}>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    accept=".json"
+                                    onChange={onUpdateFileHandle}
+                                />
+                                <DropDownButton
+                                    className={cx('activity-btn')}
+                                    icon={faFolderOpen}
+                                ></DropDownButton>
+                            </label>
                         </div>
                     </header>
                     <div className={cx('content')}>
@@ -169,6 +223,7 @@ function DsTkb() {
                                 {dsTkb.map((e) => {
                                     return (
                                         <CardTkb
+                                            isRow={isRow}
                                             data={e}
                                             key={e.id}
                                             onDelete={onDeletehandle}

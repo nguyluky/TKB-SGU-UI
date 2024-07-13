@@ -278,7 +278,6 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
                             left: contextX + 'px',
                         }}
                     >
-                        <p onClick={(e) => alert('chưa làm')}>Auto Fill</p>
                         <p
                             onClick={(e) => {
                                 e.stopPropagation();

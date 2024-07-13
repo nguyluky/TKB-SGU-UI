@@ -15,7 +15,7 @@ interface HocPhanProps {
 
 export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }: HocPhanProps) {
     var nhomHoc = data?.ds_nhom_to.filter((j) => j.ma_mon === maHocPhan);
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
     const [closeShow, setCloseShow] = useState(false);
     const setTimeOutId = useRef<NodeJS.Timeout>();
 

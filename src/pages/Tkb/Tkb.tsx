@@ -211,7 +211,7 @@ export default function Tkb() {
                     console.log(ov);
                     // ông xem nên để cái thông báo lỗi như thế nào cho hợi lý
 
-                    NotifyMaster.error('Trùng tiết');
+                    NotifyMaster.error(`Trùng tiết ${ov.map((e) => e.ten_mon).join(' - ')}`);
                     return;
                 }
 
@@ -351,9 +351,10 @@ export default function Tkb() {
 
     // updateHeader
     useEffect(() => {
+        if (!tkbData) return;
         setHeaderPar((e) => {
             e.left = <HeaderTool saveAsFile={saveAsFile} />;
-            e.right = <></>;
+            e.right = undefined;
             var tkbName = tkbData?.name || '';
             e.center = (
                 <ReName defaultName={tkbName} onChangeName={onRenameHandler} isSave={iconSaveing} />

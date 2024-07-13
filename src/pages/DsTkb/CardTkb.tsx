@@ -13,8 +13,10 @@ export function CardTkb({
     data,
     onRename,
     onDelete,
+    isRow,
 }: {
     data: TkbData;
+    isRow: boolean;
     onRename: (tkbData: TkbData, newName: string) => void;
     onDelete: (tkbData: TkbData) => void;
 }) {
@@ -37,7 +39,9 @@ export function CardTkb({
 
     return (
         <div
-            className={cx('card')}
+            className={cx('card', {
+                row: isRow,
+            })}
             onClick={() => {
                 nati(data.id + (data.isClient ? '?isclient=true' : ''));
             }}

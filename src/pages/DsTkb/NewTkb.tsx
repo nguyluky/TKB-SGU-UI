@@ -52,21 +52,7 @@ export function NewTkb() {
     return (
         <div className={cx('card', 'new')} onClick={() => setShow(true)}>
             <div className={cx('thumbnail')}>
-                <div className={cx('icon-wrapper')}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                    >
-                        <linearGradient id="grad1" x1="0%" x2="100%" y1="0%" y2="0%">
-                            <stop offset="0%" stopColor="#D16BA5" />
-                            <stop offset="50%" stopColor="#86A8E7" />
-                            <stop offset="100%" stopColor="#5FFBF1" />
-                        </linearGradient>
-                        <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z" fill="url(#grad1)"></path>
-                    </svg>
-                </div>
+                <div className={cx('icon-wrapper')}></div>
             </div>
             <div className={cx('info')}>
                 <p className={cx('name')}>Tạo mới</p>

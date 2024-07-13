@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import images from '../../assets/images';
 import { headerContent } from '../../components/Layout/DefaultLayout';
+import { routerConfig } from '../../config';
 import style from './Home.module.scss';
 
 const cx = classNames.bind(style);
@@ -14,7 +15,13 @@ function Home() {
     useEffect(() => {
         console.log('set header');
         setHeaderPar((e) => {
-            e.left = <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>;
+            e.left = (
+                <Link to={routerConfig.home} style={{ textDecoration: 'none' }}>
+                    <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>
+                </Link>
+            );
+            e.right = undefined;
+            e.center = undefined;
             return { ...e };
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
