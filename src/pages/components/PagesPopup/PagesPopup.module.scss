@@ -1,0 +1,23 @@
+.input + .input {
+    margin-top: 10px;
+}
+
+.input {
+    input,
+    select {
+        font-size: 15px;
+        margin-top: 5px;
+    }
+}
+
+.upload-file {
+    input[type='file'] {
+        color: var(--text-color-2);
+    }
+
+    input[type='file']::file-selector-button {
+        border: none;
+        background-color: transparent;
+        color: var(--text-color);
+    }
+}

@@ -7,6 +7,7 @@ import Popup from 'reactjs-popup';
 import { TkbData } from '../../Service';
 import images from '../../assets/images';
 import PopupModel from '../../components/PopupModel';
+import { RenameModal } from '../components/PagesPopup/PagesPopup';
 import { cx } from './DsTkb';
 
 export function CardTkb({
@@ -25,15 +26,13 @@ export function CardTkb({
     const [renamePopup, setRenamePopup] = useState(false);
     const [deletePopup, setDeletePopup] = useState(false);
 
-    const [lastName, setLastName] = useState(data.name);
-
     const deleteHandle = () => {
         onDelete(data);
         setDeletePopup(false);
     };
 
-    const renameHandle = () => {
-        onRename(data, lastName);
+    const renameHandle = (newName: string) => {
+        onRename(data, newName);
         setRenamePopup(false);
     };
 
@@ -65,7 +64,7 @@ export function CardTkb({
                 </div>
 
                 {/* NOTE: popup rename*/}
-                <Popup open={renamePopup} onClose={() => setRenamePopup(false)}>
+                {/* <Popup open={renamePopup} onClose={() => setRenamePopup(false)}>
                     <PopupModel
                         title="Rename Tkb"
                         onCancel={() => {
@@ -83,7 +82,14 @@ export function CardTkb({
                             />
                         </div>
                     </PopupModel>
-                </Popup>
+                </Popup> */}
+
+                <RenameModal
+                    currName={data.name}
+                    open={renamePopup}
+                    onClose={() => setRenamePopup(false)}
+                    onRename={renameHandle}
+                ></RenameModal>
 
                 {/* Popup delete */}
                 <Popup open={deletePopup} onClose={() => setDeletePopup(false)}>
@@ -123,7 +129,6 @@ export function CardTkb({
                             className={cx('item')}
                             onClick={() => {
                                 setRenamePopup(true);
-                                setLastName(data.name);
                             }}
                         >
                             Đổi tên

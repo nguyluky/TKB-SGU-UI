@@ -199,7 +199,7 @@
     transition: all 0.1s ease-in-out;
 
     &.tiet-selected {
-        outline: solid var(--success-color);
+        outline: 2px solid var(--primary-color-1);
     }
 
     .title {
@@ -234,6 +234,11 @@
     }
 }
 
+.item.conflict {
+    outline: 2px solid var(--error-color);
+    animation: shake 0.3s;
+}
+
 .context-popup {
     background: var(--header-color);
     min-width: 100px;
@@ -263,5 +268,19 @@
     @starting-style {
         opacity: 0;
         transform: scale(0.5);
+    }
+}
+
+@keyframes shake {
+    25% {
+        transform: translateX(5px);
+    }
+
+    50% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translate(5px);
     }
 }
