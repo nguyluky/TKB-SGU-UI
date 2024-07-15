@@ -1,9 +1,20 @@
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import {
+    faCalendarDays,
+    faClone,
+    faDownload,
+    faFolderOpen,
+    faReply,
+    faRightFromBracket,
+    faShare,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import { cx } from './Tkb';
 
 interface TOOL {
     title: string;
-    icon?: string;
+    icon?: IconProp;
     onclick?: () => void;
     pos: 'Left' | 'bottom';
     children?: TOOL[];
@@ -76,6 +87,10 @@ function Tool({
                 onMouseEnter={tool.children ? onMouseEnter : undefined}
                 onClick={tool.children ? onClick : tool.onclick}
             >
+                <div className={cx('icon')}>
+                    {tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}
+                </div>
+
                 {tool.title}
             </span>
 
@@ -131,26 +146,36 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
             pos: 'bottom',
             children: [
                 {
+                    icon: faCalendarDays,
                     title: 'Tạo Mới',
                     onclick: createdCommand('new'),
                     pos: 'Left',
                 },
                 {
-                    title: 'Lưu thành file',
-                    onclick: createdCommand('saveAsFile'),
+                    icon: faClone,
+                    title: 'Tạo Bạn Sao',
+                    onclick: createdCommand('clone'),
                     pos: 'Left',
                 },
                 {
-                    title: 'Mở TKB Có Sẵn',
+                    icon: faFolderOpen,
+                    title: 'Open',
                     onclick: createdCommand('open'),
                     pos: 'Left',
                 },
                 {
-                    title: 'Property',
+                    icon: faDownload,
+                    title: 'Tải xuống',
+                    onclick: createdCommand('saveAsFile'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Properties',
                     onclick: createdCommand('property'),
                     pos: 'Left',
                 },
                 {
+                    icon: faRightFromBracket,
                     title: 'Exit',
                     onclick: createdCommand('exit'),
                     pos: 'Left',
@@ -163,11 +188,13 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
             pos: 'bottom',
             children: [
                 {
+                    icon: faReply,
                     title: 'Undo',
                     onclick: createdCommand('undo'),
                     pos: 'Left',
                 },
                 {
+                    icon: faShare,
                     title: 'Redo',
                     onclick: createdCommand('redo'),
                     pos: 'Left',

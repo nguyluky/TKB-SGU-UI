@@ -10,7 +10,7 @@ import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
-import { CreateNewTkb, UploadTkb } from '../components/PagesPopup';
+import { CloneTkb, CreateNewTkb, Property, UploadTkb } from '../components/PagesPopup';
 import { Convert } from '../DsTkb/FileTkb';
 import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
@@ -175,25 +175,6 @@ export default function Tkb() {
         [tkbData],
     );
 
-    const onRemoveHphandeler = useCallback(
-        (mhp: string, isTimeLine?: boolean) => {
-            if (!tkbData || !tkbData?.ma_hoc_phans.includes(mhp)) {
-                console.log('hp không tồn tại trong ds hoặc tkb chưa tải xong');
-                return;
-            }
-
-            var index = tkbData.ma_hoc_phans.indexOf(mhp);
-            tkbData.ma_hoc_phans.splice(index, 1);
-            if (cacheMhpIdToHoc.current[mhp]) onRemoveNhomHocHandler(cacheMhpIdToHoc.current[mhp]);
-            if (!isTimeLine) {
-                undoTimeLine.current.push({ type: 'removeHocPhan', valueId: mhp });
-                redoTimeLine.current = [];
-            }
-            setTkbData({ ...tkbData });
-        },
-        [tkbData],
-    );
-
     const onRemoveNhomHocHandler = useCallback(
         (idToHoc: string, isTimeLine?: boolean) => {
             var nhom = dsNhomHoc?.ds_nhom_to.find((e) => e.id_to_hoc === idToHoc);
@@ -210,6 +191,25 @@ export default function Tkb() {
             delete cacheTietNhom.current[tkbToKey(nhom.tkb)];
         },
         [dsNhomHoc?.ds_nhom_to, tkbData],
+    );
+
+    const onRemoveHphandeler = useCallback(
+        (mhp: string, isTimeLine?: boolean) => {
+            if (!tkbData || !tkbData?.ma_hoc_phans.includes(mhp)) {
+                console.log('hp không tồn tại trong ds hoặc tkb chưa tải xong');
+                return;
+            }
+
+            var index = tkbData.ma_hoc_phans.indexOf(mhp);
+            tkbData.ma_hoc_phans.splice(index, 1);
+            if (cacheMhpIdToHoc.current[mhp]) onRemoveNhomHocHandler(cacheMhpIdToHoc.current[mhp]);
+            if (!isTimeLine) {
+                undoTimeLine.current.push({ type: 'removeHocPhan', valueId: mhp });
+                redoTimeLine.current = [];
+            }
+            setTkbData({ ...tkbData });
+        },
+        [onRemoveNhomHocHandler, tkbData],
     );
 
     const onAddNhomHocHandler = useCallback(
@@ -473,19 +473,56 @@ export default function Tkb() {
                 case 'switchNhomHoc':
                     onAddNhomHocHandler(event.valueId.split('|')[1], true);
                     break;
-
-                // case 'replayNhomHoc':
-                //     var [a, ...b] = event.valueId.split('|');
-                //     console.log(a, b);
-                //     onRemoveNhomHocHandler(a, true);
-                //     b.forEach((e) => {
-                //         onAddNhomHocHandler(e, true);
-                //     });
             }
         },
-
         exit: () => {
             nav('/tkbs');
+        },
+        clone: () => {
+            setPopup(
+                <CloneTkb
+                    open={true}
+                    onClose={() => {
+                        setPopup('');
+                    }}
+                    onClone={(name, pos) => {
+                        (pos === 'client'
+                            ? globalState.client.localApi
+                            : globalState.client.serverApi
+                        )
+                            .createNewTkb(
+                                name,
+                                '',
+                                null,
+                                false,
+                                tkbData?.id_to_hocs || [],
+                                tkbData?.ma_hoc_phans || [],
+                            )
+                            .then((e) => {
+                                if (!e.success) {
+                                    notifyMaster.error(e.msg);
+                                    return;
+                                }
+
+                                window.open(
+                                    window.location.origin +
+                                        '/tkbs/' +
+                                        e.data?.id +
+                                        (e.data?.isClient ? '?isclient=true' : ''),
+                                );
+                            })
+                            .catch((e) => {
+                                notifyMaster.success('Tạo bản sao tkb không biết lý do');
+                            });
+                    }}
+                />,
+            );
+        },
+        property: () => {
+            if (tkbData)
+                setPopup(
+                    <Property open={true} tkbData={tkbData} onClose={() => setPopup('')} modal />,
+                );
         },
     };
 

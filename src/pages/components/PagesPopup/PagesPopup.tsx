@@ -3,7 +3,9 @@ import classNames from 'classnames/bind';
 import { useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
+import notifyMaster from '../../../components/NotifyPopup/NotificationManager';
 import PopupModel from '../../../components/PopupModel';
+import { TkbData } from '../../../Service';
 import style from './PagesPopup.module.scss';
 
 const cx = classNames.bind(style);
@@ -100,7 +102,7 @@ export function UploadTkb({ uploadTkb, ...pros }: UploadTkbProps) {
         <Popup {...pros}>
             <PopupModel title="Upload tkb" onCancel={pros.onClose} onOk={uploadHandel}>
                 <div className={cx('input', 'upload-file')}>
-                    <label form="inputname">Name</label>
+                    <label form="inputname">File</label>
                     <input type="file" ref={fileInputRef} accept=".json" />
                 </div>
                 <div className={cx('input')}>
@@ -114,6 +116,126 @@ export function UploadTkb({ uploadTkb, ...pros }: UploadTkbProps) {
                         <option value="client">Client</option>
                         <option value="server">Server</option>
                     </select>
+                </div>
+            </PopupModel>
+        </Popup>
+    );
+}
+
+interface CloneTkbProps extends Omit<PopupProps, 'children'> {
+    onClone: (name: string, pos: string) => void;
+}
+
+export function CloneTkb({ onClone, ...pros }: CloneTkbProps) {
+    const [lastName, setLastName] = useState<string>('');
+    const [pos, setPos] = useState<string>('client');
+
+    const onOk = () => {
+        if (!lastName) {
+            notifyMaster.error('Tên tkb không được để chống');
+            return;
+        }
+        onClone(lastName, pos);
+    };
+
+    return (
+        <Popup {...pros}>
+            <PopupModel title="Upload tkb" onCancel={pros.onClose} onOk={onOk}>
+                <div className={cx('input')}>
+                    <label form="inputname">New Name: </label>
+                    <input
+                        type="text"
+                        name="inputname"
+                        value={lastName}
+                        onChange={(event) => setLastName(event.target.value)}
+                    />
+                </div>
+                <div className={cx('input')}>
+                    <label>Vị trí lưu</label>
+                    <select
+                        name="pos"
+                        id="pos"
+                        value={pos}
+                        onChange={(e) => setPos(e.target.value)}
+                    >
+                        <option value="client">Client</option>
+                        <option value="server">Server</option>
+                    </select>
+                </div>
+            </PopupModel>
+        </Popup>
+    );
+}
+
+interface PropertyProps extends Omit<PopupProps, 'children'> {
+    tkbData: TkbData;
+}
+
+export function Property({ tkbData, ...props }: PropertyProps) {
+    const [tab, setTab] = useState<number>(0);
+
+    return (
+        <Popup {...props}>
+            <PopupModel title="Properties" noFooter>
+                <div className={cx('properties-content')}>
+                    <div className={cx('side-bar')}>
+                        <label className={cx('side-bar-line')}>
+                            <input
+                                type="radio"
+                                name="setting-tab"
+                                checked={tab === 0}
+                                onChange={(e) => {
+                                    if (e.target.checked) setTab(0);
+                                }}
+                            />
+                            General
+                        </label>
+                        <label className={cx('side-bar-line')}>
+                            <input
+                                type="radio"
+                                name="setting-tab"
+                                checked={tab === 1}
+                                onChange={(e) => {
+                                    if (e.target.checked) setTab(1);
+                                }}
+                            />
+                            Member
+                        </label>
+
+                        <label className={cx('side-bar-line', 'end')}>Delete</label>
+                    </div>
+                    <div className={cx('body')}>
+                        {tab === 0 ? (
+                            <>
+                                <div className={cx('setting-line')}>
+                                    <span>Name:</span>
+                                    <span>{tkbData.name}</span>
+                                </div>
+
+                                <div className={cx('setting-line')}>
+                                    <span>Describe:</span>
+                                    <span>{tkbData.tkb_describe}</span>
+                                </div>
+
+                                <div className={cx('setting-line')}>
+                                    <span>quyền hạn:</span>
+                                    <span>{tkbData.rule}</span>
+                                </div>
+
+                                <div className={cx('setting-line')}>
+                                    <span>Members:</span>
+                                    <span>1</span>
+                                </div>
+
+                                <div className={cx('setting-line')}>
+                                    <span>ngày tạo:</span>
+                                    <span>{tkbData.created.toISOString()}</span>
+                                </div>
+                            </>
+                        ) : (
+                            ''
+                        )}
+                    </div>
                 </div>
             </PopupModel>
         </Popup>

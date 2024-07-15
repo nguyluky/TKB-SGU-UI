@@ -1,1 +1,1 @@
-export { CreateNewTkb, RenameModal, UploadTkb } from './PagesPopup';
+export { CloneTkb, CreateNewTkb, Property, RenameModal, UploadTkb } from './PagesPopup';

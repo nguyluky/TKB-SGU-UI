@@ -50,6 +50,7 @@
         .content {
             height: calc(100% - var(--header-height));
             overflow-y: scroll;
+            scrollbar-width: thin;
         }
 
         .content.footer {
@@ -236,6 +237,10 @@
         }
     }
 
+    .icon {
+        display: inline-block;
+    }
+
     .drop-down-item {
         border-radius: var(--border-radius-g);
         position: absolute;
@@ -243,6 +248,14 @@
         box-shadow: var(--box-shadow-g);
         width: max-content;
         padding: 5px;
+    }
+
+    .drop-down-item:has(svg) {
+        .icon {
+            height: 20px;
+            width: 20px;
+            margin-right: 10px;
+        }
     }
 
     .drop-down-item.bottom {
