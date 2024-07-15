@@ -10,7 +10,7 @@ import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
-import { RenameModal, UploadTkb } from '../components/PagesPopup';
+import { CreateNewTkb, UploadTkb } from '../components/PagesPopup';
 import { Convert } from '../DsTkb/FileTkb';
 import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
@@ -105,7 +105,24 @@ export default function Tkb() {
         });
     };
 
-    const onCreateTkbHandler = (file: File, pos: string) => {
+    const onCreateTkbHandler = (name: string, pos: string) => {
+        (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
+            .createNewTkb(name, '', null, false)
+            .then((e) => {
+                if (!e.success) {
+                    notifyMaster.error(e.msg);
+                    return;
+                }
+
+                nav('/tkbs/' + e.data?.id + (e.data?.isClient ? '?isclient=true' : ''));
+                notifyMaster.success('Tạo tkb thành công');
+            })
+            .catch((e) => {
+                notifyMaster.success('Không thể kết tạo tkb không biết lý do');
+            });
+    };
+
+    const onUploadTkbHandler = (file: File, pos: string) => {
         const reader = new FileReader();
 
         reader.readAsText(file, 'utf-8');
@@ -212,7 +229,6 @@ export default function Tkb() {
                 .split('-')
                 .map((e) => e.split('|')[0]);
 
-            // TODO: chưa có mà kiểm tra khác cơ sở
             var overlapKey = Object.keys(cacheTietNhom.current).filter((e) => {
                 if (cacheTietNhom.current[e].ma_mon === maMon) return false;
                 var i = false;
@@ -356,17 +372,13 @@ export default function Tkb() {
         new: () => {
             console.log('ok');
             setPopup(
-                <RenameModal
+                <CreateNewTkb
                     open={true}
                     onClose={() => {
                         setPopup('');
                     }}
-                    currName={tkbData?.name || ''}
-                    onRename={(s: string) => {
-                        onRenameHandler(s);
-                        setPopup('');
-                    }}
-                ></RenameModal>,
+                    onCreate={onCreateTkbHandler}
+                />,
             );
         },
         saveAsFile: () => {
@@ -398,7 +410,7 @@ export default function Tkb() {
                     }}
                     uploadTkb={(file, pos) => {
                         setPopup('');
-                        onCreateTkbHandler(file, pos);
+                        onUploadTkbHandler(file, pos);
                     }}
                 />,
             );
