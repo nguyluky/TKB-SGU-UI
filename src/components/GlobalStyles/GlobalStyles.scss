@@ -17,6 +17,8 @@
 
     --hover-color: #555;
 
+    --tkb-nhom-view-HSL: 60 50;
+
     --box-shadow-g: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
     --margin-g: 5px;
     --border-radius-g: 5px;
@@ -49,6 +51,7 @@ html[theme='dark'] {
     --background-btn-hover: #0000000c;
 
     --text-color: #f3f3f3;
+    --tkb-nhom-view-HSL: 40 30;
 }
 
 * {

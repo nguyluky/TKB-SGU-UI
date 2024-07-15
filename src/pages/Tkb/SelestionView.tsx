@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { DsNhomHocResp, DsNhomTo, TkbData, TkbTiet } from '../../Service';
+import { hashCode } from '../../utils';
 import { AddHp } from './AddHp';
 import { HocPhan } from './HocPhan';
 import { cx } from './Tkb';
@@ -137,7 +138,9 @@ function Temp({
                                 })}
                                 style={{
                                     background: tkbData?.id_to_hocs.includes(j.id_to_hoc)
-                                        ? `hsl(${Math.abs(+(maMonHoc || 1))}, 60%, 50%)`
+                                        ? `hsl(${Math.abs(
+                                              hashCode(maMonHoc || '0'),
+                                          )} var(--tkb-nhom-view-HSL) )`
                                         : 'transparent',
                                 }}
                                 key={j.id_to_hoc}
@@ -255,6 +258,7 @@ export function ReplaceView({
             <div className={cx('header')}>
                 <p>Môn tư tự</p>
                 <FontAwesomeIcon
+                    className={cx('mini')}
                     icon={faXmark}
                     onClick={() => {
                         onClose();

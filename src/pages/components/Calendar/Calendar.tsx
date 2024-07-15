@@ -13,6 +13,7 @@ import {
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { DsNhomTo } from '../../../Service';
+import { hashCode } from '../../../utils';
 import style from './Calendar.module.scss';
 
 const cx = classNames.bind(style);
@@ -25,6 +26,7 @@ interface CustomEvent extends MouseEvent {
 interface Props {
     data?: DsNhomTo[];
     idToHocs?: string[];
+    conflict: string[];
     onDeleteNhomHoc: (idToHoc: string) => void;
     onTimMonHocTuTu: (idToHocs: string[]) => void;
 }
@@ -40,11 +42,12 @@ interface TietDisplay {
     nodeRef: RefObject<HTMLDivElement>;
 }
 
-function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
+function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }: Props) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const bodyRef = useRef<HTMLDivElement>(null!);
     const contextRef = useRef<HTMLDivElement>(null!);
     const lastSelecion = useRef<string>('');
+    const calendarRef = useRef<HTMLDivElement>(null);
 
     const [direction, setDirectiom] = useState(false);
     const [selected, setSelected] = useState<string[]>([]);
@@ -84,7 +87,11 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
                     isClickOutSide = false;
             });
 
+            if (contextRef.current && contextRef.current.contains(event.target as HTMLElement))
+                isClickOutSide = false;
+
             if (isClickOutSide) {
+                console.log('ok');
                 setSelected([]);
                 setMouseDown(true);
             }
@@ -108,10 +115,10 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
         };
 
         document.addEventListener('keydown', onKeyDownHandled);
-        document.addEventListener('click', onClickHanled);
+        document.getElementById('default-content')?.addEventListener('click', onClickHanled);
 
         return () => {
-            document.removeEventListener('click', onClickHanled);
+            document.getElementById('default-content')?.removeEventListener('click', onClickHanled);
             document.removeEventListener('keydown', onKeyDownHandled);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,7 +141,9 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
                         jj.tkt - jj.tbd
                     } * var(--y-s) + 1) - 5px)`,
                     width: `calc((100% - var(--left-m)) / var(--columns) * (var(--x-s) + 1) - 5px)`,
-                    background: `hsl(${Math.abs(+(tiet?.ma_mon || 1))}, 60%, 50%)`,
+                    background: `hsl(${Math.abs(
+                        hashCode(tiet?.ma_mon || '0'),
+                    )} var(--tkb-nhom-view-HSL) )`,
                 };
 
                 var nodeRef =
@@ -160,6 +169,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
 
     return (
         <div
+            ref={calendarRef}
             className={cx('calendar', { 'layout-row': direction, 'layout-column': !direction })}
             onMouseMove={handleMouseMove}
         >
@@ -255,6 +265,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu }: Props) {
                                             }}
                                             className={cx('item', state, {
                                                 'tiet-selected': selected.includes(tr.id_to_hoc),
+                                                conflict: conflict.includes(tr.id_to_hoc),
                                             })}
                                             style={tr.style}
                                         >

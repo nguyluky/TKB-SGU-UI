@@ -29,7 +29,7 @@ function DefaultLayout() {
         <headerContent.Provider value={setHeaderPar}>
             <NotifyPopup>
                 <Header {...headerPar} />
-                <div className={cx('content')}>
+                <div className={cx('content')} id="default-content">
                     <SwitchTransition>
                         <CSSTransition
                             key={location.pathname}

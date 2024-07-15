@@ -82,16 +82,26 @@ function Tool({
             {tool.title === titleShow ? (
                 tool.children ? (
                     <div className={cx('drop-down-item', tool.pos)}>
-                        {tool.children?.map((e, i) => (
-                            <Tool
-                                key={e.title + i}
-                                tool={e}
-                                titleShow={tabShow}
-                                onMouseEnter={mouseEnterHandler}
-                                onClick={mouseClickHandler}
-                                onClickOutSide={onClickOutSideHandler}
-                            />
-                        ))}
+                        {tool.children?.map((e, i) => {
+                            if (e.onclick) {
+                                var c = e.onclick;
+                                e.onclick = (...arg) => {
+                                    if (onClickOutSide) onClickOutSide();
+                                    c(...arg);
+                                };
+                            }
+
+                            return (
+                                <Tool
+                                    key={e.title + i}
+                                    tool={e}
+                                    titleShow={tabShow}
+                                    onMouseEnter={mouseEnterHandler}
+                                    onClick={mouseClickHandler}
+                                    onClickOutSide={onClickOutSideHandler}
+                                />
+                            );
+                        })}
                     </div>
                 ) : (
                     ''
@@ -103,7 +113,17 @@ function Tool({
     );
 }
 
-export function HeaderTool({ saveAsFile }: { saveAsFile: () => void }) {
+interface HeaderToolProps {
+    onCommandEvent: (command: string) => void;
+}
+
+export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
+    const createdCommand = (command: string) => {
+        return () => {
+            onCommandEvent(command);
+        };
+    };
+
     const tools: TOOL[] = [
         {
             title: 'Tùy Chọn',
@@ -112,28 +132,54 @@ export function HeaderTool({ saveAsFile }: { saveAsFile: () => void }) {
             children: [
                 {
                     title: 'Tạo Mới',
-                    onclick: () => {
-                        console.log('hello');
-                    },
+                    onclick: createdCommand('new'),
                     pos: 'Left',
                 },
                 {
-                    title: 'Lưu TKB',
-                    onclick: saveAsFile,
+                    title: 'Lưu thành file',
+                    onclick: createdCommand('saveAsFile'),
                     pos: 'Left',
                 },
                 {
                     title: 'Mở TKB Có Sẵn',
-                    onclick: () => {
-                        console.log('hello');
-                    },
+                    onclick: createdCommand('open'),
                     pos: 'Left',
                 },
                 {
                     title: 'Property',
-                    onclick: () => {
-                        console.log('hello');
-                    },
+                    onclick: createdCommand('property'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Exit',
+                    onclick: createdCommand('exit'),
+                    pos: 'Left',
+                },
+            ],
+        },
+        {
+            title: 'Edit',
+            icon: undefined,
+            pos: 'bottom',
+            children: [
+                {
+                    title: 'Undo',
+                    onclick: createdCommand('undo'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Redo',
+                    onclick: createdCommand('redo'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Cut',
+                    onclick: createdCommand('cut'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Past',
+                    onclick: createdCommand('past'),
                     pos: 'Left',
                 },
             ],

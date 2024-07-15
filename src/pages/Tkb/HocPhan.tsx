@@ -2,6 +2,7 @@ import { faAngleDown, faAngleUp, faXmark } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { DsNhomHocResp, TkbData } from '../../Service';
+import { hashCode } from '../../utils';
 import { cx } from './Tkb';
 
 interface HocPhanProps {
@@ -62,7 +63,9 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                             })}
                             style={{
                                 background: tkb?.id_to_hocs.includes(j.id_to_hoc)
-                                    ? `hsl(${Math.abs(+(maHocPhan || 1))}, 60%, 50%)`
+                                    ? `hsl(${Math.abs(
+                                          hashCode(maHocPhan || '0'),
+                                      )} var(--tkb-nhom-view-HSL) )`
                                     : 'transparent',
                             }}
                             key={j.id_to_hoc}

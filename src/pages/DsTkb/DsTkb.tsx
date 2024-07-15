@@ -6,18 +6,17 @@ import {
     faList,
 } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
-import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import Popup from 'reactjs-popup';
 import { TkbData } from '../../Service';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
-import PopupModel from '../../components/PopupModel';
 import { routerConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
+import { UploadTkb } from '../components/PagesPopup';
 import { CardTkb } from './CardTkb';
 import style from './DsTkb.module.scss';
 import { Convert } from './FileTkb';
@@ -52,10 +51,7 @@ function DsTkb() {
     const [isLoading, setLoading] = useState(true);
     const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
     const [isRow, setIsRow] = useState<boolean>(false);
-    const [pos, setPos] = useState('client');
     const [uploadTkbShow, setUploadTkbShow] = useState<boolean>(false);
-
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const onDeletehandle = (tkbData: TkbData) => {
         if (!tkbData.isClient) {
@@ -108,11 +104,7 @@ function DsTkb() {
         }
     };
 
-    const onUpdateFileHandle = (e: ChangeEvent<HTMLInputElement>) => {
-        if (!fileInputRef.current || !fileInputRef.current.files) return;
-        var file = fileInputRef.current.files[0];
-
-        if (!file) return;
+    const onUpdateFileHandle = (file: File, pos: string) => {
         const reader = new FileReader();
 
         reader.readAsText(file, 'utf-8');
@@ -251,35 +243,14 @@ function DsTkb() {
                             </>
                         </Loader>
                     </div>
-
-                    <Popup open={uploadTkbShow}>
-                        <PopupModel
-                            title="Upload tkb"
-                            onCancel={() => {
-                                setUploadTkbShow(false);
-                            }}
-                            onOk={onUpdateFileHandle}
-                        >
-                            <div className={cx('input', 'upload-file')}>
-                                <label form="inputname">Name</label>
-                                <input type="file" ref={fileInputRef} accept=".json" />
-                            </div>
-                            <div className={cx('input')}>
-                                <label>Vị trí lưu</label>
-                                <select
-                                    name="pos"
-                                    id="pos"
-                                    value={pos}
-                                    onChange={(e) => setPos(e.target.value)}
-                                >
-                                    <option value="client">Client</option>
-                                    <option value="server">Server</option>
-                                </select>
-                            </div>
-                        </PopupModel>
-                    </Popup>
                 </div>
             </div>
+
+            <UploadTkb
+                open={uploadTkbShow}
+                onClose={() => setUploadTkbShow(false)}
+                uploadTkb={onUpdateFileHandle}
+            />
         </div>
     );
 }
