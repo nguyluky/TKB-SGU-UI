@@ -253,7 +253,7 @@ export function ReplaceView({
     return (
         <div className={cx('side-bar-wrapper')}>
             <div className={cx('header')}>
-                <p>Môn tư tự</p>
+                <p>Môn tương tự</p>
                 <FontAwesomeIcon
                     icon={faXmark}
                     onClick={() => {
