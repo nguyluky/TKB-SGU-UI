@@ -7,14 +7,17 @@ import Popup from 'reactjs-popup';
 import { TkbData } from '../../Service';
 import images from '../../assets/images';
 import PopupModel from '../../components/PopupModel';
+import { RenameModal } from '../components/PagesPopup/PagesPopup';
 import { cx } from './DsTkb';
 
 export function CardTkb({
     data,
     onRename,
     onDelete,
+    isRow,
 }: {
     data: TkbData;
+    isRow: boolean;
     onRename: (tkbData: TkbData, newName: string) => void;
     onDelete: (tkbData: TkbData) => void;
 }) {
@@ -23,21 +26,21 @@ export function CardTkb({
     const [renamePopup, setRenamePopup] = useState(false);
     const [deletePopup, setDeletePopup] = useState(false);
 
-    const [lastName, setLastName] = useState(data.name);
-
     const deleteHandle = () => {
         onDelete(data);
         setDeletePopup(false);
     };
 
-    const renameHandle = () => {
-        onRename(data, lastName);
+    const renameHandle = (newName: string) => {
+        onRename(data, newName);
         setRenamePopup(false);
     };
 
     return (
         <div
-            className={cx('card')}
+            className={cx('card', {
+                row: isRow,
+            })}
             onClick={() => {
                 nati(data.id + (data.isClient ? '?isclient=true' : ''));
             }}
@@ -61,7 +64,7 @@ export function CardTkb({
                 </div>
 
                 {/* NOTE: popup rename*/}
-                <Popup open={renamePopup} onClose={() => setRenamePopup(false)}>
+                {/* <Popup open={renamePopup} onClose={() => setRenamePopup(false)}>
                     <PopupModel
                         title="Rename Tkb"
                         onCancel={() => {
@@ -79,8 +82,16 @@ export function CardTkb({
                             />
                         </div>
                     </PopupModel>
-                </Popup>
+                </Popup> */}
 
+                <RenameModal
+                    currName={data.name}
+                    open={renamePopup}
+                    onClose={() => setRenamePopup(false)}
+                    onRename={renameHandle}
+                ></RenameModal>
+
+                {/* Popup delete */}
                 <Popup open={deletePopup} onClose={() => setDeletePopup(false)}>
                     <PopupModel
                         title="Delete Thời Khóa Biểu"
@@ -98,14 +109,26 @@ export function CardTkb({
                             <FontAwesomeIcon icon={faEllipsisVertical} />
                         </div>
                     }
+                    position={'right bottom'}
                 >
                     <div className={cx('content-menu')}>
-                        <span className={cx('item')}>Mở ở thẻ mới</span>
+                        <span
+                            className={cx('item')}
+                            onClick={() => {
+                                window.open(
+                                    window.location.origin +
+                                        '/tkbs/' +
+                                        data.id +
+                                        (data.isClient ? '?isclient=true' : ''),
+                                );
+                            }}
+                        >
+                            Mở ở thẻ mới
+                        </span>
                         <span
                             className={cx('item')}
                             onClick={() => {
                                 setRenamePopup(true);
-                                setLastName(data.name);
                             }}
                         >
                             Đổi tên

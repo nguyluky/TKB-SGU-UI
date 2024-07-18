@@ -1,23 +1,41 @@
 import {
     faArrowDownAZ,
     faEllipsisVertical,
-    faFolder,
+    faFolderOpen,
     faGrip,
+    faList,
 } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { TkbData } from '../../Service';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import { routerConfig } from '../../config';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
+import { UploadTkb } from '../components/PagesPopup';
 import { CardTkb } from './CardTkb';
 import style from './DsTkb.module.scss';
+import { Convert } from './FileTkb';
 import { NewTkb } from './NewTkb';
 
 export const cx = classNames.bind(style);
+
+export interface FileTkb {
+    name: string;
+    created: string;
+    data: Datum[];
+}
+
+export interface Datum {
+    mhp: string;
+    ten: string;
+    nhom: string;
+    id_to_hoc: string;
+}
 
 export interface DsTkbRep {
     code: number;
@@ -31,8 +49,9 @@ function DsTkb() {
     const [globalState] = useContext(globalContent);
 
     const [isLoading, setLoading] = useState(true);
-
     const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
+    const [isRow, setIsRow] = useState<boolean>(false);
+    const [uploadTkbShow, setUploadTkbShow] = useState<boolean>(false);
 
     const onDeletehandle = (tkbData: TkbData) => {
         if (!tkbData.isClient) {
@@ -85,6 +104,48 @@ function DsTkb() {
         }
     };
 
+    const onUpdateFileHandle = (file: File, pos: string) => {
+        const reader = new FileReader();
+
+        reader.readAsText(file, 'utf-8');
+
+        reader.onload = () => {
+            if (!reader.result) return;
+            try {
+                var fileTkb = Convert.toFileTkb(reader.result as string);
+
+                (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
+                    .createNewTkb(
+                        fileTkb.name,
+                        '',
+                        null,
+                        false,
+                        fileTkb.data.map((e) => e.id_to_hoc),
+                        fileTkb.data.map((e) => e.mhp),
+                    )
+                    .then((e) => {
+                        setUploadTkbShow(false);
+                        if (!e.success) {
+                            notifyMaster.error(e.msg);
+                            return;
+                        }
+
+                        setDsTkb((j) => {
+                            if (e.data) return [e.data, ...j];
+                            return [...j];
+                        });
+                        notifyMaster.success('Upload tkb thành công');
+                    })
+                    .catch((e) => {
+                        setUploadTkbShow(false);
+                        notifyMaster.success('Không thể kết upload tkb không biết lý do');
+                    });
+            } catch {
+                notifyMaster.error('Format file không hợp lệ');
+            }
+        };
+    };
+
     useEffect(() => {
         setDsTkb([]);
         setLoading(true);
@@ -92,11 +153,7 @@ function DsTkb() {
             if (!globalState.client.islogin()) return [];
 
             var resp = await globalState.client.serverApi.getDsTkb();
-
-            return (resp.data || []).map((e) => {
-                e.created = new Date(e.created);
-                return e;
-            });
+            return resp.data || [];
         };
 
         var getLocalData = async () => {
@@ -111,7 +168,11 @@ function DsTkb() {
 
         console.log('setheader');
         setHeaderPar((e) => {
-            e.left = <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>;
+            e.left = (
+                <Link to={routerConfig.home} style={{ textDecoration: 'none' }}>
+                    <h3 style={{ color: 'var(--text-color)' }}>TKB SGU</h3>
+                </Link>
+            );
             e.center = undefined;
             e.right = undefined;
 
@@ -152,15 +213,17 @@ function DsTkb() {
                         <div className={cx('right')}>
                             <DropDownButton
                                 className={cx('activity-btn')}
-                                icon={faGrip}
-                            ></DropDownButton>
+                                icon={isRow ? faGrip : faList}
+                                onClick={() => setIsRow((e) => !e)}
+                            />
+                            <DropDownButton className={cx('activity-btn')} icon={faArrowDownAZ} />
                             <DropDownButton
                                 className={cx('activity-btn')}
-                                icon={faArrowDownAZ}
-                            ></DropDownButton>
-                            <DropDownButton className={cx('activity-btn')} icon={faFolder}>
-                                <p>ẩn template</p>
-                            </DropDownButton>
+                                icon={faFolderOpen}
+                                onClick={() => {
+                                    setUploadTkbShow(true);
+                                }}
+                            />
                         </div>
                     </header>
                     <div className={cx('content')}>
@@ -169,6 +232,7 @@ function DsTkb() {
                                 {dsTkb.map((e) => {
                                     return (
                                         <CardTkb
+                                            isRow={isRow}
                                             data={e}
                                             key={e.id}
                                             onDelete={onDeletehandle}
@@ -181,6 +245,12 @@ function DsTkb() {
                     </div>
                 </div>
             </div>
+
+            <UploadTkb
+                open={uploadTkbShow}
+                onClose={() => setUploadTkbShow(false)}
+                uploadTkb={onUpdateFileHandle}
+            />
         </div>
     );
 }

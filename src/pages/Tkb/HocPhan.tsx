@@ -2,6 +2,7 @@ import { faAngleDown, faAngleUp, faXmark } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { DsNhomHocResp, TkbData } from '../../Service';
+import { hashCode } from '../../utils';
 import { cx } from './Tkb';
 
 interface HocPhanProps {
@@ -15,7 +16,7 @@ interface HocPhanProps {
 
 export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }: HocPhanProps) {
     var nhomHoc = data?.ds_nhom_to.filter((j) => j.ma_mon === maHocPhan);
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
     const [closeShow, setCloseShow] = useState(false);
     const setTimeOutId = useRef<NodeJS.Timeout>();
 
@@ -62,7 +63,9 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                             })}
                             style={{
                                 background: tkb?.id_to_hocs.includes(j.id_to_hoc)
-                                    ? `hsl(${Math.abs(+(maHocPhan || 1))}, 60%, 50%)`
+                                    ? `hsl(${Math.abs(
+                                          hashCode(maHocPhan || '0'),
+                                      )} var(--tkb-nhom-view-HSL) )`
                                     : 'transparent',
                             }}
                             key={j.id_to_hoc}

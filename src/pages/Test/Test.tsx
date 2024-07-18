@@ -1,20 +1,13 @@
-import { useEffect } from 'react';
+import classNames from 'classnames/bind';
+import { useState } from 'react';
+import style from './Test.module.scss';
 
-function Test2() {
-    useEffect(() => {
-        console.log('mouse');
-
-        return () => {
-            console.log('unmouse');
-        };
-    }, []);
-
-    return <div>test2</div>;
-}
+const cx = classNames.bind(style);
 
 function Test() {
-    var a = <Test2 />;
-    return <div>{a}</div>;
+    const [tab, setTab] = useState<number>(0);
+
+    return <p>test</p>;
 }
 
 export default Test;

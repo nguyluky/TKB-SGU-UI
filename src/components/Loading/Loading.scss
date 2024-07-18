@@ -39,7 +39,7 @@
 }
 
 .honeycomb {
-    --honey-comb-color: currentColor;
+    --honey-comb-color: var(--primary-color-1);
     height: 24px;
     position: relative;
     width: 24px;

@@ -68,10 +68,7 @@ interface BaseApi {
     getDsTkb(): Promise<ApiResponse<TkbData[]>>;
     getTkb(tkbId: string): Promise<ApiResponse<TkbData>>;
     createNewTkb(
-        name: string,
-        tkb_describe: string,
-        thumbnail: any,
-        public_: boolean,
+        name: string, tkb_describe: string, thumbnail: any, public_: boolean, id_to_hocs?: string[], ma_hoc_phans?: string[]
     ): Promise<ApiResponse<TkbData>>;
     updateTkb(tkbData: TkbData): Promise<ApiResponse<null>>;
     deleteTkb(tkbId: string): Promise<ApiResponse<null>>;
@@ -93,21 +90,35 @@ class ServerApi implements BaseApi {
 
     async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
         var resp = await this.request.get<ApiResponse<TkbData[]>>(apiConfig.getDsTkb());
+        if (resp.data.data) resp.data.data.forEach(e => {
+            e.created = new Date(e.created);
+        })
         return resp.data;
     }
 
     async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
         var resp = await this.request.get<ApiResponse<TkbData>>(apiConfig.getTkb(tkbId));
+        if (resp.data.data) {
+            resp.data.data.created = new Date(resp.data.data.created)
+            resp.data.data.id_to_hocs = resp.data.data.id_to_hocs || [];
+            resp.data.data.ma_hoc_phans = resp.data.data.ma_hoc_phans ||  [];
+        };
+
         return resp.data;
     }
 
-    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean): Promise<ApiResponse<TkbData>> {
+    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean, id_to_hocs?: string[], ma_hoc_phans?: string[]): Promise<ApiResponse<TkbData>> {
         var resp = await this.request.post<ApiResponse<TkbData>>(apiConfig.createTkb(), {
             name: name,
             tkb_describe: tkb_describe,
             thumbnail: null,
             public: false,
+            id_to_hocs: id_to_hocs || [],
+            ma_hoc_phans: ma_hoc_phans || [],
         })
+
+
+        if (resp.data.data) resp.data.data.created = new Date(resp.data.data.created);
 
         return resp.data;
     }
@@ -184,7 +195,7 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
     }
 
     async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
-        var ev = await updateRecord(tkbData);
+        await updateRecord(tkbData);
 
         return {
             code: 200,
@@ -194,7 +205,7 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
     }
 
     async deleteTkb(tkbId: string): Promise<ApiResponse<null>> {
-        var ev = await deleteRecord(tkbId);
+        await deleteRecord(tkbId);
 
         return {
             code: 200,
@@ -203,14 +214,14 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
         }
     }
 
-    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean): Promise<ApiResponse<TkbData>> {
+    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean, id_to_hocs?: string[], ma_hoc_phans?: string[]): Promise<ApiResponse<TkbData>> {
         var newTkb : TkbData = {
             id: generateUUID(),
             name: name,
             tkb_describe: tkb_describe,
             thumbnails: thumbnail,
-            id_to_hocs: [],
-            ma_hoc_phans: [],
+            id_to_hocs: id_to_hocs || [],
+            ma_hoc_phans: ma_hoc_phans || [],
             rule: 0,
             isClient: true,
             created: new Date(),

@@ -1,9 +1,20 @@
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import {
+    faCalendarDays,
+    faClone,
+    faDownload,
+    faFolderOpen,
+    faReply,
+    faRightFromBracket,
+    faShare,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import { cx } from './Tkb';
 
 interface TOOL {
     title: string;
-    icon?: string;
+    icon?: IconProp;
     onclick?: () => void;
     pos: 'Left' | 'bottom';
     children?: TOOL[];
@@ -76,22 +87,36 @@ function Tool({
                 onMouseEnter={tool.children ? onMouseEnter : undefined}
                 onClick={tool.children ? onClick : tool.onclick}
             >
+                <div className={cx('icon')}>
+                    {tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}
+                </div>
+
                 {tool.title}
             </span>
 
             {tool.title === titleShow ? (
                 tool.children ? (
                     <div className={cx('drop-down-item', tool.pos)}>
-                        {tool.children?.map((e, i) => (
-                            <Tool
-                                key={e.title + i}
-                                tool={e}
-                                titleShow={tabShow}
-                                onMouseEnter={mouseEnterHandler}
-                                onClick={mouseClickHandler}
-                                onClickOutSide={onClickOutSideHandler}
-                            />
-                        ))}
+                        {tool.children?.map((e, i) => {
+                            if (e.onclick) {
+                                var c = e.onclick;
+                                e.onclick = (...arg) => {
+                                    if (onClickOutSide) onClickOutSide();
+                                    c(...arg);
+                                };
+                            }
+
+                            return (
+                                <Tool
+                                    key={e.title + i}
+                                    tool={e}
+                                    titleShow={tabShow}
+                                    onMouseEnter={mouseEnterHandler}
+                                    onClick={mouseClickHandler}
+                                    onClickOutSide={onClickOutSideHandler}
+                                />
+                            );
+                        })}
                     </div>
                 ) : (
                     ''
@@ -103,7 +128,17 @@ function Tool({
     );
 }
 
-export function HeaderTool({ saveAsFile }: { saveAsFile: () => void }) {
+interface HeaderToolProps {
+    onCommandEvent: (command: string) => void;
+}
+
+export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
+    const createdCommand = (command: string) => {
+        return () => {
+            onCommandEvent(command);
+        };
+    };
+
     const tools: TOOL[] = [
         {
             title: 'Tùy Chọn',
@@ -111,29 +146,67 @@ export function HeaderTool({ saveAsFile }: { saveAsFile: () => void }) {
             pos: 'bottom',
             children: [
                 {
+                    icon: faCalendarDays,
                     title: 'Tạo Mới',
-                    onclick: () => {
-                        console.log('hello');
-                    },
+                    onclick: createdCommand('new'),
                     pos: 'Left',
                 },
                 {
-                    title: 'Lưu TKB',
-                    onclick: saveAsFile,
+                    icon: faClone,
+                    title: 'Tạo Bạn Sao',
+                    onclick: createdCommand('clone'),
                     pos: 'Left',
                 },
                 {
-                    title: 'Mở TKB Có Sẵn',
-                    onclick: () => {
-                        console.log('hello');
-                    },
+                    icon: faFolderOpen,
+                    title: 'Open',
+                    onclick: createdCommand('open'),
                     pos: 'Left',
                 },
                 {
-                    title: 'Property',
-                    onclick: () => {
-                        console.log('hello');
-                    },
+                    icon: faDownload,
+                    title: 'Tải xuống',
+                    onclick: createdCommand('saveAsFile'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Properties',
+                    onclick: createdCommand('property'),
+                    pos: 'Left',
+                },
+                {
+                    icon: faRightFromBracket,
+                    title: 'Exit',
+                    onclick: createdCommand('exit'),
+                    pos: 'Left',
+                },
+            ],
+        },
+        {
+            title: 'Edit',
+            icon: undefined,
+            pos: 'bottom',
+            children: [
+                {
+                    icon: faReply,
+                    title: 'Undo',
+                    onclick: createdCommand('undo'),
+                    pos: 'Left',
+                },
+                {
+                    icon: faShare,
+                    title: 'Redo',
+                    onclick: createdCommand('redo'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Cut',
+                    onclick: createdCommand('cut'),
+                    pos: 'Left',
+                },
+                {
+                    title: 'Past',
+                    onclick: createdCommand('past'),
                     pos: 'Left',
                 },
             ],

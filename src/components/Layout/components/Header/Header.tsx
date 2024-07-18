@@ -4,10 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
 import { ChangeEvent, ReactElement, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import Popup from 'reactjs-popup';
 
 import images from '../../../../assets/images';
-
-import Popup from 'reactjs-popup';
 import { apiConfig, routerConfig } from '../../../../config';
 import { ApiResponse, Client } from '../../../../Service';
 import { globalContent } from '../../../../store/GlobalContent';
@@ -43,7 +42,7 @@ function Header({
     };
 
     const openDiscord = () => {
-        window.open('https://discord.com/');
+        window.open('https://discord.gg/gVdV6UJRvy');
     };
 
     const handelChangeTheme = (event: ChangeEvent<HTMLInputElement>) => {

@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import Popup from 'reactjs-popup';
 import SvgIcon from '../../assets/svg/index';
-import PopupModel from '../../components/PopupModel';
 
+import { RenameModal } from '../components/PagesPopup';
 import { cx } from './Tkb';
 
 const icons = {
@@ -20,11 +19,10 @@ export function ReName({
     onChangeName?: (s: string) => void;
     isSave: 'saved' | 'notsave' | 'saving';
 }) {
-    const [lastName, setLastName] = useState(defaultName);
     const [show, setShow] = useState(false);
 
-    const renameHandle = () => {
-        if (onChangeName) onChangeName(lastName);
+    const renameHandle = (newName: string) => {
+        if (onChangeName) onChangeName(newName);
         setShow(false);
     };
 
@@ -32,7 +30,6 @@ export function ReName({
         <div className={cx('rename-header')}>
             <p
                 onClick={() => {
-                    setLastName(defaultName);
                     setShow(true);
                 }}
             >
@@ -41,25 +38,12 @@ export function ReName({
 
             {icons[isSave]}
 
-            <Popup open={show}>
-                <PopupModel
-                    title="Đổi tên TKB"
-                    onCancel={() => {
-                        setShow(false);
-                    }}
-                    onOk={renameHandle}
-                >
-                    <div className={cx('input')}>
-                        <label form="inputname">Tên Mới: </label>
-                        <input
-                            type="text"
-                            name="inputname"
-                            value={lastName}
-                            onChange={(event) => setLastName(event.target.value)}
-                        />
-                    </div>
-                </PopupModel>
-            </Popup>
+            <RenameModal
+                open={show}
+                currName={defaultName}
+                onRename={renameHandle}
+                onClose={() => setShow(false)}
+            />
         </div>
     );
 }
