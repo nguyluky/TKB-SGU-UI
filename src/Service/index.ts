@@ -3,9 +3,9 @@ import api from '../config/api';
 import { apiConfig } from '../config';
 import { addRecord, deleteRecord, getAllRecord, getRecord, updateRecord } from './localDB';
 import { generateUUID } from '../utils';
+import SocketManage from './socket';
 
-
-const ApiEndPoint = api.baseUrl ;
+const ApiEndPoint = api.baseUrl;
 
 export interface TkbData {
     id: string;
@@ -18,7 +18,6 @@ export interface TkbData {
     isClient?: boolean;
     created: Date; //"2024-06-17T12:22:36.000Z"
 }
-
 
 export interface DsNhomHocResp {
     ds_nhom_to: DsNhomTo[];
@@ -35,6 +34,7 @@ export interface DsNhomTo {
     ds_lop: Lop[];
     ds_khoa: Lop[];
     tkb: TkbTiet[];
+    nhom: string;
 }
 
 export interface Lop {
@@ -68,12 +68,17 @@ interface BaseApi {
     getDsTkb(): Promise<ApiResponse<TkbData[]>>;
     getTkb(tkbId: string): Promise<ApiResponse<TkbData>>;
     createNewTkb(
-        name: string, tkb_describe: string, thumbnail: any, public_: boolean, id_to_hocs?: string[], ma_hoc_phans?: string[]
+        name: string,
+        tkb_describe: string,
+        thumbnail: any,
+        public_: boolean,
+        id_to_hocs?: string[],
+        ma_hoc_phans?: string[],
     ): Promise<ApiResponse<TkbData>>;
     updateTkb(tkbData: TkbData): Promise<ApiResponse<null>>;
     deleteTkb(tkbId: string): Promise<ApiResponse<null>>;
 
-    getDsNhomHoc() : Promise<DsNhomHocResp>;
+    getDsNhomHoc(): Promise<DsNhomHocResp>;
 
     createInviteLink(tkbId: string): Promise<ApiResponse<string>>;
     join(inviteLink: string): Promise<ApiResponse<null>>;
@@ -85,29 +90,37 @@ interface BaseApi {
 class ServerApi implements BaseApi {
     request: AxiosInstance;
     constructor(request: AxiosInstance) {
-        this.request = request
+        this.request = request;
     }
 
     async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
         var resp = await this.request.get<ApiResponse<TkbData[]>>(apiConfig.getDsTkb());
-        if (resp.data.data) resp.data.data.forEach(e => {
-            e.created = new Date(e.created);
-        })
+        if (resp.data.data)
+            resp.data.data.forEach((e) => {
+                e.created = new Date(e.created);
+            });
         return resp.data;
     }
 
     async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
         var resp = await this.request.get<ApiResponse<TkbData>>(apiConfig.getTkb(tkbId));
         if (resp.data.data) {
-            resp.data.data.created = new Date(resp.data.data.created)
+            resp.data.data.created = new Date(resp.data.data.created);
             resp.data.data.id_to_hocs = resp.data.data.id_to_hocs || [];
-            resp.data.data.ma_hoc_phans = resp.data.data.ma_hoc_phans ||  [];
-        };
+            resp.data.data.ma_hoc_phans = resp.data.data.ma_hoc_phans || [];
+        }
 
         return resp.data;
     }
 
-    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean, id_to_hocs?: string[], ma_hoc_phans?: string[]): Promise<ApiResponse<TkbData>> {
+    async createNewTkb(
+        name: string,
+        tkb_describe: string,
+        thumbnail: any,
+        public_: boolean,
+        id_to_hocs?: string[],
+        ma_hoc_phans?: string[],
+    ): Promise<ApiResponse<TkbData>> {
         var resp = await this.request.post<ApiResponse<TkbData>>(apiConfig.createTkb(), {
             name: name,
             tkb_describe: tkb_describe,
@@ -115,8 +128,7 @@ class ServerApi implements BaseApi {
             public: false,
             id_to_hocs: id_to_hocs || [],
             ma_hoc_phans: ma_hoc_phans || [],
-        })
-
+        });
 
         if (resp.data.data) resp.data.data.created = new Date(resp.data.data.created);
 
@@ -124,9 +136,12 @@ class ServerApi implements BaseApi {
     }
 
     async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
-        var resp = await this.request.put<ApiResponse<null>>(apiConfig.updateTkb(tkbData.id), tkbData);
+        var resp = await this.request.put<ApiResponse<null>>(
+            apiConfig.updateTkb(tkbData.id),
+            tkbData,
+        );
         return resp.data;
-    }   
+    }
 
     async deleteTkb(tkbId: string): Promise<ApiResponse<null>> {
         var resp = await this.request.delete<ApiResponse<null>>(api.deleteTkb(tkbId));
@@ -150,38 +165,55 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async updateRuleMember(tkbId: string, memberId: string, rule: number): Promise<ApiResponse<null>> {
-        var resp = await this.request.put<ApiResponse<null>>(apiConfig.updateRuleMember(tkbId, memberId), {rule: rule});
+    async updateRuleMember(
+        tkbId: string,
+        memberId: string,
+        rule: number,
+    ): Promise<ApiResponse<null>> {
+        var resp = await this.request.put<ApiResponse<null>>(
+            apiConfig.updateRuleMember(tkbId, memberId),
+            { rule: rule },
+        );
         return resp.data;
     }
 
     async removeMember(tkbId: string, memberId: string): Promise<ApiResponse<null>> {
-        var resp = await this.request.delete<ApiResponse<null>>(apiConfig.removeMember(tkbId, memberId));
+        var resp = await this.request.delete<ApiResponse<null>>(
+            apiConfig.removeMember(tkbId, memberId),
+        );
         return resp.data;
     }
 
     async getDsNhomHoc(): Promise<DsNhomHocResp> {
         var getData = this.request.get<DsNhomHocResp>(apiConfig.getDsNhomHoc());
-        
 
         return (await getData).data;
     }
-
 }
 
-
 // TODO: getDsNhomHoc nhớ thêm vào lại
-class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'updateRuleMember'|'removeMember' | 'getDsNhomHoc'> {
+class localApi
+    implements
+        Omit<
+            BaseApi,
+            | 'createInviteLink'
+            | 'join'
+            | 'getDsMember'
+            | 'updateRuleMember'
+            | 'removeMember'
+            | 'getDsNhomHoc'
+        >
+{
     async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
-        var ev = await getAllRecord()
-        
+        var ev = await getAllRecord();
+
         return {
             code: 200,
             msg: '',
             success: true,
-            data: ev
-        }
-    }   
+            data: ev,
+        };
+    }
 
     async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
         var ev = await getRecord(tkbId);
@@ -190,8 +222,8 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
             code: 200,
             msg: '',
             success: true,
-            data: ev
-        }
+            data: ev,
+        };
     }
 
     async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
@@ -200,8 +232,8 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
         return {
             code: 200,
             msg: '',
-            success: true
-        }
+            success: true,
+        };
     }
 
     async deleteTkb(tkbId: string): Promise<ApiResponse<null>> {
@@ -210,12 +242,19 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
         return {
             code: 200,
             msg: '',
-            success: true
-        }
+            success: true,
+        };
     }
 
-    async createNewTkb(name: string, tkb_describe: string, thumbnail: any, public_: boolean, id_to_hocs?: string[], ma_hoc_phans?: string[]): Promise<ApiResponse<TkbData>> {
-        var newTkb : TkbData = {
+    async createNewTkb(
+        name: string,
+        tkb_describe: string,
+        thumbnail: any,
+        public_: boolean,
+        id_to_hocs?: string[],
+        ma_hoc_phans?: string[],
+    ): Promise<ApiResponse<TkbData>> {
+        var newTkb: TkbData = {
             id: generateUUID(),
             name: name,
             tkb_describe: tkb_describe,
@@ -225,7 +264,7 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
             rule: 0,
             isClient: true,
             created: new Date(),
-        }
+        };
 
         await addRecord(newTkb);
 
@@ -233,11 +272,10 @@ class localApi implements Omit<BaseApi,'createInviteLink'|'join'|'getDsMember'|'
             code: 200,
             msg: '',
             success: true,
-            data: newTkb
-        }
+            data: newTkb,
+        };
     }
 }
-
 
 var ClientInstance: Client;
 export class Client {
@@ -245,6 +283,7 @@ export class Client {
     public serverApi: ServerApi;
     public localApi: localApi;
     private token?: string;
+    public socket: SocketManage;
 
     constructor(token?: string) {
         this.token = token;
@@ -257,6 +296,7 @@ export class Client {
             },
         });
         this.serverApi = new ServerApi(this.request);
+        this.socket = new SocketManage(this.token || '');
     }
 
     islogin() {

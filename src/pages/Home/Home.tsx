@@ -2,6 +2,8 @@ import classNames from 'classnames/bind';
 import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import images from '../../assets/images';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { routerConfig } from '../../config';
@@ -28,8 +30,8 @@ function Home() {
     }, []);
 
     return (
-        <div className={cx('wrapper', 'main')}>
-            <div className={cx('container')}>
+        <div className={cx('wrapper')}>
+            <div className={cx('container', 'main')}>
                 <div className={cx('item')}></div>
                 <div className={cx('item')}>
                     <div className={cx('logo')}>
@@ -43,6 +45,11 @@ function Home() {
                         <button className={cx('buttonHome')}>Bắt Đầu</button>
                     </Link>
                 </div>
+            </div>
+
+            <div className={cx('tn')}>
+                <p>Tính năng nổi bật</p>
+                <FontAwesomeIcon icon={faChevronDown} />
             </div>
         </div>
     );

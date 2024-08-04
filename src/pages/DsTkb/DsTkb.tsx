@@ -48,6 +48,7 @@ function DsTkb() {
     const setHeaderPar = useContext(headerContent);
     const [globalState] = useContext(globalContent);
 
+    const [sortBy, setSortBy] = useState<'name' | 'time' | ''>('');
     const [isLoading, setLoading] = useState(true);
     const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
     const [isRow, setIsRow] = useState<boolean>(false);
@@ -229,17 +230,28 @@ function DsTkb() {
                     <div className={cx('content')}>
                         <Loader isLoading={isLoading}>
                             <>
-                                {dsTkb.map((e) => {
-                                    return (
-                                        <CardTkb
-                                            isRow={isRow}
-                                            data={e}
-                                            key={e.id}
-                                            onDelete={onDeletehandle}
-                                            onRename={onRenameHandle}
-                                        />
-                                    );
-                                })}
+                                {[...dsTkb]
+                                    .sort((a, b) => {
+                                        if (sortBy === 'time') {
+                                            return a.created.getTime() - b.created.getTime();
+                                        }
+
+                                        if (sortBy === 'name') {
+                                            return a.name.localeCompare(b.name);
+                                        }
+                                        return 0;
+                                    })
+                                    .map((e) => {
+                                        return (
+                                            <CardTkb
+                                                isRow={isRow}
+                                                data={e}
+                                                key={e.id}
+                                                onDelete={onDeletehandle}
+                                                onRename={onRenameHandle}
+                                            />
+                                        );
+                                    })}
                             </>
                         </Loader>
                     </div>

@@ -38,6 +38,7 @@ interface TietDisplay {
     id_mon: string;
     style: CSSProperties;
     id_to_hoc: string;
+    nhom: string;
     key: string;
     nodeRef: RefObject<HTMLDivElement>;
 }
@@ -69,13 +70,14 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
     };
 
     const onDeleteHandel = (event: MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
+        console.log('delete on click');
+        // event.stopPropagation();
         // onDeleteMHP
-        setSelected([]);
         setContextIsOpen(false);
-        selected.forEach((e) => {
+        [...selected].forEach((e) => {
             onDeleteNhomHoc(e);
         });
+        setSelected([]);
     };
 
     useEffect(() => {
@@ -144,6 +146,9 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                     background: `hsl(${Math.abs(
                         hashCode(tiet?.ma_mon || '0'),
                     )} var(--tkb-nhom-view-HSL) )`,
+                    scrollbarColor: `hsl(${Math.abs(
+                        hashCode(tiet?.ma_mon || '0'),
+                    )} 20 50 )  transparent`,
                 };
 
                 var nodeRef =
@@ -155,6 +160,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                     phong: jj.phong,
                     ten_mon: tiet?.ten_mon || '',
                     id_mon: tiet?.ma_mon || '',
+                    nhom: tiet?.nhom || '',
                     style: itemStyle,
                     id_to_hoc: tiet?.id_to_hoc || '',
                     key: (tiet?.ma_mon || '') + i,
@@ -271,6 +277,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                                         >
                                             <p className={cx('title')}>{tr.ten_mon}</p>
                                             <p className={cx('info')}>GV: {tr.gv}</p>
+                                            <p className={cx('info')}>Nhóm: {tr.nhom}</p>
                                             <p className={cx('info')}>Phòng: {tr.phong}</p>
                                         </div>
                                     );
@@ -291,7 +298,6 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                     >
                         <p
                             onClick={(e) => {
-                                e.stopPropagation();
                                 setContextIsOpen(false);
                                 onTimMonHocTuTu(selected);
                             }}

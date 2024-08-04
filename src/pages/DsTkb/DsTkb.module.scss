@@ -90,9 +90,10 @@
     box-sizing: border-box;
     padding: 10px;
     .thumbnail {
-        box-shadow: 0 2rem 3rem rgba(#000, 0.175);
+        box-shadow: 0 2rem 3rem rgba(from var(--hover-color) r g b / 0.2),
+            0 0 10px rgba(from var(--hover-color) r g b / 0.4);
         border-radius: var(--margin-g);
-        background: var(--content-color);
+        // background: var(--hover-color);
         height: 157px;
         display: flex;
         align-items: center;
@@ -184,6 +185,7 @@
     .thumbnail {
         background: var(--header-color);
         position: relative;
+        box-shadow: none;
     }
 
     .thumbnail .icon-wrapper {

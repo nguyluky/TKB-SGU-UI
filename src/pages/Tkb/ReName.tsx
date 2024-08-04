@@ -14,10 +14,12 @@ export function ReName({
     defaultName,
     onChangeName,
     isSave,
+    isReadOnly,
 }: {
     defaultName: string;
     onChangeName?: (s: string) => void;
     isSave: 'saved' | 'notsave' | 'saving';
+    isReadOnly?: boolean;
 }) {
     const [show, setShow] = useState(false);
 
@@ -28,6 +30,15 @@ export function ReName({
 
     return (
         <div className={cx('rename-header')}>
+            {isReadOnly ? (
+                <>
+                    <p>readOnly</p>
+                    <p>-</p>
+                </>
+            ) : (
+                ''
+            )}
+
             <p
                 onClick={() => {
                     setShow(true);

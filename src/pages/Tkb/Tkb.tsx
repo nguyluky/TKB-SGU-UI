@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
-
 import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { NotifyMaster } from '../../components/NotifyPopup';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
@@ -38,7 +38,7 @@ function tkbToKey(tkbs: TkbTiet[]): string {
         var cs = e.phong.substring(0, 1);
 
         for (let index = e.tbd; index <= e.tkt; index++) {
-            const hash = `${thu}${index}|${cs}`;
+            const hash = `${thu},${index}|${cs}`;
             temp.push(hash);
         }
     });
@@ -162,9 +162,15 @@ export default function Tkb() {
     const onAddHphandler = useCallback(
         (mhp: string, isTimeLine?: boolean) => {
             if (!tkbData || tkbData.ma_hoc_phans.includes(mhp)) {
-                console.log('tkb chưa tải xong');
+                notifyMaster.info('tkb chưa tải xong');
                 return;
             }
+
+            if (tkbData.rule >= 3) {
+                notifyMaster.error('bạn không có quyền sửa tkb này');
+                return;
+            }
+
             tkbData.ma_hoc_phans.push(mhp);
             setTkbData({ ...tkbData });
             if (!isTimeLine) {
@@ -233,8 +239,10 @@ export default function Tkb() {
                 if (cacheTietNhom.current[e].ma_mon === maMon) return false;
                 var i = false;
 
+                var t = e.split('-').map((j) => j.split('|')[0]);
+
                 tiet.forEach((j) => {
-                    if (e.includes(j)) i = true;
+                    if (t.includes(j)) i = true;
                 });
 
                 return i;
@@ -246,8 +254,13 @@ export default function Tkb() {
             tkbToKey(nhom.tkb)
                 .split('-')
                 .forEach((e) => {
-                    var hash = e.substring(0, 1) + (+e.substring(1, 2) <= 5 ? 's' : 'c');
-                    tem[hash] = e.substring(3, 4);
+                    console.log(e);
+
+                    const [ThT, CS] = e.split('|');
+                    const [Thu, t] = ThT.split(',');
+
+                    var hash = Thu + (+t <= 5 ? 's' : 'c');
+                    tem[hash] = CS;
                 });
 
             console.log(tem);
@@ -256,10 +269,14 @@ export default function Tkb() {
                 if (cacheTietNhom.current[key].ma_mon === maMon) return false;
                 var isTrung = false;
                 key.split('-').forEach((e) => {
-                    var hash = e.substring(0, 1) + (+e.substring(1, 2) <= 5 ? 's' : 'c');
-                    // console.log(hash);
-                    // console.log(tem[hash], e.substring(3, 4));
-                    if (tem[hash] && tem[hash] !== e.substring(3, 4)) isTrung = true;
+                    const [ThT, CS] = e.split('|');
+                    const [Thu, t] = ThT.split(',');
+
+                    var hash = Thu + (+t <= 5 ? 's' : 'c');
+                    console.log(tem[hash]);
+                    if (tem[hash] && tem[hash] !== CS) {
+                        isTrung = true;
+                    }
                 });
 
                 return isTrung;
@@ -535,7 +552,11 @@ export default function Tkb() {
     const doUpdate = () => {
         // console.log(tkbDateRef.current);
         console.log('dosave');
+
         if (!tkbDataRef.current) return;
+
+        if (tkbDataRef.current.rule >= 3) return;
+
         if (tkbDataRef.current?.isClient) {
             setIconSaveing('saving');
             globalState.client.localApi.updateTkb(tkbDataRef.current).then((apiresp) => {
@@ -626,7 +647,12 @@ export default function Tkb() {
             e.right = undefined;
             var tkbName = tkbData?.name || '';
             e.center = (
-                <ReName defaultName={tkbName} onChangeName={onRenameHandler} isSave={iconSaveing} />
+                <ReName
+                    defaultName={tkbName}
+                    onChangeName={onRenameHandler}
+                    isSave={iconSaveing}
+                    isReadOnly={tkbData.rule >= 3}
+                />
             );
             return { ...e };
         });

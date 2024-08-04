@@ -197,6 +197,10 @@
     padding: var(--margin-g);
     position: absolute;
     transition: all 0.1s ease-in-out;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    // color: grey;
+    // scrollbar-color: grey transparent;
 
     &.tiet-selected {
         outline: 2px solid var(--primary-color-1);
@@ -208,9 +212,13 @@
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        font-size: large;
+        font-size: 1.2rem;
         font-weight: bold;
         // background: transparent;
+    }
+
+    .info {
+        font-size: 1rem;
     }
 
     &.entering {
@@ -255,7 +263,7 @@
         border-radius: var(--border-radius-g);
 
         &:hover {
-            background-color: var(--hover-color);
+            background-color: rgba($color: #000000, $alpha: 0.1);
         }
     }
 }
