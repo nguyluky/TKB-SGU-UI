@@ -6,7 +6,8 @@ const routers = {
     test: '/test',
     errorPage: '/error',
     changePassword: '/change-password',
-    forgotPassword: '/forgot-password'
+    forgotPassword: '/forgot-password',
+    join: '/join/:joinId',
 };
 
 export default routers;

@@ -7,6 +7,7 @@ import ChangePassword from '../pages/ChangePassword';
 import DsTkb from '../pages/DsTkb';
 import ErrorPage from '../pages/Error';
 import Home from '../pages/Home';
+import Join from '../pages/Join';
 import LoginUp from '../pages/LoginUp';
 import Test from '../pages/Test/Test';
 import Tkb from '../pages/Tkb';
@@ -30,6 +31,11 @@ export const defaultLayoutChildren = [
     {
         path: routerConfig.test,
         element: <Test />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
+    {
+        path: routerConfig.join,
+        element: <Join />,
         nodeRef: createRef<HTMLDivElement>(),
     },
 ];

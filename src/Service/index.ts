@@ -81,7 +81,7 @@ interface BaseApi {
     getDsNhomHoc(): Promise<DsNhomHocResp>;
 
     createInviteLink(tkbId: string): Promise<ApiResponse<string>>;
-    join(inviteLink: string): Promise<ApiResponse<null>>;
+    join(inviteLink: string): Promise<ApiResponse<string>>;
     getDsMember(tkbId: string): Promise<ApiResponse<Member[]>>;
     updateRuleMember(tkbId: string, memberId: string, rule: number): Promise<ApiResponse<null>>;
     removeMember(tkbId: string, memberId: string): Promise<ApiResponse<null>>;
@@ -154,8 +154,8 @@ class ServerApi implements BaseApi {
             tkb_describe: tkb_describe,
             thumbnail: null,
             public: false,
-            id_to_hocs: id_to_hocs || [],
-            ma_hoc_phans: ma_hoc_phans || [],
+            id_to_hocs: id_to_hocs,
+            ma_hoc_phans: ma_hoc_phans,
         });
 
         if (resp.data.data) resp.data.data.created = new Date(resp.data.data.created);
@@ -209,7 +209,7 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async join(inviteLink: string): Promise<ApiResponse<null>> {
+    async join(inviteLink: string): Promise<ApiResponse<string>> {
         if (!window.navigator.onLine) {
             return new Promise((r, a) => {
                 r({
@@ -219,7 +219,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.post<ApiResponse<null>>(apiConfig.joinTkb(inviteLink));
+        var resp = await this.request.post<ApiResponse<string>>(apiConfig.joinTkb(inviteLink));
         return resp.data;
     }
 

@@ -256,6 +256,7 @@
     transition-property: display transform opacity;
     transition-duration: 0.05s;
     transition-behavior: allow-discrete;
+    z-index: 2;
 
     p {
         padding: 3px 20px;

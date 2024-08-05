@@ -1,4 +1,5 @@
-const baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
+// const baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
+const baseUrl = 'http://localhost:4000/api/v1';
 
 const config = {
     baseUrl: baseUrl,
@@ -9,8 +10,7 @@ const config = {
     logUp: () => '/auth/signup',
     verifyEmail: (token: string) => '/auth/verify/' + encodeURIComponent(token),
     forgotPassword: () => '/auth/forgot-password',
-    resetPassword: (tokenResetPassword: string) =>
-        '/auth/reset-password?token=' + encodeURIComponent(tokenResetPassword),
+    resetPassword: (tokenResetPassword: string) => '/auth/reset-password?token=' + encodeURIComponent(tokenResetPassword),
     changePassword: () => '/auth/change-password',
     getLogInHistory: () => '/auth/tokens',
     logOut: (tokenId: string) => '/auth/tokens/' + encodeURIComponent(tokenId),
@@ -23,10 +23,8 @@ const config = {
     createJoinLink: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/invite',
     joinTkb: (invite_id: string) => '/tkbs/join?invite_id=' + encodeURIComponent(invite_id),
     getDsMember: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends',
-    updateRuleMember: (tkbId: string, memberId: string) =>
-        '/tkbs/' + encodeURIComponent(tkbId) + '/friends/' + encodeURIComponent(memberId),
-    removeMember: (tkbId: string, memberId: string) =>
-        '/tkbs/' + encodeURIComponent(tkbId) + '/friends/' + encodeURIComponent(memberId),
+    updateRuleMember: (tkbId: string, memberId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends/' + encodeURIComponent(memberId),
+    removeMember: (tkbId: string, memberId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends/' + encodeURIComponent(memberId),
 };
 
 export default config;
