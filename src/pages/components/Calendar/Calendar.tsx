@@ -275,7 +275,12 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                                             })}
                                             style={tr.style}
                                         >
-                                            <p className={cx('title')}>{tr.ten_mon}</p>
+                                            <p
+                                                className={cx('title')}
+                                                content={`${tr.ten_mon} (${tr.id_mon})`}
+                                            >
+                                                {tr.ten_mon} ({tr.id_mon})
+                                            </p>
                                             <p className={cx('info')}>GV: {tr.gv}</p>
                                             <p className={cx('info')}>Nhóm: {tr.nhom}</p>
                                             <p className={cx('info')}>Phòng: {tr.phong}</p>

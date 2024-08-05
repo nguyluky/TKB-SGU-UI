@@ -159,7 +159,8 @@
 
 .add-popup {
     height: 60vh;
-
+    min-width: max-content;
+    width: 50vw;
     .header {
         box-sizing: border-box;
         padding: 10px 15px;

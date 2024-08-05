@@ -94,6 +94,16 @@ class ServerApi implements BaseApi {
     }
 
     async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                    data: [],
+                });
+            });
+        }
         var resp = await this.request.get<ApiResponse<TkbData[]>>(apiConfig.getDsTkb());
         if (resp.data.data)
             resp.data.data.forEach((e) => {
@@ -103,6 +113,15 @@ class ServerApi implements BaseApi {
     }
 
     async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.get<ApiResponse<TkbData>>(apiConfig.getTkb(tkbId));
         if (resp.data.data) {
             resp.data.data.created = new Date(resp.data.data.created);
@@ -121,6 +140,15 @@ class ServerApi implements BaseApi {
         id_to_hocs?: string[],
         ma_hoc_phans?: string[],
     ): Promise<ApiResponse<TkbData>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.post<ApiResponse<TkbData>>(apiConfig.createTkb(), {
             name: name,
             tkb_describe: tkb_describe,
@@ -136,6 +164,15 @@ class ServerApi implements BaseApi {
     }
 
     async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.put<ApiResponse<null>>(
             apiConfig.updateTkb(tkbData.id),
             tkbData,
@@ -144,22 +181,58 @@ class ServerApi implements BaseApi {
     }
 
     async deleteTkb(tkbId: string): Promise<ApiResponse<null>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.delete<ApiResponse<null>>(api.deleteTkb(tkbId));
         return resp.data;
     }
 
     async createInviteLink(tkbId: string): Promise<ApiResponse<string>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.post<ApiResponse<string>>(apiConfig.createJoinLink(tkbId));
 
         return resp.data;
     }
 
     async join(inviteLink: string): Promise<ApiResponse<null>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.post<ApiResponse<null>>(apiConfig.joinTkb(inviteLink));
         return resp.data;
     }
 
     async getDsMember(tkbId: string): Promise<ApiResponse<Member[]>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.get<ApiResponse<Member[]>>(apiConfig.getDsMember(tkbId));
 
         return resp.data;
@@ -170,6 +243,15 @@ class ServerApi implements BaseApi {
         memberId: string,
         rule: number,
     ): Promise<ApiResponse<null>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.put<ApiResponse<null>>(
             apiConfig.updateRuleMember(tkbId, memberId),
             { rule: rule },
@@ -178,6 +260,15 @@ class ServerApi implements BaseApi {
     }
 
     async removeMember(tkbId: string, memberId: string): Promise<ApiResponse<null>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
         var resp = await this.request.delete<ApiResponse<null>>(
             apiConfig.removeMember(tkbId, memberId),
         );
@@ -185,9 +276,13 @@ class ServerApi implements BaseApi {
     }
 
     async getDsNhomHoc(): Promise<DsNhomHocResp> {
-        var getData = this.request.get<DsNhomHocResp>(apiConfig.getDsNhomHoc());
+        if (!window.navigator.onLine) {
+            return JSON.parse(localStorage.getItem('dsNhomHoc') || '{}');
+        }
 
-        return (await getData).data;
+        const getData = this.request.get<DsNhomHocResp>(apiConfig.getDsNhomHoc());
+        const data = (await getData).data;
+        return data;
     }
 }
 

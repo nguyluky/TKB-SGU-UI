@@ -98,6 +98,7 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                             <p>
                                 Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
                             </p>
+                            {/* <p>Lớp: {j.lop.ma}</p> */}
                         </div>
                     );
                 })}
