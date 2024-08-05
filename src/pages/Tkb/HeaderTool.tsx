@@ -7,6 +7,7 @@ import {
     faReply,
     faRightFromBracket,
     faShare,
+    faShareFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
@@ -207,6 +208,25 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 {
                     title: 'Past',
                     onclick: createdCommand('past'),
+                    pos: 'Left',
+                },
+            ],
+        },
+        {
+            title: 'Share',
+            icon: undefined,
+            pos: 'bottom',
+            children: [
+                {
+                    icon: faShareFromSquare,
+                    title: 'Tạo lời mời',
+                    onclick: createdCommand('addMember'),
+                    pos: 'Left',
+                },
+                {
+                    icon: undefined,
+                    title: 'quản lý',
+                    onclick: createdCommand('quản lý'),
                     pos: 'Left',
                 },
             ],

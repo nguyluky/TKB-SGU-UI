@@ -149,6 +149,8 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                     scrollbarColor: `hsl(${Math.abs(
                         hashCode(tiet?.ma_mon || '0'),
                     )} 20 50 )  transparent`,
+                    opacity: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0.5 : 1,
+                    zIndex: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0 : 1,
                 };
 
                 var nodeRef =

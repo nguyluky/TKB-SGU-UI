@@ -11,6 +11,7 @@ import { textSaveAsFile } from '../../utils';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
 import { CloneTkb, CreateNewTkb, Property, UploadTkb } from '../components/PagesPopup';
+import { SharePopup } from '../components/PagesPopup/PagesPopup';
 import { Convert } from '../DsTkb/FileTkb';
 import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
@@ -237,6 +238,11 @@ export default function Tkb() {
 
             var overlapKey = Object.keys(cacheTietNhom.current).filter((e) => {
                 if (cacheTietNhom.current[e].ma_mon === maMon) return false;
+                if (
+                    cacheTietNhom.current[e].ma_mon === '862408' ||
+                    cacheTietNhom.current[e].ma_mon === '862409'
+                )
+                    return false;
                 var i = false;
 
                 var t = e.split('-').map((j) => j.split('|')[0]);
@@ -267,6 +273,11 @@ export default function Tkb() {
 
             var khacCSKey = Object.keys(cacheTietNhom.current).filter((key) => {
                 if (cacheTietNhom.current[key].ma_mon === maMon) return false;
+                if (
+                    cacheTietNhom.current[key].ma_mon === '862408' ||
+                    cacheTietNhom.current[key].ma_mon === '862409'
+                )
+                    return false;
                 var isTrung = false;
                 key.split('-').forEach((e) => {
                     const [ThT, CS] = e.split('|');
@@ -311,7 +322,7 @@ export default function Tkb() {
                 tkbData.id_to_hocs.push(idToHoc);
                 setTkbData({ ...tkbData });
             } else {
-                if (khacCS.length) {
+                if (khacCS.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
                     console.log(khacCS);
                     NotifyMaster.error(`khác cơ sở ${ov.map((e) => e.ten_mon).join(' - ')}`);
                     setConflict((e) => {
@@ -336,7 +347,7 @@ export default function Tkb() {
                     return;
                 }
 
-                if (ov.length) {
+                if (ov.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
                     console.log(ov);
                     // ông xem nên để cái thông báo lỗi như thế nào cho hợi lý
 
@@ -535,6 +546,11 @@ export default function Tkb() {
                 />,
             );
         },
+        addMember: () => {
+            if (tkbData) {
+                setPopup(<SharePopup open={true} modal onClose={() => setPopup('')}></SharePopup>);
+            }
+        },
         property: () => {
             if (tkbData)
                 setPopup(
@@ -606,6 +622,8 @@ export default function Tkb() {
         return () => {
             document.removeEventListener('keydown', keyEventHandel);
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onAddHphandler, onAddNhomHocHandler, onRemoveHphandeler, onRemoveNhomHocHandler]);
 
     // getTkbData và dsNhomHoc

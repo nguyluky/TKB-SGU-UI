@@ -25,10 +25,10 @@ export function RenameModal({ onRename, currName, ...props }: RenameModalProps) 
         <Popup {...props}>
             <PopupModel title="Rename Tkb" onCancel={props.onClose} onOk={onRenameHandel}>
                 <div className={cx('input')}>
-                    <label form="inputname">New Name: </label>
+                    <label form="inputName">New Name: </label>
                     <input
                         type="text"
-                        name="inputname"
+                        name="inputName"
                         value={lastName}
                         onChange={(event) => setLastName(event.target.value)}
                     />
@@ -236,6 +236,23 @@ export function Property({ tkbData, ...props }: PropertyProps) {
                             ''
                         )}
                     </div>
+                </div>
+            </PopupModel>
+        </Popup>
+    );
+}
+
+interface SharePopupProps extends Omit<PopupProps, 'children'> {}
+
+export function SharePopup({ ...pros }: SharePopupProps) {
+    // const [pos, setPos] = useState('read');
+    const [link, setLine] = useState('');
+    return (
+        <Popup {...pros}>
+            <PopupModel title="Tại lời mời" onCancel={pros.onClose} noFooter>
+                <div className={cx('input')}>
+                    <label form="inputname">link: </label>
+                    <input type="text" name="inputname" value={'đang làm'} disabled />
                 </div>
             </PopupModel>
         </Popup>
