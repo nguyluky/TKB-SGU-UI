@@ -239,7 +239,7 @@ export function SharePopup({ tkbid, ...pros }: SharePopupProps) {
             }
             setLine(e.data || '');
         });
-    }, []);
+    }, [globalState.client.serverApi, tkbid]);
 
     return (
         <Popup {...pros}>

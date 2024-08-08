@@ -1,6 +1,6 @@
 import { TkbData } from '.';
 
-var db: IDBDatabase;
+let db: IDBDatabase;
 
 async function createDataBase() {
     const temp = new Promise<IDBDatabase>((resolve, reject) => {
@@ -28,10 +28,10 @@ export async function addRecord(data: TkbData) {
     if (!db) await createDataBase();
 
     const addRecordPromise = await new Promise<IDBValidKey>(function (resolve, reject) {
-        var tran = db.transaction(['tkbStorage'], 'readwrite');
-        var objStore = tran.objectStore('tkbStorage');
+        const tran = db.transaction(['tkbStorage'], 'readwrite');
+        const objStore = tran.objectStore('tkbStorage');
 
-        var addRep = objStore.add(data);
+        const addRep = objStore.add(data);
 
         addRep.onsuccess = (ev) => {
             resolve(addRep.result);
@@ -48,11 +48,11 @@ export async function addRecord(data: TkbData) {
 export async function updateRecord(data: TkbData) {
     if (!db) await createDataBase();
 
-    var updateRecord = await new Promise<IDBValidKey>(function (resolve, reject) {
-        var tran = db.transaction(['tkbStorage'], 'readwrite');
-        var objStore = tran.objectStore('tkbStorage');
+    const updateRecord = await new Promise<IDBValidKey>(function (resolve, reject) {
+        const tran = db.transaction(['tkbStorage'], 'readwrite');
+        const objStore = tran.objectStore('tkbStorage');
 
-        var updateRep = objStore.put(data);
+        const updateRep = objStore.put(data);
 
         updateRep.onsuccess = (ev) => {
             resolve(updateRep.result);
@@ -69,10 +69,10 @@ export async function updateRecord(data: TkbData) {
 export async function deleteRecord(tkbId: string) {
     if (!db) await createDataBase();
     const deleteRecordPromise = await new Promise<undefined>(function (resolve, reject) {
-        var tran = db.transaction(['tkbStorage'], 'readwrite');
-        var objStore = tran.objectStore('tkbStorage');
+        const tran = db.transaction(['tkbStorage'], 'readwrite');
+        const objStore = tran.objectStore('tkbStorage');
 
-        var deleteRep = objStore.delete(tkbId);
+        const deleteRep = objStore.delete(tkbId);
 
         deleteRep.onsuccess = (ev) => {
             resolve(deleteRep.result);
@@ -89,11 +89,11 @@ export async function deleteRecord(tkbId: string) {
 export async function getRecord(tkbId: string) {
     if (!db) await createDataBase();
 
-    var getRecord = await new Promise<TkbData>(function (resolve, reject) {
-        var tran = db.transaction(['tkbStorage'], 'readonly');
-        var objStore = tran.objectStore('tkbStorage');
+    const getRecord = await new Promise<TkbData>(function (resolve, reject) {
+        const tran = db.transaction(['tkbStorage'], 'readonly');
+        const objStore = tran.objectStore('tkbStorage');
 
-        var getRep = objStore.get(tkbId);
+        const getRep = objStore.get(tkbId);
 
         getRep.onsuccess = (ev) => {
             resolve(getRep.result as TkbData);
@@ -109,11 +109,11 @@ export async function getRecord(tkbId: string) {
 
 export async function getAllRecord() {
     if (!db) await createDataBase();
-    var getALlRecord = await new Promise<TkbData[]>(function (resolve, reject) {
-        var tran = db.transaction(['tkbStorage'], 'readonly');
-        var objStore = tran.objectStore('tkbStorage');
+    const getALlRecord = await new Promise<TkbData[]>(function (resolve, reject) {
+        const tran = db.transaction(['tkbStorage'], 'readonly');
+        const objStore = tran.objectStore('tkbStorage');
 
-        var getAllRep = objStore.getAll();
+        const getAllRep = objStore.getAll();
 
         getAllRep.onsuccess = (ev) => {
             resolve(getAllRep.result as TkbData[]);

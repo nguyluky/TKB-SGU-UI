@@ -3,17 +3,13 @@ import style from './ButtonWithLoading.module.scss';
 
 const cx = classNames.bind(style);
 
-interface Props
-    extends React.DetailedHTMLProps<
-        React.ButtonHTMLAttributes<HTMLButtonElement>,
-        HTMLButtonElement
-    > {
+interface Props extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
     withoutBackground?: boolean;
     isLoading?: boolean;
 }
 
 function ButtonWithLoading(props: Props) {
-    var { withoutBackground, isLoading, className, disabled, ...props1 } = props;
+    const { withoutBackground, isLoading, className, disabled, ...props1 } = props;
 
     return (
         <button

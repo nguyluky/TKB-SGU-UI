@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import classNames from 'classnames/bind';
 import { useState } from 'react';
 import style from './Test.module.scss';

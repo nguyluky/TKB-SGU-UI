@@ -1,5 +1,4 @@
 import { io, Socket } from 'socket.io-client';
-import { callbackify } from 'util';
 import { apiConfig } from '../config';
 
 interface SocketEventListener {

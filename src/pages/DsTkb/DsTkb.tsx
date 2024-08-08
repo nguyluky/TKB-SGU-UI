@@ -1,19 +1,13 @@
-import {
-    faArrowDownAZ,
-    faEllipsisVertical,
-    faFolderOpen,
-    faGrip,
-    faList,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowDownAZ, faEllipsisVertical, faFolderOpen, faGrip, faList } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { TkbData } from '../../Service';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { routerConfig } from '../../config';
+import { TkbData } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import { UploadTkb } from '../components/PagesPopup';
@@ -48,7 +42,7 @@ function DsTkb() {
     const setHeaderPar = useContext(headerContent);
     const [globalState] = useContext(globalContent);
 
-    const [sortBy, setSortBy] = useState<'name' | 'time' | ''>('');
+    const [sortBy] = useState<'name' | 'time' | ''>('');
     const [isLoading, setLoading] = useState(true);
     const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
     const [isRow, setIsRow] = useState<boolean>(false);
@@ -63,7 +57,7 @@ function DsTkb() {
                     return;
                 }
                 setDsTkb((j) => {
-                    var i = j.findIndex((i) => i.id === tkbData.id);
+                    const i = j.findIndex((i) => i.id === tkbData.id);
                     if (i >= 0) j.splice(i, 1);
                     return [...j];
                 });
@@ -78,7 +72,7 @@ function DsTkb() {
                 return;
             }
             setDsTkb((j) => {
-                var i = j.findIndex((i) => i.id === tkbData.id);
+                const i = j.findIndex((i) => i.id === tkbData.id);
                 if (i >= 0) j.splice(i, 1);
                 return [...j];
             });
@@ -113,7 +107,7 @@ function DsTkb() {
         reader.onload = () => {
             if (!reader.result) return;
             try {
-                var fileTkb = Convert.toFileTkb(reader.result as string);
+                const fileTkb = Convert.toFileTkb(reader.result as string);
 
                 (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
                     .createNewTkb(
@@ -150,15 +144,15 @@ function DsTkb() {
     useEffect(() => {
         setDsTkb([]);
         setLoading(true);
-        var getServerData = async () => {
+        const getServerData = async () => {
             if (!globalState.client.islogin()) return [];
 
-            var resp = await globalState.client.serverApi.getDsTkb();
+            const resp = await globalState.client.serverApi.getDsTkb();
             return resp.data || [];
         };
 
-        var getLocalData = async () => {
-            var resp = await globalState.client.localApi.getDsTkb();
+        const getLocalData = async () => {
+            const resp = await globalState.client.localApi.getDsTkb();
             return resp.data || [];
         };
 
@@ -191,10 +185,7 @@ function DsTkb() {
                             <span>Bắt đầu thời khoá biểu mới</span>
                         </div>
                         <div className={cx('right')}>
-                            <DropDownButton
-                                icon={faEllipsisVertical}
-                                className={cx('activity-btn')}
-                            >
+                            <DropDownButton icon={faEllipsisVertical} className={cx('activity-btn')}>
                                 <p>ẩn template</p>
                             </DropDownButton>
                         </div>
@@ -212,11 +203,7 @@ function DsTkb() {
                             <span>Thời khoá biểu đã lưu</span>
                         </div>
                         <div className={cx('right')}>
-                            <DropDownButton
-                                className={cx('activity-btn')}
-                                icon={isRow ? faGrip : faList}
-                                onClick={() => setIsRow((e) => !e)}
-                            />
+                            <DropDownButton className={cx('activity-btn')} icon={isRow ? faGrip : faList} onClick={() => setIsRow((e) => !e)} />
                             <DropDownButton className={cx('activity-btn')} icon={faArrowDownAZ} />
                             <DropDownButton
                                 className={cx('activity-btn')}
@@ -242,15 +229,7 @@ function DsTkb() {
                                         return 0;
                                     })
                                     .map((e) => {
-                                        return (
-                                            <CardTkb
-                                                isRow={isRow}
-                                                data={e}
-                                                key={e.id}
-                                                onDelete={onDeletehandle}
-                                                onRename={onRenameHandle}
-                                            />
-                                        );
+                                        return <CardTkb isRow={isRow} data={e} key={e.id} onDelete={onDeletehandle} onRename={onRenameHandle} />;
                                     })}
                             </>
                         </Loader>
@@ -258,11 +237,7 @@ function DsTkb() {
                 </div>
             </div>
 
-            <UploadTkb
-                open={uploadTkbShow}
-                onClose={() => setUploadTkbShow(false)}
-                uploadTkb={onUpdateFileHandle}
-            />
+            <UploadTkb open={uploadTkbShow} onClose={() => setUploadTkbShow(false)} uploadTkb={onUpdateFileHandle} />
         </div>
     );
 }

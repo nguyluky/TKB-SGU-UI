@@ -348,17 +348,18 @@ export default function Tkb() {
 
     // updateHeader
     useEffect(() => {
-        if (!tkbHandler.tkbData) return;
+        const tkbTemp = tkbHandler.tkbData;
+        if (!tkbTemp) return;
         setHeaderPar((e) => {
             e.left = <HeaderTool onCommandEvent={onCommandHandel} />;
             e.right = undefined;
-            const tkbName = tkbHandler.tkbData?.name || '';
+            const tkbName = tkbTemp?.name || '';
             e.center = (
                 <ReName
                     defaultName={tkbName}
                     onChangeName={tkbHandler.onRenameHandler}
                     isSave={tkbHandler.iconSaveing}
-                    isReadOnly={(tkbHandler.tkbData?.rule || 3) >= 3}
+                    isReadOnly={tkbTemp.rule >= 3}
                 />
             );
             return { ...e };

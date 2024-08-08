@@ -40,7 +40,7 @@ function Tool({
     const mouseEnterHandler = (event: React.MouseEvent<HTMLSpanElement>) => {
         if (!tabShow) return;
 
-        var spanEle = event.target as HTMLSpanElement;
+        const spanEle = event.target as HTMLSpanElement;
         setTabShow(spanEle.textContent || '');
     };
 
@@ -50,7 +50,7 @@ function Tool({
             return;
         }
 
-        var spanEle = event.target as HTMLSpanElement;
+        const spanEle = event.target as HTMLSpanElement;
         setTabShow(spanEle.textContent || '');
     };
 
@@ -83,14 +83,8 @@ function Tool({
 
     return (
         <div className={cx('tool-item')} ref={toolref}>
-            <span
-                className={cx('title')}
-                onMouseEnter={tool.children ? onMouseEnter : undefined}
-                onClick={tool.children ? onClick : tool.onclick}
-            >
-                <div className={cx('icon')}>
-                    {tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}
-                </div>
+            <span className={cx('title')} onMouseEnter={tool.children ? onMouseEnter : undefined} onClick={tool.children ? onClick : tool.onclick}>
+                <div className={cx('icon')}>{tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}</div>
 
                 {tool.title}
             </span>
@@ -100,7 +94,7 @@ function Tool({
                     <div className={cx('drop-down-item', tool.pos)}>
                         {tool.children?.map((e, i) => {
                             if (e.onclick) {
-                                var c = e.onclick;
+                                const c = e.onclick;
                                 e.onclick = (...arg) => {
                                     if (onClickOutSide) onClickOutSide();
                                     c(...arg);
@@ -237,7 +231,7 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
     const mouseEnterHandler = (event: React.MouseEvent<HTMLSpanElement>) => {
         if (!tabShow) return;
 
-        var spanEle = event.target as HTMLSpanElement;
+        const spanEle = event.target as HTMLSpanElement;
 
         setTabShow(spanEle.textContent || '');
     };
@@ -248,7 +242,7 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
             return;
         }
 
-        var spanEle = event.target as HTMLSpanElement;
+        const spanEle = event.target as HTMLSpanElement;
         setTabShow(spanEle.textContent || '');
     };
 

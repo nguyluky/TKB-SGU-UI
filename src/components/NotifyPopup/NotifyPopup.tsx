@@ -9,7 +9,7 @@ import style from './NotifyPopup.module.scss';
 const cx = classNames.bind(style);
 
 function NotifyPopup({ children }: { children: ReactElement | ReactElement[] }) {
-    var [listNotify, setListNotify] = useState<NotifyItem[]>([]);
+    const [listNotify, setListNotify] = useState<NotifyItem[]>([]);
 
     const changeHandle = (list: NotifyItem[]) => {
         setListNotify([...list]);
@@ -41,10 +41,7 @@ function NotifyPopup({ children }: { children: ReactElement | ReactElement[] }) 
                             >
                                 {(state) => {
                                     return (
-                                        <div
-                                            className={cx('animation-wrapper', state)}
-                                            ref={e.nodeRef}
-                                        >
+                                        <div className={cx('animation-wrapper', state)} ref={e.nodeRef}>
                                             <NotifyElement data={e} />
                                         </div>
                                     );

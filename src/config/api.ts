@@ -1,5 +1,11 @@
-const baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
-// const baseUrl = 'http://localhost:4000/api/v1';
+
+let baseUrl;
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    baseUrl = 'http://localhost:4000/api/v1';
+} else {
+    baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
+}
+
 
 const config = {
     baseUrl: baseUrl,

@@ -5,12 +5,12 @@ import { useContext, useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Client } from '../../Service';
 import ButtonWithLoading from '../../components/ButtonWithLoading';
 import Input from '../../components/Input';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { apiConfig, routerConfig } from '../../config';
 import api from '../../config/api';
+import { Client } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';
 import style from './LoginUp.module.scss';
 
@@ -56,7 +56,7 @@ function SignIn() {
                 setLoading(false);
                 console.log(resp);
                 if (resp.data.success && resp.data.data) {
-                    var data = resp.data.data;
+                    const data = resp.data.data;
                     console.log(data);
 
                     window.localStorage.setItem('token', data.accessToken);
@@ -86,14 +86,7 @@ function SignIn() {
                 type="text"
                 icon={faUser}
             />
-            <Input
-                autoComplete="off"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                title="Password"
-                type="password"
-                icon={faLock}
-            />
+            <Input autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} title="Password" type="password" icon={faLock} />
             <a href={routerConfig.forgotPassword}>Quên mật khẩu ?</a>
             <ButtonWithLoading className={cx('btn')} onClick={handleLogin} isLoading={isLoading}>
                 Sign In
@@ -124,7 +117,7 @@ function SignUp() {
             .then((resp) => {
                 setLoading(false);
                 if (resp.data.success) {
-                    var url = new URLSearchParams([
+                    const url = new URLSearchParams([
                         ['verifyEmail', 'true'],
                         ['msg', resp.data.msg],
                     ]).toString();
@@ -143,30 +136,9 @@ function SignUp() {
 
     return (
         <>
-            <Input
-                autoComplete="off"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                title="User Name"
-                type="text"
-                icon={faUser}
-            />
-            <Input
-                autoComplete="off"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                title="Email"
-                type="text"
-                icon={faAt}
-            />
-            <Input
-                autoComplete="off"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                title="Password"
-                type="password"
-                icon={faLock}
-            />
+            <Input autoComplete="off" value={userName} onChange={(e) => setUserName(e.target.value)} title="User Name" type="text" icon={faUser} />
+            <Input autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} title="Email" type="text" icon={faAt} />
+            <Input autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} title="Password" type="password" icon={faLock} />
             <ButtonWithLoading className={cx('btn')} isLoading={isLoading} onClick={signUpHandle}>
                 Sign Up
             </ButtonWithLoading>
@@ -175,7 +147,7 @@ function SignUp() {
 }
 
 function LoginUp() {
-    let [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [inORup, setInOrUp] = useState(!searchParams.get('up'));
 
     console.log(searchParams);
