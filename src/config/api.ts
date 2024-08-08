@@ -1,5 +1,5 @@
-// const baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
-const baseUrl = 'http://localhost:4000/api/v1';
+const baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
+// const baseUrl = 'http://localhost:4000/api/v1';
 
 const config = {
     baseUrl: baseUrl,

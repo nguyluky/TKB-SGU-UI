@@ -20,11 +20,11 @@ export interface TkbData {
 }
 
 export interface DsNhomHocResp {
-    ds_nhom_to: DsNhomTo[];
+    ds_nhom_to: NhomHoc[];
     ds_mon_hoc: { [key: string]: string };
 }
 
-export interface DsNhomTo {
+export interface NhomHoc {
     id_to_hoc: string;
     id_mon: string;
     ma_mon: string;
@@ -104,7 +104,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.get<ApiResponse<TkbData[]>>(apiConfig.getDsTkb());
+        const resp = await this.request.get<ApiResponse<TkbData[]>>(apiConfig.getDsTkb());
         if (resp.data.data)
             resp.data.data.forEach((e) => {
                 e.created = new Date(e.created);
@@ -122,7 +122,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.get<ApiResponse<TkbData>>(apiConfig.getTkb(tkbId));
+        const resp = await this.request.get<ApiResponse<TkbData>>(apiConfig.getTkb(tkbId));
         if (resp.data.data) {
             resp.data.data.created = new Date(resp.data.data.created);
             resp.data.data.id_to_hocs = resp.data.data.id_to_hocs || [];
@@ -149,7 +149,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.post<ApiResponse<TkbData>>(apiConfig.createTkb(), {
+        const resp = await this.request.post<ApiResponse<TkbData>>(apiConfig.createTkb(), {
             name: name,
             tkb_describe: tkb_describe,
             thumbnail: null,
@@ -173,7 +173,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.put<ApiResponse<null>>(
+        const resp = await this.request.put<ApiResponse<null>>(
             apiConfig.updateTkb(tkbData.id),
             tkbData,
         );
@@ -190,7 +190,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.delete<ApiResponse<null>>(api.deleteTkb(tkbId));
+        const resp = await this.request.delete<ApiResponse<null>>(api.deleteTkb(tkbId));
         return resp.data;
     }
 
@@ -204,7 +204,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.post<ApiResponse<string>>(apiConfig.createJoinLink(tkbId));
+        const resp = await this.request.post<ApiResponse<string>>(apiConfig.createJoinLink(tkbId));
 
         return resp.data;
     }
@@ -219,7 +219,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.post<ApiResponse<string>>(apiConfig.joinTkb(inviteLink));
+        const resp = await this.request.post<ApiResponse<string>>(apiConfig.joinTkb(inviteLink));
         return resp.data;
     }
 
@@ -233,7 +233,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.get<ApiResponse<Member[]>>(apiConfig.getDsMember(tkbId));
+        const resp = await this.request.get<ApiResponse<Member[]>>(apiConfig.getDsMember(tkbId));
 
         return resp.data;
     }
@@ -252,7 +252,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.put<ApiResponse<null>>(
+        const resp = await this.request.put<ApiResponse<null>>(
             apiConfig.updateRuleMember(tkbId, memberId),
             { rule: rule },
         );
@@ -269,7 +269,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        var resp = await this.request.delete<ApiResponse<null>>(
+        const resp = await this.request.delete<ApiResponse<null>>(
             apiConfig.removeMember(tkbId, memberId),
         );
         return resp.data;
@@ -300,7 +300,7 @@ class localApi
         >
 {
     async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
-        var ev = await getAllRecord();
+        const ev = await getAllRecord();
 
         return {
             code: 200,
@@ -311,7 +311,7 @@ class localApi
     }
 
     async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
-        var ev = await getRecord(tkbId);
+        const ev = await getRecord(tkbId);
 
         return {
             code: 200,
@@ -349,7 +349,7 @@ class localApi
         id_to_hocs?: string[],
         ma_hoc_phans?: string[],
     ): Promise<ApiResponse<TkbData>> {
-        var newTkb: TkbData = {
+        const newTkb: TkbData = {
             id: generateUUID(),
             name: name,
             tkb_describe: tkb_describe,
@@ -372,7 +372,7 @@ class localApi
     }
 }
 
-var ClientInstance: Client;
+let ClientInstance: Client;
 export class Client {
     public request: AxiosInstance;
     public serverApi: ServerApi;

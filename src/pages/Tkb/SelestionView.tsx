@@ -1,14 +1,8 @@
-import {
-    faAngleDown,
-    faAngleUp,
-    faPlus,
-    faSquareMinus,
-    faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faPlus, faSquareMinus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
-import { DsNhomHocResp, DsNhomTo, TkbData, TkbTiet } from '../../Service';
+import { DsNhomHocResp, NhomHoc, TkbData, TkbTiet } from '../../Service';
 import { hashCode } from '../../utils';
 import { AddHp } from './AddHp';
 import { HocPhan } from './HocPhan';
@@ -24,15 +18,7 @@ interface selestionViewPro {
     onRemoveNhomHoc: (idToHoc: string) => void;
 }
 
-export function SelestionView({
-    dsNhomHoc,
-    onAddHp,
-    onRemoveHp,
-    onRemoveNhomHoc,
-    tkbData,
-    onAddNhomHoc,
-    soTC,
-}: selestionViewPro) {
+export function SelestionView({ dsNhomHoc, onAddHp, onRemoveHp, onRemoveNhomHoc, tkbData, onAddNhomHoc, soTC }: selestionViewPro) {
     const [mini, setMini] = useState<number>(0);
     const toggleHp = (mhp: string) => {
         if (!tkbData) return;
@@ -65,15 +51,7 @@ export function SelestionView({
 
             <div className={cx('content')}>
                 {tkbData?.ma_hoc_phans.map((e) => (
-                    <HocPhan
-                        mini={mini}
-                        key={e}
-                        tkb={tkbData}
-                        data={dsNhomHoc}
-                        maHocPhan={e}
-                        onRemoveHp={onRemoveHp}
-                        onAddNhomHoc={toggleNhomHoc}
-                    />
+                    <HocPhan mini={mini} key={e} tkb={tkbData} data={dsNhomHoc} maHocPhan={e} onRemoveHp={onRemoveHp} onAddNhomHoc={toggleNhomHoc} />
                 ))}
             </div>
         </div>
@@ -87,7 +65,7 @@ function Temp({
     onAddNhomHoc,
     maMonHoc,
 }: {
-    dsNhomHoc: DsNhomTo[];
+    dsNhomHoc: NhomHoc[];
     tkbData?: TkbData;
     onAddNhomHoc: (idToHoc: string) => void;
     data?: DsNhomHocResp;
@@ -138,9 +116,7 @@ function Temp({
                                 })}
                                 style={{
                                     background: tkbData?.id_to_hocs.includes(j.id_to_hoc)
-                                        ? `hsl(${Math.abs(
-                                              hashCode(maMonHoc || '0'),
-                                          )} var(--tkb-nhom-view-HSL) )`
+                                        ? `hsl(${Math.abs(hashCode(maMonHoc || '0'))} var(--tkb-nhom-view-HSL) )`
                                         : 'transparent',
                                 }}
                                 key={j.id_to_hoc}
@@ -148,20 +124,9 @@ function Temp({
                                     onAddNhomHoc(j.id_to_hoc);
                                 }}
                             >
-                                <p>
-                                    Thứ:{' '}
-                                    {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}
-                                </p>
-                                <p>
-                                    GV:{' '}
-                                    {Array.from(
-                                        new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : ''))),
-                                    ).join(', ')}
-                                </p>
-                                <p>
-                                    Phòng:{' '}
-                                    {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
-                                </p>
+                                <p>Thứ: {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}</p>
+                                <p>GV: {Array.from(new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : '')))).join(', ')}</p>
+                                <p>Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}</p>
                             </div>
                         );
                     })}
@@ -170,8 +135,8 @@ function Temp({
     );
 }
 
-function timNhomHocTuongTu(tkbs: TkbTiet[], fromDS: DsNhomTo[]) {
-    var listTiet: string[] = [];
+function timNhomHocTuongTu(tkbs: TkbTiet[], fromDS: NhomHoc[]) {
+    const listTiet: string[] = [];
 
     tkbs.forEach((e) => {
         for (let index = e.tbd; index < e.tkt; index++) {
@@ -180,17 +145,17 @@ function timNhomHocTuongTu(tkbs: TkbTiet[], fromDS: DsNhomTo[]) {
     });
 
     // kết quả chả về
-    var nhomHocCanFix: DsNhomTo[] = [];
+    const nhomHocCanFix: NhomHoc[] = [];
 
     fromDS.forEach((e) => {
-        var listTietCurr: string[] = [];
+        const listTietCurr: string[] = [];
         e.tkb.forEach((jj) => {
             for (let index = jj.tbd; index < jj.tkt; index++) {
                 listTietCurr.push(`${jj.thu}${index}`);
             }
         });
 
-        var laCon = true;
+        let laCon = true;
         for (let index = 0; index < listTietCurr.length; index++) {
             const element = listTietCurr[index];
 
@@ -214,15 +179,8 @@ interface ReplaceViewProps {
     onClose: () => void;
 }
 
-export function ReplaceView({
-    idNhomHocToReplace,
-    dsNhomHoc,
-    tkbData,
-    onAddNhomHoc,
-    onRemoveNhomHoc,
-    onClose,
-}: ReplaceViewProps) {
-    const [replayItem, setReplayItem] = useState<DsNhomTo[]>([]);
+export function ReplaceView({ idNhomHocToReplace, dsNhomHoc, tkbData, onAddNhomHoc, onRemoveNhomHoc, onClose }: ReplaceViewProps) {
+    const [replayItem, setReplayItem] = useState<NhomHoc[]>([]);
     const [dsMaHocPhan, setDsMaHocPhan] = useState<string[]>([]);
 
     const toggleHp = (mhp: string) => {
@@ -233,25 +191,24 @@ export function ReplaceView({
     };
 
     useEffect(() => {
-        var tkbs: TkbTiet[] = [];
+        const tkbs: TkbTiet[] = [];
 
         idNhomHocToReplace.forEach((e) => {
-            var nhomHoc = dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+            const nhomHoc = dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
 
             nhomHoc?.tkb.forEach((jj) => {
                 tkbs.push(jj);
             });
         });
 
-        var listAllNhomHocs: DsNhomTo[] =
-            dsNhomHoc?.ds_nhom_to.filter((jjj) => tkbData?.ma_hoc_phans.includes(jjj.ma_mon)) || [];
+        const listAllNhomHocs: NhomHoc[] = dsNhomHoc?.ds_nhom_to.filter((jjj) => tkbData?.ma_hoc_phans.includes(jjj.ma_mon)) || [];
 
-        var dsNhomHoc_ = timNhomHocTuongTu(tkbs, listAllNhomHocs);
+        const dsNhomHoc_ = timNhomHocTuongTu(tkbs, listAllNhomHocs);
 
         // console.log(dsNhomHoc_);
         setReplayItem(dsNhomHoc_);
         setDsMaHocPhan(Array.from(new Set(dsNhomHoc_.map((e) => e.ma_mon))));
-    }, [idNhomHocToReplace]);
+    }, [dsNhomHoc?.ds_nhom_to, idNhomHocToReplace, tkbData?.ma_hoc_phans]);
 
     return (
         <div className={cx('side-bar-wrapper')}>
@@ -267,14 +224,7 @@ export function ReplaceView({
             </div>
             <div className={cx('content')}>
                 {dsMaHocPhan.map((e, i) => (
-                    <Temp
-                        key={i}
-                        data={dsNhomHoc}
-                        tkbData={tkbData}
-                        maMonHoc={e}
-                        dsNhomHoc={replayItem}
-                        onAddNhomHoc={toggleHp}
-                    />
+                    <Temp key={i} data={dsNhomHoc} tkbData={tkbData} maMonHoc={e} dsNhomHoc={replayItem} onAddNhomHoc={toggleHp} />
                 ))}
             </div>
         </div>

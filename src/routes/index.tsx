@@ -45,7 +45,7 @@ const routers = createBrowserRouter([
         path: routerConfig.home,
         element: <DefaultLayout />,
         children: defaultLayoutChildren.map<RouteObject>((route) => {
-            var temp: RouteObject = {
+            const temp: RouteObject = {
                 index: route.path === '/',
                 path: route.path === '/' ? undefined : route.path,
                 element: route.element,

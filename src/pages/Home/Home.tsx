@@ -40,7 +40,6 @@ function Home() {
                     </div>
                     <h1>Lịch học ngay trong tầm tay</h1>
                     <p>Chỉ cần vài phút, là bạn đã có một thời khoá biểu đẹp</p>
-                    <p>Tại sao phải khổ sở trên web, khi ta có thể xài tool 😎</p>
                     <Link to={'/tkbs'} className={cx('button')}>
                         <button className={cx('buttonHome')}>Bắt Đầu</button>
                     </Link>

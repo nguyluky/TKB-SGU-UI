@@ -1,18 +1,10 @@
 import { faGripLines } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
-import {
-    createRef,
-    CSSProperties,
-    MouseEvent,
-    RefObject,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import { createRef, CSSProperties, MouseEvent, RefObject, useEffect, useRef, useState } from 'react';
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { DsNhomTo } from '../../../Service';
+import { NhomHoc } from '../../../Service';
 import { hashCode } from '../../../utils';
 import style from './Calendar.module.scss';
 
@@ -24,7 +16,7 @@ interface CustomEvent extends MouseEvent {
 }
 
 interface Props {
-    data?: DsNhomTo[];
+    data?: NhomHoc[];
     idToHocs?: string[];
     conflict: string[];
     onDeleteNhomHoc: (idToHoc: string) => void;
@@ -82,15 +74,13 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
 
     useEffect(() => {
         const onClickHanled = (event: globalThis.MouseEvent) => {
-            var isClickOutSide = true;
+            let isClickOutSide = true;
 
             tietDisplay.forEach((e) => {
-                if (e.nodeRef.current?.contains(event.target as HTMLElement))
-                    isClickOutSide = false;
+                if (e.nodeRef.current?.contains(event.target as HTMLElement)) isClickOutSide = false;
             });
 
-            if (contextRef.current && contextRef.current.contains(event.target as HTMLElement))
-                isClickOutSide = false;
+            if (contextRef.current && contextRef.current.contains(event.target as HTMLElement)) isClickOutSide = false;
 
             if (isClickOutSide) {
                 console.log('ok');
@@ -101,8 +91,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
             if (!(event.target as HTMLDivElement).contains(contextRef.current)) {
                 if (lastSelecion.current)
                     setSelected((ses) => {
-                        if (ses.includes(lastSelecion.current))
-                            ses.splice(ses.indexOf(lastSelecion.current), 1);
+                        if (ses.includes(lastSelecion.current)) ses.splice(ses.indexOf(lastSelecion.current), 1);
                         lastSelecion.current = '';
                         return [...ses];
                     });
@@ -127,35 +116,25 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
     }, [tietDisplay]);
 
     useEffect(() => {
-        var temp: TietDisplay[] = [];
+        const temp: TietDisplay[] = [];
         idToHocs?.forEach((e) => {
-            var tiet = data?.find((j) => j.id_to_hoc === e);
+            const tiet = data?.find((j) => j.id_to_hoc === e);
 
             tiet?.tkb.forEach((jj, i) => {
-                var itemStyle: CSSProperties = {
-                    left: `calc(((100% - var(--left-m)) / var(--columns)) * (${
-                        +jj.thu - 2
-                    } * var(--y-s) + ${jj.tbd - 1} * var(--x-s))  + var(--left-m))`,
-                    top: `calc(((100% - var(--top-m)) / var(--rows)) * (${
-                        +jj.thu - 2
-                    } * var(--x-s) + ${jj.tbd - 1} * var(--y-s)) + var(--top-m))`,
-                    height: `calc((100% - var(--top-m)) / var(--rows) * (${
-                        jj.tkt - jj.tbd
-                    } * var(--y-s) + 1) - 5px)`,
+                const itemStyle: CSSProperties = {
+                    left: `calc(((100% - var(--left-m)) / var(--columns)) * (${+jj.thu - 2} * var(--y-s) + ${
+                        jj.tbd - 1
+                    } * var(--x-s))  + var(--left-m))`,
+                    top: `calc(((100% - var(--top-m)) / var(--rows)) * (${+jj.thu - 2} * var(--x-s) + ${jj.tbd - 1} * var(--y-s)) + var(--top-m))`,
+                    height: `calc((100% - var(--top-m)) / var(--rows) * (${jj.tkt - jj.tbd} * var(--y-s) + 1) - 5px)`,
                     width: `calc((100% - var(--left-m)) / var(--columns) * (var(--x-s) + 1) - 5px)`,
-                    background: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} var(--tkb-nhom-view-HSL) )`,
-                    scrollbarColor: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} 20 50 )  transparent`,
+                    background: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} var(--tkb-nhom-view-HSL) )`,
+                    scrollbarColor: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} 20 50 )  transparent`,
                     opacity: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0.5 : 1,
                     zIndex: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0 : 1,
                 };
 
-                var nodeRef =
-                    tietDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef ||
-                    createRef();
+                const nodeRef = tietDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef || createRef();
 
                 temp.push({
                     gv: jj.gv || '',
@@ -176,11 +155,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
     }, [JSON.stringify(idToHocs)]);
 
     return (
-        <div
-            ref={calendarRef}
-            className={cx('calendar', { 'layout-row': direction, 'layout-column': !direction })}
-            onMouseMove={handleMouseMove}
-        >
+        <div ref={calendarRef} className={cx('calendar', { 'layout-row': direction, 'layout-column': !direction })} onMouseMove={handleMouseMove}>
             <div className={cx('thu')}>
                 <div className={cx('day-name')} onClick={() => setDirectiom((e) => !e)}>
                     <FontAwesomeIcon icon={faGripLines} />
@@ -235,8 +210,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                                             key={tr.key}
                                             onContextMenu={(event) => {
                                                 event.preventDefault();
-                                                var { x, y } =
-                                                    bodyRef.current.getBoundingClientRect();
+                                                const { x, y } = bodyRef.current.getBoundingClientRect();
                                                 console.log();
                                                 console.log(event.clientX - x, event.clientY - y);
 
@@ -254,18 +228,11 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                                             onClick={(event) => {
                                                 setSelected((sel) => {
                                                     if (event.ctrlKey) {
-                                                        if (sel.includes(tr.id_to_hoc))
-                                                            sel.splice(
-                                                                sel.indexOf(tr.id_to_hoc),
-                                                                1,
-                                                            );
+                                                        if (sel.includes(tr.id_to_hoc)) sel.splice(sel.indexOf(tr.id_to_hoc), 1);
                                                         else sel.push(tr.id_to_hoc);
                                                         return [...sel];
                                                     }
-                                                    if (
-                                                        sel.length === 1 &&
-                                                        sel.includes(tr.id_to_hoc)
-                                                    ) {
+                                                    if (sel.length === 1 && sel.includes(tr.id_to_hoc)) {
                                                         return [];
                                                     }
                                                     return [tr.id_to_hoc];
@@ -277,10 +244,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                                             })}
                                             style={tr.style}
                                         >
-                                            <p
-                                                className={cx('title')}
-                                                content={`${tr.ten_mon} (${tr.id_mon})`}
-                                            >
+                                            <p className={cx('title')} content={`${tr.ten_mon} (${tr.id_mon})`}>
                                                 {tr.ten_mon} ({tr.id_mon})
                                             </p>
                                             <p className={cx('info')}>GV: {tr.gv}</p>

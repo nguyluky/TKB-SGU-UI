@@ -29,12 +29,7 @@ export function RenameModal({ onRename, currName, ...props }: RenameModalProps) 
             <PopupModel title="Rename Tkb" onCancel={props.onClose} onOk={onRenameHandel}>
                 <div className={cx('input')}>
                     <label form="inputName">New Name: </label>
-                    <input
-                        type="text"
-                        name="inputName"
-                        value={lastName}
-                        onChange={(event) => setLastName(event.target.value)}
-                    />
+                    <input type="text" name="inputName" value={lastName} onChange={(event) => setLastName(event.target.value)} />
                 </div>
             </PopupModel>
         </Popup>
@@ -60,22 +55,12 @@ export function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) {
             >
                 <div className={cx('input')}>
                     <label form="inputname">Name</label>
-                    <input
-                        type="text"
-                        name="inputname"
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
-                    />
+                    <input type="text" name="inputname" value={name} onChange={(event) => setName(event.target.value)} />
                 </div>
 
                 <div className={cx('input')}>
                     <label>Vị trí lưu</label>
-                    <select
-                        name="pos"
-                        id="pos"
-                        value={pos}
-                        onChange={(e) => setPos(e.target.value)}
-                    >
+                    <select name="pos" id="pos" value={pos} onChange={(e) => setPos(e.target.value)}>
                         <option value="client">Client</option>
                         <option value="server">Server</option>
                     </select>
@@ -95,7 +80,7 @@ export function UploadTkb({ uploadTkb, ...pros }: UploadTkbProps) {
 
     const uploadHandel = () => {
         if (!fileInputRef.current || !fileInputRef.current.files) return;
-        var file = fileInputRef.current.files[0];
+        const file = fileInputRef.current.files[0];
 
         if (!file) return;
         uploadTkb(file, pos);
@@ -110,12 +95,7 @@ export function UploadTkb({ uploadTkb, ...pros }: UploadTkbProps) {
                 </div>
                 <div className={cx('input')}>
                     <label>Vị trí lưu</label>
-                    <select
-                        name="pos"
-                        id="pos"
-                        value={pos}
-                        onChange={(e) => setPos(e.target.value)}
-                    >
+                    <select name="pos" id="pos" value={pos} onChange={(e) => setPos(e.target.value)}>
                         <option value="client">Client</option>
                         <option value="server">Server</option>
                     </select>
@@ -146,21 +126,11 @@ export function CloneTkb({ onClone, ...pros }: CloneTkbProps) {
             <PopupModel title="Upload tkb" onCancel={pros.onClose} onOk={onOk}>
                 <div className={cx('input')}>
                     <label form="inputname">New Name: </label>
-                    <input
-                        type="text"
-                        name="inputname"
-                        value={lastName}
-                        onChange={(event) => setLastName(event.target.value)}
-                    />
+                    <input type="text" name="inputname" value={lastName} onChange={(event) => setLastName(event.target.value)} />
                 </div>
                 <div className={cx('input')}>
                     <label>Vị trí lưu</label>
-                    <select
-                        name="pos"
-                        id="pos"
-                        value={pos}
-                        onChange={(e) => setPos(e.target.value)}
-                    >
+                    <select name="pos" id="pos" value={pos} onChange={(e) => setPos(e.target.value)}>
                         <option value="client">Client</option>
                         <option value="server">Server</option>
                     </select>
