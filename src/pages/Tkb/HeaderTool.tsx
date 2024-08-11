@@ -11,7 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
-import { cx } from './Tkb';
+import { commandsInterface, cx } from './Tkb';
 
 interface TOOL {
     title: string;
@@ -124,11 +124,11 @@ function Tool({
 }
 
 interface HeaderToolProps {
-    onCommandEvent: (command: string) => void;
+    onCommandEvent: (command: keyof commandsInterface) => void;
 }
 
 export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
-    const createdCommand = (command: string) => {
+    const createdCommand = (command: keyof commandsInterface) => {
         return () => {
             onCommandEvent(command);
         };
@@ -220,7 +220,7 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 {
                     icon: undefined,
                     title: 'quản lý',
-                    onclick: createdCommand('quản lý'),
+                    onclick: createdCommand('manageMenber'),
                     pos: 'Left',
                 },
             ],

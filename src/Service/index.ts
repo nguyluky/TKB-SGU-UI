@@ -286,7 +286,6 @@ class ServerApi implements BaseApi {
     }
 }
 
-// TODO: getDsNhomHoc nhớ thêm vào lại
 class localApi
     implements
         Omit<

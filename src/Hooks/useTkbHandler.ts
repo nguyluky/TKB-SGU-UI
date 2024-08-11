@@ -43,9 +43,6 @@ function getKeyBiChung(newKey: string, listKey: string[]) {
     const thuTiets = newKey.split('-').map((e) => e.split('|')[0]);
 
     return listKey.filter((key) => {
-        // TODO: nhớ phải lọc thêm lại cái lọc này
-        // if (cacheTietNhom.current[key].ma_mon === maMon) return false;
-        // if (cacheTietNhom.current[key].ma_mon === '862408' || cacheTietNhom.current[key].ma_mon === '862409') return false;
         let isChung = false;
 
         const t = key.split('-').map((j) => j.split('|')[0]);
@@ -155,7 +152,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                 undoTimeLine.current.push({ type: 'addHocPhan', valueId: mhp });
                 redoTimeLine.current = [];
             }
-        },
+        }, 
         [globalState.client.socket, tkbData],
     );
 
@@ -341,7 +338,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     );
 
     const doUpdate = useCallback(() => {
-        // console.log(tkbDateRef.current);
+        console.log(tkbDataRef.current);
         console.log('dosave');
 
         if (!tkbDataRef.current) return;

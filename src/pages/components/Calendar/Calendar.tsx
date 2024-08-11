@@ -35,6 +35,49 @@ interface TietDisplay {
     nodeRef: RefObject<HTMLDivElement>;
 }
 
+interface CalendarCellProps {
+    tietDisplay: TietDisplay[];
+    selectedEd: string[];
+    conflictEd: string[];
+    onContextMenu: (event: MouseEvent<HTMLDivElement>, idToHoc: string) => void;
+    onClickHanled: (event: MouseEvent<HTMLDivElement>, idToHoc: string) => void;
+}
+
+function CalendarCell({ tietDisplay, selectedEd, conflictEd, onContextMenu, onClickHanled }: CalendarCellProps) {
+    return (
+        <TransitionGroup>
+            {tietDisplay.map((tr) => {
+                return (
+                    <CSSTransition key={tr.key} nodeRef={tr.nodeRef} timeout={100}>
+                        {(state) => {
+                            return (
+                                <div
+                                    ref={tr.nodeRef}
+                                    key={tr.key}
+                                    onContextMenu={(event) => onContextMenu(event, tr.id_to_hoc)}
+                                    onClick={(event) => onClickHanled(event, tr.id_to_hoc)}
+                                    className={cx('item', state, {
+                                        'tiet-selected': selectedEd.includes(tr.id_to_hoc),
+                                        conflict: conflictEd.includes(tr.id_to_hoc),
+                                    })}
+                                    style={tr.style}
+                                >
+                                    <p className={cx('title')} content={`${tr.ten_mon} (${tr.id_mon})`}>
+                                        {tr.ten_mon} ({tr.id_mon})
+                                    </p>
+                                    <p className={cx('info')}>GV: {tr.gv}</p>
+                                    <p className={cx('info')}>Nhóm: {tr.nhom}</p>
+                                    <p className={cx('info')}>Phòng: {tr.phong}</p>
+                                </div>
+                            );
+                        }}
+                    </CSSTransition>
+                );
+            })}
+        </TransitionGroup>
+    );
+}
+
 function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }: Props) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const bodyRef = useRef<HTMLDivElement>(null!);
@@ -47,9 +90,7 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
     const [isMouseDown, setMouseDown] = useState<boolean>(false);
     const [tietDisplay, setTietDisplay] = useState<TietDisplay[]>([]);
 
-    const [contextX, setContextX] = useState<number>(0);
-    const [contextY, setContextY] = useState<number>(0);
-    const [contextIsOpen, setContextIsOpen] = useState<boolean>(false);
+    const [contentPos, setContentPos] = useState<[x: number, y: number, isOpen: number]>([0, 0, 0]);
 
     const handleMouseDown = (event: CustomEvent) => {
         console.log(event.thu, event.tiet);
@@ -63,13 +104,57 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
 
     const onDeleteHandel = (event: MouseEvent<HTMLDivElement>) => {
         console.log('delete on click');
-        // event.stopPropagation();
-        // onDeleteMHP
-        setContextIsOpen(false);
+        setContentPos((e) => {
+            if (!e) return e;
+            e[2] = 0;
+            return [...e];
+        });
+        // setContextIsOpen(false);
         [...selected].forEach((e) => {
             onDeleteNhomHoc(e);
         });
         setSelected([]);
+    };
+
+    const onConntextMenu = (event: MouseEvent<HTMLDivElement>, idToHoc: string) => {
+        event.preventDefault();
+        const { x, y } = bodyRef.current.getBoundingClientRect();
+        console.log();
+        console.log(event.clientX - x, event.clientY - y);
+
+        setSelected((ses) => {
+            if (!ses.length) {
+                lastSelecion.current = idToHoc;
+                return [idToHoc, ...ses];
+            }
+            return [...ses];
+        });
+
+        // setContentPos((e) => {
+        //     if (!e) return e;
+        //     e[0] = event.clientX - x;
+        //     e[1] = event.clientY - y;
+        //     return [...e];
+        // });
+
+        setContentPos([event.clientX - x, event.clientY - y, 1]);
+        // setContextX(event.clientX - x);
+        // setContextY(event.clientY - y);
+        // setContextIsOpen(true);
+    };
+
+    const onClickHanled = (event: MouseEvent<HTMLDivElement>, idToHoc: string) => {
+        setSelected((sel) => {
+            if (event.ctrlKey) {
+                if (sel.includes(idToHoc)) sel.splice(sel.indexOf(idToHoc), 1);
+                else sel.push(idToHoc);
+                return [...sel];
+            }
+            if (sel.length === 1 && sel.includes(idToHoc)) {
+                return [];
+            }
+            return [idToHoc];
+        });
     };
 
     useEffect(() => {
@@ -95,7 +180,11 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                         lastSelecion.current = '';
                         return [...ses];
                     });
-                setContextIsOpen(false);
+                setContentPos((e) => {
+                    if (!e) return e;
+                    e[2] = 0;
+                    return [...e];
+                });
             }
         };
 
@@ -200,76 +289,31 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
                     );
                 })}
                 <div className={cx('display-tiet')}>
-                    <TransitionGroup>
-                        {tietDisplay.map((tr) => (
-                            <CSSTransition key={tr.key} nodeRef={tr.nodeRef} timeout={100}>
-                                {(state) => {
-                                    return (
-                                        <div
-                                            ref={tr.nodeRef}
-                                            key={tr.key}
-                                            onContextMenu={(event) => {
-                                                event.preventDefault();
-                                                const { x, y } = bodyRef.current.getBoundingClientRect();
-                                                console.log();
-                                                console.log(event.clientX - x, event.clientY - y);
-
-                                                setSelected((ses) => {
-                                                    if (!ses.length) {
-                                                        lastSelecion.current = tr.id_to_hoc;
-                                                        return [tr.id_to_hoc, ...ses];
-                                                    }
-                                                    return [...ses];
-                                                });
-                                                setContextX(event.clientX - x);
-                                                setContextY(event.clientY - y);
-                                                setContextIsOpen(true);
-                                            }}
-                                            onClick={(event) => {
-                                                setSelected((sel) => {
-                                                    if (event.ctrlKey) {
-                                                        if (sel.includes(tr.id_to_hoc)) sel.splice(sel.indexOf(tr.id_to_hoc), 1);
-                                                        else sel.push(tr.id_to_hoc);
-                                                        return [...sel];
-                                                    }
-                                                    if (sel.length === 1 && sel.includes(tr.id_to_hoc)) {
-                                                        return [];
-                                                    }
-                                                    return [tr.id_to_hoc];
-                                                });
-                                            }}
-                                            className={cx('item', state, {
-                                                'tiet-selected': selected.includes(tr.id_to_hoc),
-                                                conflict: conflict.includes(tr.id_to_hoc),
-                                            })}
-                                            style={tr.style}
-                                        >
-                                            <p className={cx('title')} content={`${tr.ten_mon} (${tr.id_mon})`}>
-                                                {tr.ten_mon} ({tr.id_mon})
-                                            </p>
-                                            <p className={cx('info')}>GV: {tr.gv}</p>
-                                            <p className={cx('info')}>Nhóm: {tr.nhom}</p>
-                                            <p className={cx('info')}>Phòng: {tr.phong}</p>
-                                        </div>
-                                    );
-                                }}
-                            </CSSTransition>
-                        ))}
-                    </TransitionGroup>
+                    <CalendarCell
+                        tietDisplay={tietDisplay}
+                        selectedEd={selected}
+                        conflictEd={conflict}
+                        onClickHanled={onClickHanled}
+                        onContextMenu={onConntextMenu}
+                    />
 
                     <div
                         ref={contextRef}
                         className={cx('context-popup', 'item', {
-                            show: contextIsOpen,
+                            show: contentPos[2],
                         })}
                         style={{
-                            top: contextY + 'px',
-                            left: contextX + 'px',
+                            top: contentPos[1] + 'px',
+                            left: contentPos[0] + 'px',
                         }}
                     >
                         <p
                             onClick={(e) => {
-                                setContextIsOpen(false);
+                                setContentPos((e) => {
+                                    if (!e) return e;
+                                    e[2] = 0;
+                                    return [...e];
+                                });
                                 onTimMonHocTuTu(selected);
                             }}
                         >

@@ -1,19 +1,4 @@
 {
-    "cSpell.words": [
-        "fontawesome",
-        "fortawesome",
-        "hocs",
-        "khoa",
-        "Lucide",
-        "nhom",
-        "phans",
-        "phong",
-        "reactjs",
-        "tiet",
-        "tiets",
-        "tkbid",
-        "usehooks"
-    ],
     "typescript.tsdk": "node_modules\\typescript\\lib",
     "[typescriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",

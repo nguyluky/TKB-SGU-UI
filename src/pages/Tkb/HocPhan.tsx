@@ -21,6 +21,8 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
     const [closeShow, setCloseShow] = useState(false);
     const setTimeOutId = useRef<NodeJS.Timeout>();
 
+    const hocphanDropDownRef = useRef<HTMLDivElement>(null!);
+
     useEffect(() => {
         setShow(false);
     }, [mini]);
@@ -52,9 +54,11 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                 </div>
             </div>
             <div
-                className={cx('hocphan-dropdown', {
-                    show: show,
-                })}
+                className={cx('hocphan-dropdown', { show: show })}
+                ref={hocphanDropDownRef}
+                style={{
+                    height: show ? hocphanDropDownRef.current.scrollHeight + 'px' : 0,
+                }}
             >
                 {nhomHoc?.map((j) => {
                     const noData = j.tkb.find((e) => e.thu === '??');
