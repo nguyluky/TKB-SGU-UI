@@ -177,15 +177,11 @@
         }
         .filter {
             padding: 6px;
-            width: 100px;
+            width: 150px;
             background-color: var(--primary-color-1);
             border: transparent;
             outline: none;
             border-radius: var(--border-radius-g);
-
-            &:active {
-                transform: scale(0.99);
-            }
         }
     }
     .body {

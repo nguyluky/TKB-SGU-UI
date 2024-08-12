@@ -4,7 +4,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import useSelection from '../../Hooks/useSelection';
 import useTkbHandler from '../../Hooks/useTkbHandler';
+import useTkbSocket from '../../Hooks/useTkbSocket';
 import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
 import Calendar from '../components/Calendar';
@@ -20,6 +22,21 @@ import style from './Tkb.module.scss';
 
 export const cx = classNames.bind(style);
 
+export interface commandsInterface {
+    new?: () => void;
+    saveAsFile?: () => void;
+    open?: () => void;
+    undo?: () => void;
+    redo?: () => void;
+    exit?: () => void;
+    clone?: () => void;
+    addMember?: () => void;
+    property?: () => void;
+    cut?: () => void;
+    past?: () => void;
+    manageMenber?: () => void;
+}
+
 export default function Tkb() {
     const nav = useNavigate();
 
@@ -32,77 +49,24 @@ export default function Tkb() {
     const [searchParams] = useSearchParams();
 
     // tkb data
-
-    const tkbHandler = useTkbHandler(tkbid || '', !!searchParams.get('isclient'));
-
     const [replayIdToHoc, setReplayIdToHoc] = useState<string[]>([]);
-    const [soTC, setSoTC] = useState<number>(0);
+    const [soTC, setSoTC] = useState<number>(-1);
 
     // state
     const [sideBar, setSideBar] = useState<string>('');
     const [popup, setPopup] = useState<ReactNode>();
+    const selection = useSelection();
+
     // ref
 
     const idAutoSaveTimeOut = useRef<NodeJS.Timeout>();
 
-    const onCreateTkbHandler = useCallback(
-        (name: string, pos: string) => {
-            (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
-                .createNewTkb(name, '', null, false)
-                .then((e) => {
-                    if (!e.success) {
-                        notifyMaster.error(e.msg);
-                        return;
-                    }
-
-                    nav('/tkbs/' + e.data?.id + (e.data?.isClient ? '?isclient=true' : ''));
-                    notifyMaster.success('Tạo tkb thành công');
-                })
-                .catch((e) => {
-                    notifyMaster.success('Không thể kết tạo tkb không biết lý do');
-                });
-        },
-        [globalState.client, nav],
-    );
-
-    const onUploadTkbHandler = useCallback(
-        (file: File, pos: string) => {
-            const reader = new FileReader();
-
-            reader.readAsText(file, 'utf-8');
-
-            reader.onload = () => {
-                if (!reader.result) return;
-                try {
-                    const fileTkb = Convert.toFileTkb(reader.result as string);
-
-                    (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
-                        .createNewTkb(
-                            fileTkb.name,
-                            '',
-                            null,
-                            false,
-                            fileTkb.data.map((e) => e.id_to_hoc),
-                            fileTkb.data.map((e) => e.mhp),
-                        )
-                        .then((e) => {
-                            if (!e.success) {
-                                notifyMaster.error(e.msg);
-                                return;
-                            }
-
-                            nav('/tkbs/' + e.data?.id + (e.data?.isClient ? '?isclient=true' : ''));
-                            notifyMaster.success('Upload tkb thành công');
-                        })
-                        .catch((e) => {
-                            notifyMaster.success('Không thể kết upload tkb không biết lý do');
-                        });
-                } catch {
-                    notifyMaster.error('Format file không hợp lệ');
-                }
-            };
-        },
-        [globalState.client, nav],
+    const tkbHandler = useTkbHandler(tkbid || '', !!searchParams.get('isclient'));
+    useTkbSocket(
+        tkbHandler.onAddHphandler,
+        tkbHandler.onAddNhomHocHandler,
+        tkbHandler.onRemoveHphandeler,
+        tkbHandler.onRemoveNhomHocHandler,
     );
 
     const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
@@ -112,8 +76,69 @@ export default function Tkb() {
     };
 
     const commands = useCallback(
-        (key: string) => {
-            const commandObj: { [Key: string]: Function } = {
+        (key: keyof commandsInterface) => {
+            const onUploadTkbHandler = (file: File, pos: string) => {
+                const reader = new FileReader();
+
+                reader.readAsText(file, 'utf-8');
+
+                reader.onload = () => {
+                    if (!reader.result) return;
+                    try {
+                        const fileTkb = Convert.toFileTkb(reader.result as string);
+
+                        (pos === 'client'
+                            ? globalState.client.localApi
+                            : globalState.client.serverApi
+                        )
+                            .createNewTkb(
+                                fileTkb.name,
+                                '',
+                                null,
+                                false,
+                                fileTkb.data.map((e) => e.id_to_hoc),
+                                fileTkb.data.map((e) => e.mhp),
+                            )
+                            .then((e) => {
+                                if (!e.success) {
+                                    notifyMaster.error(e.msg);
+                                    return;
+                                }
+
+                                nav(
+                                    '/tkbs/' +
+                                        e.data?.id +
+                                        (e.data?.isClient ? '?isclient=true' : ''),
+                                );
+                                notifyMaster.success('Upload tkb thành công');
+                            })
+                            .catch((e) => {
+                                notifyMaster.success('Không thể kết upload tkb không biết lý do');
+                            });
+                    } catch {
+                        notifyMaster.error('Format file không hợp lệ');
+                    }
+                };
+            };
+
+            const onCreateTkbHandler = (name: string, pos: string) => {
+                (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
+                    .createNewTkb(name, '', null, false)
+                    .then((e) => {
+                        if (!e.success) {
+                            notifyMaster.error(e.msg);
+                            return;
+                        }
+
+                        nav('/tkbs/' + e.data?.id + (e.data?.isClient ? '?isclient=true' : ''));
+                        notifyMaster.success('Tạo tkb thành công');
+                    })
+                    .catch((e) => {
+                        notifyMaster.success('Không thể kết tạo tkb không biết lý do');
+                    });
+            };
+
+            const commandObj: commandsInterface = {
                 new: () => {
                     console.log('ok');
                     setPopup(
@@ -128,7 +153,9 @@ export default function Tkb() {
                 },
                 saveAsFile: () => {
                     const a = tkbHandler.tkbData?.id_to_hocs.map((e) => {
-                        const nhom = tkbHandler.dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+                        const nhom = tkbHandler.dsNhomHoc?.ds_nhom_to.find(
+                            (j) => j.id_to_hoc === e,
+                        );
 
                         return {
                             mhp: nhom?.ma_mon,
@@ -231,10 +258,23 @@ export default function Tkb() {
                                 setPopup('');
                             }}
                             onClone={(name, pos) => {
-                                console.log(tkbHandler.tkbData?.id_to_hocs, tkbHandler.tkbData?.ma_hoc_phans);
+                                console.log(
+                                    tkbHandler.tkbData?.id_to_hocs,
+                                    tkbHandler.tkbData?.ma_hoc_phans,
+                                );
 
-                                (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
-                                    .createNewTkb(name, '', null, false, tkbHandler.tkbData?.id_to_hocs || [], tkbHandler.tkbData?.ma_hoc_phans || [])
+                                (pos === 'client'
+                                    ? globalState.client.localApi
+                                    : globalState.client.serverApi
+                                )
+                                    .createNewTkb(
+                                        name,
+                                        '',
+                                        null,
+                                        false,
+                                        tkbHandler.tkbData?.id_to_hocs || [],
+                                        tkbHandler.tkbData?.ma_hoc_phans || [],
+                                    )
                                     .then((e) => {
                                         if (!e.success || !e.data) {
                                             notifyMaster.error(e.msg);
@@ -244,13 +284,20 @@ export default function Tkb() {
                                         const newData = e.data;
 
                                         newData.id_to_hocs = tkbHandler.tkbData?.id_to_hocs || [];
-                                        newData.ma_hoc_phans = tkbHandler.tkbData?.ma_hoc_phans || [];
+                                        newData.ma_hoc_phans =
+                                            tkbHandler.tkbData?.ma_hoc_phans || [];
 
-                                        (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
+                                        (pos === 'client'
+                                            ? globalState.client.localApi
+                                            : globalState.client.serverApi
+                                        )
                                             .updateTkb(newData)
                                             .then((j) => {
                                                 window.open(
-                                                    window.location.origin + '/tkbs/' + e.data?.id + (e.data?.isClient ? '?isclient=true' : ''),
+                                                    window.location.origin +
+                                                        '/tkbs/' +
+                                                        e.data?.id +
+                                                        (e.data?.isClient ? '?isclient=true' : ''),
                                                 );
                                             });
                                     })
@@ -264,23 +311,42 @@ export default function Tkb() {
                 addMember: () => {
                     if (tkbHandler.tkbData) {
                         if (tkbHandler.tkbData.isClient) {
-                            notifyMaster.error('không thể chia sẻ tkb client, sạo bản sao phía server rồi thử lại nha.');
+                            notifyMaster.error(
+                                'không thể chia sẻ tkb client, sạo bản sao phía server rồi thử lại nha.',
+                            );
                             return;
                         }
-                        setPopup(<SharePopup tkbid={tkbid || ''} open={true} modal onClose={() => setPopup('')}></SharePopup>);
+                        setPopup(
+                            <SharePopup
+                                tkbid={tkbid || ''}
+                                open={true}
+                                modal
+                                onClose={() => setPopup('')}
+                            ></SharePopup>,
+                        );
                     }
                 },
                 property: () => {
-                    if (tkbHandler.tkbData) setPopup(<Property open={true} tkbData={tkbHandler.tkbData} onClose={() => setPopup('')} modal />);
+                    if (tkbHandler.tkbData)
+                        setPopup(
+                            <Property
+                                open={true}
+                                tkbData={tkbHandler.tkbData}
+                                onClose={() => setPopup('')}
+                                modal
+                            />,
+                        );
                 },
             };
             return commandObj[key];
         },
-        [globalState.client.localApi, globalState.client.serverApi, nav, onCreateTkbHandler, onUploadTkbHandler, tkbHandler, tkbid],
+        [globalState.client.localApi, globalState.client.serverApi, nav, tkbHandler, tkbid],
     );
 
     const onCommandHandel = useCallback(
-        (command: string) => {
+        (command: keyof commandsInterface) => {
+            console.log('reload');
+
             const funs = commands(command);
             if (!funs) {
                 notifyMaster.error('chưa làm =) : ' + command);
@@ -292,59 +358,35 @@ export default function Tkb() {
         [commands],
     );
 
-    // socket event handel
-    useEffect(() => {
-        if (!globalState.client.islogin()) return;
-
-        globalState.client.socket.addEventListener('onJoin', ([tkbId, userId]) => {});
-        globalState.client.socket.addEventListener('onLeave', ([tkbId, userId]) => {});
-        globalState.client.socket.addEventListener('onSelestion', ([tkbId, idToHocs]) => {});
-        globalState.client.socket.addEventListener('onAddHocPhan', ([tkbId, mxhp, isTimeLine]) => {
-            console.log(mxhp, isTimeLine);
-            tkbHandler.onAddHphandler(mxhp, isTimeLine, true);
-        });
-        globalState.client.socket.addEventListener('onAddNhomHoc', ([tkbId, idToHoc, isTimeLine, replay]) => {
-            console.log(tkbId, idToHoc, isTimeLine, replay);
-            tkbHandler.onAddNhomHocHandler(idToHoc, isTimeLine, replay, true);
-        });
-        globalState.client.socket.addEventListener('onRemoveHocPhan', ([tkbId, mxhp, isTimeLine]) => {
-            console.log(mxhp, isTimeLine);
-            tkbHandler.onRemoveHphandeler(mxhp, isTimeLine, true);
-        });
-        globalState.client.socket.addEventListener('onRemoveNhomHoc', ([tkbId, idToHoc, isTimeLine]) => {
-            console.log(idToHoc, isTimeLine);
-            tkbHandler.onRemoveNhomHocHandler(idToHoc, isTimeLine, true);
-        });
-
-        return () => {
-            globalState.client.socket.removeEventListener('onJoin');
-            globalState.client.socket.removeEventListener('onLeave');
-            globalState.client.socket.removeEventListener('onSelestion');
-            globalState.client.socket.removeEventListener('onAddHocPhan');
-            globalState.client.socket.removeEventListener('onAddNhomHoc');
-            globalState.client.socket.removeEventListener('onRemoveHocPhan');
-            globalState.client.socket.removeEventListener('onRemoveNhomHoc');
-        };
-    }, [globalState.client, tkbHandler]);
-
     // event handle
     useEffect(() => {
         const keyEventHandel = (e: KeyboardEvent) => {
             if (e.keyCode === 90 && e.ctrlKey) {
-                commands('undo')();
+                const command = commands('undo');
+                if (command) command();
             } else if (e.keyCode === 89 && e.ctrlKey) {
-                commands('redo')();
+                const command = commands('redo');
+                if (command) command();
+            } else if (e.keyCode === 65 && e.ctrlKey) {
+                selection.addAll(tkbHandler.tkbData?.id_to_hocs || []);
+                // tkbHandler.tkbData?.id_to_hocs.forEach((e) => {
+                //     selection.addSelection(e);
+                // });
             }
-            // console.log(e);
+            if (e.keyCode === 27) {
+                console.log('clear');
+                selection.clear();
+            }
+
+            console.log(e);
         };
 
         document.addEventListener('keydown', keyEventHandel);
-        // globalState.client.socket.addEventListener()
 
         return () => {
             document.removeEventListener('keydown', keyEventHandel);
         };
-    }, [commands]);
+    }, [commands, selection, tkbHandler.tkbData?.id_to_hocs]);
 
     // updateHeader
     useEffect(() => {
@@ -364,19 +406,30 @@ export default function Tkb() {
             );
             return { ...e };
         });
-    }, [onCommandHandel, setHeaderPar, tkbHandler.iconSaveing, tkbHandler.onRenameHandler, tkbHandler.tkbData]);
+        // NOTE: có thể nỗi mai mốt
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setHeaderPar, tkbHandler.tkbData?.name, tkbHandler.iconSaveing]);
 
     // auto save
     useEffect(() => {
         let sCT = 0;
-        tkbHandler.tkbData?.id_to_hocs.forEach((e) => {
-            const nhom = tkbHandler.dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+        if (!tkbHandler.tkbData) return;
+        const dsNhomHoc = tkbHandler.dsNhomHoc;
+        if (!dsNhomHoc) return;
+
+        tkbHandler.tkbData.id_to_hocs.forEach((e) => {
+            const nhom = dsNhomHoc.ds_nhom_to.find((j) => j.id_to_hoc === e);
             if (nhom) sCT += nhom.so_tc;
         });
 
+        console.log('why', soTC);
+        if (soTC >= 0) {
+            if (idAutoSaveTimeOut.current) clearTimeout(idAutoSaveTimeOut.current);
+            idAutoSaveTimeOut.current = setTimeout(tkbHandler.doUpdate, 5000);
+        }
         setSoTC(sCT);
-        if (idAutoSaveTimeOut.current) clearTimeout(idAutoSaveTimeOut.current);
-        idAutoSaveTimeOut.current = setTimeout(tkbHandler.doUpdate, 5000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tkbHandler.doUpdate, tkbHandler.dsNhomHoc, tkbHandler.tkbData]);
 
     const sideBars: { [Key: string]: ReactNode } = {
@@ -420,8 +473,12 @@ export default function Tkb() {
                             conflict={tkbHandler.conflict}
                             data={tkbHandler.dsNhomHoc?.ds_nhom_to}
                             idToHocs={tkbHandler.tkbData?.id_to_hocs}
-                            onDeleteNhomHoc={tkbHandler.onRemoveNhomHocHandler}
+                            onDeleteNhomHoc={(idToHoc: string) => {
+                                tkbHandler.onRemoveNhomHocHandler(idToHoc);
+                                selection.removeSelection(idToHoc);
+                            }}
                             onTimMonHocTuTu={timNhomHocTuongTuHandel}
+                            selection={selection}
                         />
                     </div>
 
