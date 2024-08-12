@@ -194,8 +194,6 @@ function Calendar({ data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict }
             }
         };
 
-        document.addEventListener('keydown', onKeyDownHandled);
-        document.getElementById('default-content')?.addEventListener('click', onClickHanled);
 
         return () => {
             document.getElementById('default-content')?.removeEventListener('click', onClickHanled);
