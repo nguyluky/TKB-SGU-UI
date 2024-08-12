@@ -6,13 +6,25 @@ import routers from './routes';
 import { globalContent } from './store/GlobalContent';
 
 function App() {
-    const [globalState] = useContext(globalContent);
+    const [globalState, setGlobalState] = useContext(globalContent);
 
     useEffect(() => {
         window.document
             ?.querySelector('html')
             ?.setAttribute('theme', globalState?.theme || 'light');
     }, [globalState?.theme]);
+
+    useEffect(() => {
+        globalState.client.getUserInfo().then((res) => {
+            if (!res.success) {
+                setGlobalState((e) => {
+                    e.userInfo = undefined;
+                    return { ...e };
+                });
+            }
+            setGlobalState({ ...globalState, userInfo: res.data });
+        });
+    }, [globalState.client.islogin, setGlobalState]);
 
     return <RouterProvider router={routers} />;
 }

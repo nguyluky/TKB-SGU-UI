@@ -129,11 +129,19 @@ function Header({
                             </label>
                         </div>
                     </DropDownButton>
-                    <DropDownButton icon={faUser} className={cx('item')}>
+                    <DropDownButton
+                        icon={faUser}
+                        url={globalState.userInfo?.avt}
+                        className={cx('item')}
+                    >
                         <div className={cx('user-info')}>
                             {globalState.client.islogin() ? (
                                 <>
-                                    <div className={cx('user-info')}></div>
+                                    <div className={cx('user-info')}>
+                                        <div className={cx('line')}>
+                                            Login at: {globalState.userInfo?.display_name}
+                                        </div>
+                                    </div>
                                     <Popup
                                         onOpen={() => {
                                             setP1('');
@@ -187,6 +195,7 @@ function Header({
                                             window.localStorage.setItem('token', '');
                                             setGlobalState((e) => {
                                                 e.client = new Client();
+                                                e.userInfo = undefined;
                                                 return { ...e };
                                             });
                                         }}
