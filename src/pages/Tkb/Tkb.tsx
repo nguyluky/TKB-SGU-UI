@@ -4,6 +4,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import useSelection from '../../Hooks/useSelection';
 import useTkbHandler from '../../Hooks/useTkbHandler';
 import useTkbSocket from '../../Hooks/useTkbSocket';
 import { globalContent } from '../../store/GlobalContent';
@@ -49,17 +50,24 @@ export default function Tkb() {
 
     // tkb data
     const [replayIdToHoc, setReplayIdToHoc] = useState<string[]>([]);
-    const [soTC, setSoTC] = useState<number>(0);
+    const [soTC, setSoTC] = useState<number>(-1);
 
     // state
     const [sideBar, setSideBar] = useState<string>('');
     const [popup, setPopup] = useState<ReactNode>();
+    const selection = useSelection();
+
     // ref
 
     const idAutoSaveTimeOut = useRef<NodeJS.Timeout>();
 
     const tkbHandler = useTkbHandler(tkbid || '', !!searchParams.get('isclient'));
-    useTkbSocket(tkbHandler.onAddHphandler, tkbHandler.onAddNhomHocHandler, tkbHandler.onRemoveHphandeler, tkbHandler.onRemoveNhomHocHandler);
+    useTkbSocket(
+        tkbHandler.onAddHphandler,
+        tkbHandler.onAddNhomHocHandler,
+        tkbHandler.onRemoveHphandeler,
+        tkbHandler.onRemoveNhomHocHandler,
+    );
 
     const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
         console.log(idToHocs);
@@ -79,7 +87,10 @@ export default function Tkb() {
                     try {
                         const fileTkb = Convert.toFileTkb(reader.result as string);
 
-                        (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
+                        (pos === 'client'
+                            ? globalState.client.localApi
+                            : globalState.client.serverApi
+                        )
                             .createNewTkb(
                                 fileTkb.name,
                                 '',
@@ -94,7 +105,11 @@ export default function Tkb() {
                                     return;
                                 }
 
-                                nav('/tkbs/' + e.data?.id + (e.data?.isClient ? '?isclient=true' : ''));
+                                nav(
+                                    '/tkbs/' +
+                                        e.data?.id +
+                                        (e.data?.isClient ? '?isclient=true' : ''),
+                                );
                                 notifyMaster.success('Upload tkb thành công');
                             })
                             .catch((e) => {
@@ -138,7 +153,9 @@ export default function Tkb() {
                 },
                 saveAsFile: () => {
                     const a = tkbHandler.tkbData?.id_to_hocs.map((e) => {
-                        const nhom = tkbHandler.dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+                        const nhom = tkbHandler.dsNhomHoc?.ds_nhom_to.find(
+                            (j) => j.id_to_hoc === e,
+                        );
 
                         return {
                             mhp: nhom?.ma_mon,
@@ -241,10 +258,23 @@ export default function Tkb() {
                                 setPopup('');
                             }}
                             onClone={(name, pos) => {
-                                console.log(tkbHandler.tkbData?.id_to_hocs, tkbHandler.tkbData?.ma_hoc_phans);
+                                console.log(
+                                    tkbHandler.tkbData?.id_to_hocs,
+                                    tkbHandler.tkbData?.ma_hoc_phans,
+                                );
 
-                                (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
-                                    .createNewTkb(name, '', null, false, tkbHandler.tkbData?.id_to_hocs || [], tkbHandler.tkbData?.ma_hoc_phans || [])
+                                (pos === 'client'
+                                    ? globalState.client.localApi
+                                    : globalState.client.serverApi
+                                )
+                                    .createNewTkb(
+                                        name,
+                                        '',
+                                        null,
+                                        false,
+                                        tkbHandler.tkbData?.id_to_hocs || [],
+                                        tkbHandler.tkbData?.ma_hoc_phans || [],
+                                    )
                                     .then((e) => {
                                         if (!e.success || !e.data) {
                                             notifyMaster.error(e.msg);
@@ -254,13 +284,20 @@ export default function Tkb() {
                                         const newData = e.data;
 
                                         newData.id_to_hocs = tkbHandler.tkbData?.id_to_hocs || [];
-                                        newData.ma_hoc_phans = tkbHandler.tkbData?.ma_hoc_phans || [];
+                                        newData.ma_hoc_phans =
+                                            tkbHandler.tkbData?.ma_hoc_phans || [];
 
-                                        (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
+                                        (pos === 'client'
+                                            ? globalState.client.localApi
+                                            : globalState.client.serverApi
+                                        )
                                             .updateTkb(newData)
                                             .then((j) => {
                                                 window.open(
-                                                    window.location.origin + '/tkbs/' + e.data?.id + (e.data?.isClient ? '?isclient=true' : ''),
+                                                    window.location.origin +
+                                                        '/tkbs/' +
+                                                        e.data?.id +
+                                                        (e.data?.isClient ? '?isclient=true' : ''),
                                                 );
                                             });
                                     })
@@ -274,14 +311,31 @@ export default function Tkb() {
                 addMember: () => {
                     if (tkbHandler.tkbData) {
                         if (tkbHandler.tkbData.isClient) {
-                            notifyMaster.error('không thể chia sẻ tkb client, sạo bản sao phía server rồi thử lại nha.');
+                            notifyMaster.error(
+                                'không thể chia sẻ tkb client, sạo bản sao phía server rồi thử lại nha.',
+                            );
                             return;
                         }
-                        setPopup(<SharePopup tkbid={tkbid || ''} open={true} modal onClose={() => setPopup('')}></SharePopup>);
+                        setPopup(
+                            <SharePopup
+                                tkbid={tkbid || ''}
+                                open={true}
+                                modal
+                                onClose={() => setPopup('')}
+                            ></SharePopup>,
+                        );
                     }
                 },
                 property: () => {
-                    if (tkbHandler.tkbData) setPopup(<Property open={true} tkbData={tkbHandler.tkbData} onClose={() => setPopup('')} modal />);
+                    if (tkbHandler.tkbData)
+                        setPopup(
+                            <Property
+                                open={true}
+                                tkbData={tkbHandler.tkbData}
+                                onClose={() => setPopup('')}
+                                modal
+                            />,
+                        );
                 },
             };
             return commandObj[key];
@@ -291,6 +345,8 @@ export default function Tkb() {
 
     const onCommandHandel = useCallback(
         (command: keyof commandsInterface) => {
+            console.log('reload');
+
             const funs = commands(command);
             if (!funs) {
                 notifyMaster.error('chưa làm =) : ' + command);
@@ -311,17 +367,26 @@ export default function Tkb() {
             } else if (e.keyCode === 89 && e.ctrlKey) {
                 const command = commands('redo');
                 if (command) command();
+            } else if (e.keyCode === 65 && e.ctrlKey) {
+                selection.addAll(tkbHandler.tkbData?.id_to_hocs || []);
+                // tkbHandler.tkbData?.id_to_hocs.forEach((e) => {
+                //     selection.addSelection(e);
+                // });
             }
-            // console.log(e);
+            if (e.keyCode === 27) {
+                console.log('clear');
+                selection.clear();
+            }
+
+            console.log(e);
         };
 
         document.addEventListener('keydown', keyEventHandel);
-        // globalState.client.socket.addEventListener()
 
         return () => {
             document.removeEventListener('keydown', keyEventHandel);
         };
-    }, [commands]);
+    }, [commands, selection, tkbHandler.tkbData?.id_to_hocs]);
 
     // updateHeader
     useEffect(() => {
@@ -341,19 +406,30 @@ export default function Tkb() {
             );
             return { ...e };
         });
-    }, [onCommandHandel, setHeaderPar, tkbHandler.iconSaveing, tkbHandler.onRenameHandler, tkbHandler.tkbData]);
+        // NOTE: có thể nỗi mai mốt
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setHeaderPar, tkbHandler.tkbData?.name, tkbHandler.iconSaveing]);
 
     // auto save
     useEffect(() => {
         let sCT = 0;
-        tkbHandler.tkbData?.id_to_hocs.forEach((e) => {
-            const nhom = tkbHandler.dsNhomHoc?.ds_nhom_to.find((j) => j.id_to_hoc === e);
+
+        if (!tkbHandler.tkbData) return;
+        const dsNhomHoc = tkbHandler.dsNhomHoc;
+        if (!dsNhomHoc) return;
+
+        tkbHandler.tkbData.id_to_hocs.forEach((e) => {
+            const nhom = dsNhomHoc.ds_nhom_to.find((j) => j.id_to_hoc === e);
             if (nhom) sCT += nhom.so_tc;
         });
 
+        console.log('why', soTC);
+        if (soTC >= 0) {
+            if (idAutoSaveTimeOut.current) clearTimeout(idAutoSaveTimeOut.current);
+            idAutoSaveTimeOut.current = setTimeout(tkbHandler.doUpdate, 5000);
+        }
         setSoTC(sCT);
-        if (idAutoSaveTimeOut.current) clearTimeout(idAutoSaveTimeOut.current);
-        idAutoSaveTimeOut.current = setTimeout(tkbHandler.doUpdate, 5000);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tkbHandler.doUpdate, tkbHandler.dsNhomHoc, tkbHandler.tkbData]);
 
     const sideBars: { [Key: string]: ReactNode } = {
@@ -397,8 +473,12 @@ export default function Tkb() {
                             conflict={tkbHandler.conflict}
                             data={tkbHandler.dsNhomHoc?.ds_nhom_to}
                             idToHocs={tkbHandler.tkbData?.id_to_hocs}
-                            onDeleteNhomHoc={tkbHandler.onRemoveNhomHocHandler}
+                            onDeleteNhomHoc={(idToHoc: string) => {
+                                tkbHandler.onRemoveNhomHocHandler(idToHoc);
+                                selection.removeSelection(idToHoc);
+                            }}
                             onTimMonHocTuTu={timNhomHocTuongTuHandel}
+                            selection={selection}
                         />
                     </div>
 

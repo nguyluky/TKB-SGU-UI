@@ -26,8 +26,8 @@ export function AddHp({ data, onAddHp, maHocPhans }: { data?: DsNhomHocResp; onA
         const listMonHoc = Object.keys(data.ds_mon_hoc).map((key) => {
             return {
                 id: key,
-                name: key,
-                mhp: data?.ds_mon_hoc[key],
+                name: data?.ds_mon_hoc[key],
+                mhp: key,
             };
         });
 
@@ -42,15 +42,25 @@ export function AddHp({ data, onAddHp, maHocPhans }: { data?: DsNhomHocResp; onA
 
         if (!data?.ds_mon_hoc) return;
 
-        const result = searchResultTemp.map((result) => {
-            const monhoc = data.ds_mon_hoc[result.id];
-            return {
-                id: result.id,
-                name: monhoc,
-                mhp: result.id,
-            };
-        });
-
+        let result = [];
+        if (searchResultTemp.length) {
+            result = searchResultTemp.map((result) => {
+                const monhoc = data.ds_mon_hoc[result.id];
+                return {
+                    id: result.id,
+                    name: monhoc,
+                    mhp: result.id,
+                };
+            });
+        } else {
+            result = Object.keys(data.ds_mon_hoc).map((key) => {
+                return {
+                    id: key,
+                    name: data?.ds_mon_hoc[key],
+                    mhp: key,
+                };
+            });
+        }
         setSearchResult(result);
     }, [data, search]);
 

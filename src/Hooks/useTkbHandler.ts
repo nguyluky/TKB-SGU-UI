@@ -338,10 +338,9 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     );
 
     const doUpdate = useCallback(() => {
+        if (!tkbDataRef.current) return;
         console.log(tkbDataRef.current);
         console.log('dosave');
-
-        if (!tkbDataRef.current) return;
 
         if (tkbDataRef.current.rule >= 3) return;
 
@@ -368,13 +367,13 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
         }
     }, [globalState.client, tkbId]);
 
-    const onRenameHandler = (s: string) => {
+    const onRenameHandler = useCallback((s: string) => {
         setTkbData((e) => {
             if (!e) return e;
             e.name = s;
             return { ...e };
         });
-    };
+    }, []);
 
     // getTkbData và dsNhomHoc
     useEffect(() => {
