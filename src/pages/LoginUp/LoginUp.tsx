@@ -37,7 +37,6 @@ function SignIn() {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [globalState, setGlobalState] = useContext(globalContent);
 
     const navigate = useNavigate();
@@ -60,9 +59,13 @@ function SignIn() {
                     console.log(data);
 
                     window.localStorage.setItem('token', data.accessToken);
-                    setGlobalState((e) => {
-                        e.client = new Client(data.accessToken);
-                        return { ...e };
+                    const client = new Client(data.accessToken);
+
+                    client.getUserInfo().then((resp) => {
+                        if (resp.success) globalState.userInfo = resp.data;
+
+                        globalState.client = client;
+                        setGlobalState({ ...globalState });
                     });
 
                     navigate(routerConfig.tkbs);
@@ -86,7 +89,14 @@ function SignIn() {
                 type="text"
                 icon={faUser}
             />
-            <Input autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} title="Password" type="password" icon={faLock} />
+            <Input
+                autoComplete="off"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                title="Password"
+                type="password"
+                icon={faLock}
+            />
             <a href={routerConfig.forgotPassword}>Quên mật khẩu ?</a>
             <ButtonWithLoading className={cx('btn')} onClick={handleLogin} isLoading={isLoading}>
                 Sign In
@@ -136,9 +146,30 @@ function SignUp() {
 
     return (
         <>
-            <Input autoComplete="off" value={userName} onChange={(e) => setUserName(e.target.value)} title="User Name" type="text" icon={faUser} />
-            <Input autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} title="Email" type="text" icon={faAt} />
-            <Input autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} title="Password" type="password" icon={faLock} />
+            <Input
+                autoComplete="off"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                title="User Name"
+                type="text"
+                icon={faUser}
+            />
+            <Input
+                autoComplete="off"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                title="Email"
+                type="text"
+                icon={faAt}
+            />
+            <Input
+                autoComplete="off"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                title="Password"
+                type="password"
+                icon={faLock}
+            />
             <ButtonWithLoading className={cx('btn')} isLoading={isLoading} onClick={signUpHandle}>
                 Sign Up
             </ButtonWithLoading>

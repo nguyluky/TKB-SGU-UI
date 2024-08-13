@@ -33,6 +33,8 @@ const config = {
     getDsMember: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends',
     updateRuleMember: (tkbId: string, memberId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends/' + encodeURIComponent(memberId),
     removeMember: (tkbId: string, memberId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/friends/' + encodeURIComponent(memberId),
+
+    getUserInfo: () => '/user'
 };
 
 export default config;

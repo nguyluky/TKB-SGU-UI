@@ -375,6 +375,14 @@ export default function Tkb() {
             }
             if (e.keyCode === 27) {
                 console.log('clear');
+                if (!selection.selection) selection.clear();
+            }
+
+            if (e.keyCode === 46) {
+                if (!selection.selection) return;
+                [...selection.selection].forEach((e) => {
+                    tkbHandler.onRemoveNhomHocHandler(e);
+                });
                 selection.clear();
             }
 
@@ -386,7 +394,7 @@ export default function Tkb() {
         return () => {
             document.removeEventListener('keydown', keyEventHandel);
         };
-    }, [commands, selection, tkbHandler.tkbData?.id_to_hocs]);
+    }, [commands, selection, tkbHandler, tkbHandler.tkbData?.id_to_hocs]);
 
     // updateHeader
     useEffect(() => {

@@ -4,6 +4,7 @@ import { apiConfig } from '../config';
 import { addRecord, deleteRecord, getAllRecord, getRecord, updateRecord } from './localDB';
 import { generateUUID } from '../utils';
 import SocketManage from './socket';
+import { UserInfoType } from '../store/GlobalContent/Content';
 
 const ApiEndPoint = api.baseUrl;
 
@@ -371,6 +372,8 @@ class localApi
     }
 }
 
+
+
 let ClientInstance: Client;
 export class Client {
     public request: AxiosInstance;
@@ -391,6 +394,12 @@ export class Client {
         });
         this.serverApi = new ServerApi(this.request);
         this.socket = new SocketManage(this.token || '');
+        // this.getUserInfo();
+    }
+
+    async getUserInfo() {
+        const res = await this.request.get<ApiResponse<UserInfoType>>(api.getUserInfo())
+        return res.data;
     }
 
     islogin() {

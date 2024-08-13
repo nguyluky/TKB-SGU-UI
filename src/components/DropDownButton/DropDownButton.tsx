@@ -11,11 +11,12 @@ const cx = classNamesBind.bind(style);
 interface ActivityItemProps {
     className?: string;
     icon: IconProp;
+    url?: string;
     children?: ReactNode | ReactNode[];
     onClick?: MouseEventHandler;
 }
 
-function DropDownButton({ className, icon, children, onClick }: ActivityItemProps) {
+function DropDownButton({ className, icon, children, onClick, url }: ActivityItemProps) {
     const dorpDownRef = useRef<HTMLDivElement>(null);
 
     const [isDropDownShow, setDropDownShow] = useState(false);
@@ -42,7 +43,7 @@ function DropDownButton({ className, icon, children, onClick }: ActivityItemProp
     return (
         <div className={classNames(cx('button-wrapper'), className)} ref={dorpDownRef}>
             <div className={cx('icon-wrapper')} onClick={handleOnClickIcon}>
-                <FontAwesomeIcon icon={icon} />
+                {!url ? <FontAwesomeIcon icon={icon} /> : <img src={url} alt="avt" />}
             </div>
             <div
                 className={cx('activity-drop-down', {
