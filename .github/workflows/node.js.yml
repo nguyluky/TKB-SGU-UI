@@ -30,7 +30,7 @@ jobs:
         run: npm ci
       - name: build
         env:
-          CI: False
+          CI: true
         run: npm run build --if-present
   
   deploy:
