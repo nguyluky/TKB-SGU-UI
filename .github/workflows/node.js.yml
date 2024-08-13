@@ -32,6 +32,10 @@ jobs:
         env:
           CI: false
         run: npm run build --if-present
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
   
   deploy:
     runs-on: ubuntu-latest
