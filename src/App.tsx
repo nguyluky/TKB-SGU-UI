@@ -24,6 +24,7 @@ function App() {
             }
             setGlobalState({ ...globalState, userInfo: res.data });
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [globalState.client.islogin, setGlobalState]);
 
     return <RouterProvider router={routers} />;

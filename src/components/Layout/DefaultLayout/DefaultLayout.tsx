@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 
-import { Dispatch, ReactElement, SetStateAction, createContext, useState } from 'react';
+import { createContext, Dispatch, ReactElement, SetStateAction, useState } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { defaultLayoutChildren } from '../../../routes';

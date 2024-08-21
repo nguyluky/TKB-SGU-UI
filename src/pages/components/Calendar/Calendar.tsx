@@ -153,10 +153,6 @@ function Calendar({
     const [tietDisplay, setTietDisplay] = useState<TietDisplay[]>([]);
     const [contentPos, setContentPos] = useState<[x: number, y: number, isOpen: number]>([0, 0, 0]);
 
-    const handleMouseDown = (event: CustomEvent) => {
-        console.log(event.thu, event.tiet);
-    };
-
     const handleMouseMove = (event: MouseEvent) => {
         if (!isMouseDown) return;
         if (!event.buttons) setMouseDown(false);

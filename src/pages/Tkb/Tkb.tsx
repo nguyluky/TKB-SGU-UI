@@ -455,8 +455,6 @@ export default function Tkb() {
         ),
     };
 
-    // console.log(cacheMhpIdToHoc.current, cacheTietNhom.current);
-
     return (
         <Loader isLoading={tkbHandler.isLoading}>
             {tkbHandler.errMsg ? (

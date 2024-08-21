@@ -224,7 +224,6 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             const ov = overlapKey.map((e) => cacheTietNhom.current[e]);
 
             // kiểm tra khác cơ sở
-
             let khacCSKey = getKeyKhacCoSo(tkbToKey(nhom.tkb), Object.keys(cacheTietNhom.current));
             khacCSKey = khacCSKey.filter(
                 (key) =>
@@ -238,6 +237,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
 
             // console.log(khacCS);
 
+            // nếu môn đó thay thế hết toàn bộ môn thì xóa những môn bị chùng đi
             if (replay) {
                 const tietString: string[] = [];
                 tietString.push(idToHoc);
@@ -264,6 +264,8 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                 setTkbData({ ...tkbData });
                 return;
             }
+
+
             if (khacCS.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
                 NotifyMaster.error(`khác cơ sở ${ov.map((e) => e.ten_mon).join(' - ')}`);
                 setConflict((e) => {
@@ -290,8 +292,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
 
             if (ov.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
                 console.log(ov);
-                // ông xem nên để cái thông báo lỗi như thế nào cho hợi lý
-
+                
                 NotifyMaster.error(`Trùng tiết ${ov.map((e) => e.ten_mon).join(' - ')}`);
                 setConflict((e) => {
                     ov.forEach((j) => {
@@ -377,14 +378,19 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
 
     // getTkbData và dsNhomHoc
     useEffect(() => {
+
+        console.log('hello')
+
         if (globalState.client.islogin()) {
             globalState.client.socket.emit('join', tkbId || '');
         }
 
-        Promise.all([getTkbData(), getDsNhomHoc()]).then(([tkbDataResp, dsNhomHocResp]) => {
-            console.log('getTkbRep', tkbDataResp);
-            console.log('getDsNhomHocRep', dsNhomHocResp);
-            setIsLoading(false)
+        if (!tkbData || !dsNhomHoc) {
+
+            Promise.all([getTkbData(), getDsNhomHoc()]).then(([tkbDataResp, dsNhomHocResp]) => {
+                console.log('getTkbRep', tkbDataResp);
+                console.log('getDsNhomHocRep', dsNhomHocResp);
+                setIsLoading(false)
             if (!tkbDataResp.success || !tkbDataResp.data) {
                 setErrMsg(tkbDataResp.msg || 'lỗi không thể lấy thời khóa biểu');
                 return;
@@ -393,20 +399,22 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             setDsNhomHoc(dsNhomHocResp);
             tkbDataResp.data?.id_to_hocs.forEach((idToHoc) => {
                 const nhomHoc = dsNhomHocResp.ds_nhom_to.find((e) => e.id_to_hoc === idToHoc);
-
+                
                 if (!nhomHoc) return;
-
+                
                 cacheMhpIdToHoc.current[nhomHoc.ma_mon] = idToHoc;
                 const key = tkbToKey(nhomHoc.tkb);
                 cacheTietNhom.current[key] = nhomHoc;
             });
         });
-
+    }
+        
         return () => {
             doUpdate();
             globalState.client.socket.emit('leave', tkbId || '');
         };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [doUpdate, getDsNhomHoc, getTkbData, globalState.client, tkbId]);
 
     useEffect(() => {
