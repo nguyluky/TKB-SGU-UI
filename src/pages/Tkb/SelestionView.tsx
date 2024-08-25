@@ -1,12 +1,23 @@
-import { faAngleDown, faAngleUp, faPlus, faSquareMinus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {
+    faAngleDown,
+    faAngleUp,
+    faPlus,
+    faSquareMinus,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { DsNhomHocResp, NhomHoc, TkbData, TkbTiet } from '../../Service';
 import { hashCode } from '../../utils';
 import { AddHp } from './AddHp';
 import { HocPhan } from './HocPhan';
-import { cx } from './Tkb';
+// import { cx } from './Tkb';
+
+import style from './SelestionView.module.scss';
+
+const cx = classNames.bind(style);
 
 interface selestionViewPro {
     dsNhomHoc?: DsNhomHocResp;
@@ -18,7 +29,15 @@ interface selestionViewPro {
     onRemoveNhomHoc: (idToHoc: string) => void;
 }
 
-export function SelestionView({ dsNhomHoc, onAddHp, onRemoveHp, onRemoveNhomHoc, tkbData, onAddNhomHoc, soTC }: selestionViewPro) {
+export function SelestionView({
+    dsNhomHoc,
+    onAddHp,
+    onRemoveHp,
+    onRemoveNhomHoc,
+    tkbData,
+    onAddNhomHoc,
+    soTC,
+}: selestionViewPro) {
     const [mini, setMini] = useState<number>(0);
     const toggleHp = (mhp: string) => {
         if (!tkbData) return;
@@ -51,7 +70,15 @@ export function SelestionView({ dsNhomHoc, onAddHp, onRemoveHp, onRemoveNhomHoc,
 
             <div className={cx('content')}>
                 {tkbData?.ma_hoc_phans.map((e) => (
-                    <HocPhan mini={mini} key={e} tkb={tkbData} data={dsNhomHoc} maHocPhan={e} onRemoveHp={onRemoveHp} onAddNhomHoc={toggleNhomHoc} />
+                    <HocPhan
+                        mini={mini}
+                        key={e}
+                        tkb={tkbData}
+                        data={dsNhomHoc}
+                        maHocPhan={e}
+                        onRemoveHp={onRemoveHp}
+                        onAddNhomHoc={toggleNhomHoc}
+                    />
                 ))}
             </div>
         </div>
@@ -116,7 +143,9 @@ function Temp({
                                 })}
                                 style={{
                                     background: tkbData?.id_to_hocs.includes(j.id_to_hoc)
-                                        ? `hsl(${Math.abs(hashCode(maMonHoc || '0'))} var(--tkb-nhom-view-HSL) )`
+                                        ? `hsl(${Math.abs(
+                                              hashCode(maMonHoc || '0'),
+                                          )} var(--tkb-nhom-view-HSL) )`
                                         : 'transparent',
                                 }}
                                 key={j.id_to_hoc}
@@ -124,9 +153,20 @@ function Temp({
                                     onAddNhomHoc(j.id_to_hoc);
                                 }}
                             >
-                                <p>Thứ: {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}</p>
-                                <p>GV: {Array.from(new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : '')))).join(', ')}</p>
-                                <p>Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}</p>
+                                <p>
+                                    Thứ:{' '}
+                                    {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}
+                                </p>
+                                <p>
+                                    GV:{' '}
+                                    {Array.from(
+                                        new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : ''))),
+                                    ).join(', ')}
+                                </p>
+                                <p>
+                                    Phòng:{' '}
+                                    {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
+                                </p>
                             </div>
                         );
                     })}
@@ -179,7 +219,14 @@ interface ReplaceViewProps {
     onClose: () => void;
 }
 
-export function ReplaceView({ idNhomHocToReplace, dsNhomHoc, tkbData, onAddNhomHoc, onRemoveNhomHoc, onClose }: ReplaceViewProps) {
+export function ReplaceView({
+    idNhomHocToReplace,
+    dsNhomHoc,
+    tkbData,
+    onAddNhomHoc,
+    onRemoveNhomHoc,
+    onClose,
+}: ReplaceViewProps) {
     const [replayItem, setReplayItem] = useState<NhomHoc[]>([]);
     const [dsMaHocPhan, setDsMaHocPhan] = useState<string[]>([]);
 
@@ -201,7 +248,8 @@ export function ReplaceView({ idNhomHocToReplace, dsNhomHoc, tkbData, onAddNhomH
             });
         });
 
-        const listAllNhomHocs: NhomHoc[] = dsNhomHoc?.ds_nhom_to.filter((jjj) => tkbData?.ma_hoc_phans.includes(jjj.ma_mon)) || [];
+        const listAllNhomHocs: NhomHoc[] =
+            dsNhomHoc?.ds_nhom_to.filter((jjj) => tkbData?.ma_hoc_phans.includes(jjj.ma_mon)) || [];
 
         const dsNhomHoc_ = timNhomHocTuongTu(tkbs, listAllNhomHocs);
 
@@ -224,7 +272,14 @@ export function ReplaceView({ idNhomHocToReplace, dsNhomHoc, tkbData, onAddNhomH
             </div>
             <div className={cx('content')}>
                 {dsMaHocPhan.map((e, i) => (
-                    <Temp key={i} data={dsNhomHoc} tkbData={tkbData} maMonHoc={e} dsNhomHoc={replayItem} onAddNhomHoc={toggleHp} />
+                    <Temp
+                        key={i}
+                        data={dsNhomHoc}
+                        tkbData={tkbData}
+                        maMonHoc={e}
+                        dsNhomHoc={replayItem}
+                        onAddNhomHoc={toggleHp}
+                    />
                 ))}
             </div>
         </div>

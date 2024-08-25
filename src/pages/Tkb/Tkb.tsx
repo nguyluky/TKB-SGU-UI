@@ -11,8 +11,7 @@ import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
-import { CloneTkb, CreateNewTkb, Property, UploadTkb } from '../components/PagesPopup';
-import { SharePopup } from '../components/PagesPopup/PagesPopup';
+import { CloneTkb, CreateNewTkb, Property, Share, UploadTkb } from '../components/PagesPopup';
 import { Convert } from '../DsTkb/FileTkb';
 import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
@@ -56,8 +55,8 @@ export default function Tkb() {
     const [sideBar, setSideBar] = useState<string>('');
     const [popup, setPopup] = useState<ReactNode>();
     const selection = useSelection();
-
-    // ref
+    const [sideBarWidth, setSideBarWidth] = useState<number>(290);
+    const [isResize, setResize] = useState(false);
 
     const idAutoSaveTimeOut = useRef<NodeJS.Timeout>();
 
@@ -317,12 +316,12 @@ export default function Tkb() {
                             return;
                         }
                         setPopup(
-                            <SharePopup
+                            <Share
                                 tkbid={tkbid || ''}
                                 open={true}
                                 modal
                                 onClose={() => setPopup('')}
-                            ></SharePopup>,
+                            ></Share>,
                         );
                     }
                 },
@@ -357,6 +356,25 @@ export default function Tkb() {
         },
         [commands],
     );
+
+    const resize = (ev: MouseEvent) => {
+        console.log(ev.x);
+        setSideBarWidth(ev.x - 2);
+    };
+
+    const mouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+        setResize(true);
+        document.addEventListener('mousemove', resize);
+        document.addEventListener(
+            'mouseup',
+            () => {
+                setResize(false);
+                document.removeEventListener('mousemove', resize);
+            },
+            false,
+        );
+        console.log(event.clientX);
+    };
 
     // event handle
     useEffect(() => {
@@ -461,7 +479,12 @@ export default function Tkb() {
                 <Error msg={tkbHandler.errMsg} />
             ) : (
                 <div className={cx('wrapper')}>
-                    <div className={cx('side-bar')}>
+                    <div
+                        className={cx('side-bar')}
+                        style={{
+                            width: sideBarWidth + 'px',
+                        }}
+                    >
                         {sideBars[sideBar] || (
                             <SelestionView
                                 dsNhomHoc={tkbHandler.dsNhomHoc}
@@ -474,6 +497,13 @@ export default function Tkb() {
                             />
                         )}
                     </div>
+                    <div
+                        id="resizer"
+                        className={cx('resizer', {
+                            md: isResize,
+                        })}
+                        onMouseDown={mouseDown}
+                    ></div>
                     <div className={cx('calendar-wrapper')}>
                         <Calendar
                             conflict={tkbHandler.conflict}

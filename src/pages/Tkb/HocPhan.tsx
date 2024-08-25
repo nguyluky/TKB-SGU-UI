@@ -1,10 +1,14 @@
 import { faAngleDown, faAngleUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
 import { NotifyMaster } from '../../components/NotifyPopup';
 import { DsNhomHocResp, TkbData } from '../../Service';
 import { hashCode } from '../../utils';
-import { cx } from './Tkb';
+// import { cx } from './Tkb';
+import style from './HocPhan.module.scss';
+
+const cx = classNames.bind(style);
 
 interface HocPhanProps {
     data?: DsNhomHocResp;
@@ -70,7 +74,9 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                             })}
                             style={{
                                 background: tkb?.id_to_hocs.includes(j.id_to_hoc)
-                                    ? `hsl(${Math.abs(hashCode(maHocPhan || '0'))} var(--tkb-nhom-view-HSL) )`
+                                    ? `hsl(${Math.abs(
+                                          hashCode(maHocPhan || '0'),
+                                      )} var(--tkb-nhom-view-HSL) )`
                                     : 'transparent',
                             }}
                             key={j.id_to_hoc}
@@ -87,10 +93,19 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                                 onAddNhomHoc(j.id_to_hoc);
                             }}
                         >
-                            <p>Thứ: {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}</p>
-                            <p>GV: {Array.from(new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : '')))).join(', ')}</p>
+                            <p>
+                                Thứ: {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}
+                            </p>
+                            <p>
+                                GV:{' '}
+                                {Array.from(
+                                    new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : ''))),
+                                ).join(', ')}
+                            </p>
                             <p>Nhóm: {j.nhom}</p>
-                            <p>Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}</p>
+                            <p>
+                                Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
+                            </p>
                             {/* <p>Lớp: {j.lop.ma}</p> */}
                         </div>
                     );

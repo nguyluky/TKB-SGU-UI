@@ -20,11 +20,6 @@ import style from './Calendar.module.scss';
 
 const cx = classNames.bind(style);
 
-interface CustomEvent extends MouseEvent {
-    thu?: number;
-    tiet?: number;
-}
-
 interface TietDisplay {
     gv: string;
     phong: string;

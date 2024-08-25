@@ -8,7 +8,6 @@ import DsTkb from '../pages/DsTkb';
 import ErrorPage from '../pages/Error';
 import Home from '../pages/Home';
 import Join from '../pages/Join';
-import LoginUp from '../pages/LoginUp';
 import Test from '../pages/Test/Test';
 import Tkb from '../pages/Tkb';
 
@@ -62,14 +61,14 @@ const routers = createBrowserRouter([
             </AuthLayout>
         ),
     },
-    {
-        path: routerConfig.logInUp,
-        element: (
-            <AuthLayout>
-                <LoginUp />
-            </AuthLayout>
-        ),
-    },
+    // {
+    //     path: routerConfig.logInUp,
+    //     element: (
+    //         <AuthLayout>
+    //             <LoginUp />
+    //         </AuthLayout>
+    //     ),
+    // },
     {
         path: routerConfig.errorPage,
         element: <ErrorPage />,

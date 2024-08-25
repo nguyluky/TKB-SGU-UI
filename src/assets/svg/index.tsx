@@ -2,7 +2,7 @@ import { SVGAttributes } from 'react';
 
 interface IconSvgProps extends SVGAttributes<SVGSVGElement> {}
 
-function Cloudy(props: IconSvgProps) {
+export function Cloudy(props: IconSvgProps) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +42,7 @@ function Cloudy(props: IconSvgProps) {
     );
 }
 
-function Cloud(props: IconSvgProps) {
+export function Cloud(props: IconSvgProps) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +62,7 @@ function Cloud(props: IconSvgProps) {
     );
 }
 
-function CloudOff(props: IconSvgProps) {
+export function CloudOff(props: IconSvgProps) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +84,7 @@ function CloudOff(props: IconSvgProps) {
     );
 }
 
-function CloudUpload(props: IconSvgProps) {
+export function CloudUpload(props: IconSvgProps) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -105,7 +105,3 @@ function CloudUpload(props: IconSvgProps) {
         </svg>
     );
 }
-
-const svgs = { Cloud, Cloudy, CloudOff, CloudUpload };
-
-export default svgs;

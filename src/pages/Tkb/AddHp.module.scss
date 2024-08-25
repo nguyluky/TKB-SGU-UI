@@ -1,0 +1,62 @@
+.add-popup {
+    height: 60vh;
+    min-width: max-content;
+    width: 50vw;
+    .header {
+        box-sizing: border-box;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        input {
+            background: transparent;
+            outline: transparent;
+            border-radius: var(--border-radius-g);
+            border: 1px solid var(--content-color-1);
+            padding: 7px 7px 7px 10px;
+            flex: 1;
+        }
+        .filter {
+            padding: 6px;
+            width: 150px;
+            background-color: var(--primary-color-1);
+            border: transparent;
+            outline: none;
+            border-radius: var(--border-radius-g);
+        }
+    }
+    .body {
+        height: calc(100% - 53px);
+        .relust {
+            height: 100%;
+            overflow-y: scroll;
+            scrollbar-width: thin;
+            scrollbar-color: gray transparent;
+            .monhoc {
+                display: block;
+                color: var(--text-color);
+                cursor: pointer;
+                padding: 0 20px;
+                margin: 3px 0;
+                border-left: 3px solid transparent;
+
+                input {
+                    display: none;
+                }
+
+                .ten {
+                    font-weight: bold;
+                }
+
+                .more-info {
+                    font-size: small;
+                    color: var(--text-color-2);
+                }
+            }
+
+            .monhoc:has(input:checked) {
+                border-left: 3px solid var(--primary-color-1);
+            }
+        }
+    }
+}

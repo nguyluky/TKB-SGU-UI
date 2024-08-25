@@ -10,8 +10,12 @@ import {
     faShareFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames/bind';
 import React, { useEffect, useRef, useState } from 'react';
-import { commandsInterface, cx } from './Tkb';
+import style from './HeaderTool.module.scss';
+import { commandsInterface } from './Tkb';
+
+const cx = classNames.bind(style);
 
 interface TOOL {
     title: string;
@@ -83,8 +87,14 @@ function Tool({
 
     return (
         <div className={cx('tool-item')} ref={toolref}>
-            <span className={cx('title')} onMouseEnter={tool.children ? onMouseEnter : undefined} onClick={tool.children ? onClick : tool.onclick}>
-                <div className={cx('icon')}>{tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}</div>
+            <span
+                className={cx('title')}
+                onMouseEnter={tool.children ? onMouseEnter : undefined}
+                onClick={tool.children ? onClick : tool.onclick}
+            >
+                <div className={cx('icon')}>
+                    {tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}
+                </div>
 
                 {tool.title}
             </span>

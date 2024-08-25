@@ -1,7 +1,11 @@
+import classNames from 'classnames/bind';
 import MiniSearch from 'minisearch';
 import { useEffect, useRef, useState } from 'react';
 import { DsNhomHocResp } from '../../Service';
-import { cx } from './Tkb';
+// import { cx } from './Tkb';
+import style from './AddHp.module.scss';
+
+const cx = classNames.bind(style);
 
 interface item {
     id: string;
@@ -9,7 +13,15 @@ interface item {
     mhp: string;
 }
 
-export function AddHp({ data, onAddHp, maHocPhans }: { data?: DsNhomHocResp; onAddHp?: (maHocPhan: string) => void; maHocPhans?: string[] }) {
+export function AddHp({
+    data,
+    onAddHp,
+    maHocPhans,
+}: {
+    data?: DsNhomHocResp;
+    onAddHp?: (maHocPhan: string) => void;
+    maHocPhans?: string[];
+}) {
     const [search, setSearch] = useState('');
     const [searchBy, setSearchBy] = useState<string>('mon');
 
@@ -67,9 +79,18 @@ export function AddHp({ data, onAddHp, maHocPhans }: { data?: DsNhomHocResp; onA
     return (
         <div className={cx('add-popup')}>
             <div className={cx('header')}>
-                <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." />
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search..."
+                />
                 {/* <button className={cx('filter')}>Bộ Lọc</button> */}
-                <select className={cx('filter')} value={searchBy} onChange={(e) => setSearchBy(e.target.value)}>
+                <select
+                    className={cx('filter')}
+                    value={searchBy}
+                    onChange={(e) => setSearchBy(e.target.value)}
+                >
                     <option value={'mon'}>Lọc theo môn</option>
                     <option value={'lop'}>Lọc theo lớp</option>
                     <option value={'khoa'}>Lọc theo khoa</option>

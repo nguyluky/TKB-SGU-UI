@@ -3,11 +3,12 @@ import { faBug, faGear, faLock, faMoon, faSun, faUser } from '@fortawesome/free-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
 import { ChangeEvent, ReactElement, useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 
 import images from '../../../../assets/images';
-import { apiConfig, routerConfig } from '../../../../config';
+import { apiConfig } from '../../../../config';
+import Auth from '../../../../pages/components/PagesPopup/Auth';
 import { ApiResponse, Client } from '../../../../Service';
 import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
@@ -28,10 +29,12 @@ function Header({
     right?: ReactElement;
 }) {
     const [globalState, setGlobalState] = useContext(globalContent);
+    const navigate = useNavigate();
 
     const [p1, setP1] = useState<string>('');
     const [p2, setP2] = useState<string>('');
     const [p3, setP3] = useState<string>('');
+    const [showLogin, setShowLogin] = useState(false);
 
     const openGitHub = () => {
         window.open('https://github.com/nguyluky/TKB-SGU-UI');
@@ -89,6 +92,13 @@ function Header({
             <div className={cx('right')}>
                 {right}
                 <div className={cx('activity')}>
+                    <Auth
+                        open={showLogin}
+                        onClose={() => {
+                            setShowLogin(false);
+                        }}
+                        onForgotPassword={() => {}}
+                    />
                     <DropDownButton icon={faDiscord} onClick={openDiscord} className={cx('item')} />
                     <DropDownButton icon={faBug} onClick={openIssues} className={cx('item')} />
                     <DropDownButton icon={faGithub} onClick={openGitHub} className={cx('item')} />
@@ -206,10 +216,23 @@ function Header({
                             ) : (
                                 <>
                                     <div className={cx('line')}>
-                                        <Link to={routerConfig.logInUp}>Đăng nhập</Link>
+                                        <p
+                                            onClick={(e) => {
+                                                setShowLogin(true);
+                                            }}
+                                        >
+                                            Đăng nhập
+                                        </p>
                                     </div>
                                     <div className={cx('line')}>
-                                        <Link to={routerConfig.logInUp + '?up=t'}>Đăng ký</Link>
+                                        <p
+                                            onClick={(e) => {
+                                                navigate('?' + 'registration=1');
+                                                setShowLogin(true);
+                                            }}
+                                        >
+                                            Đăng ký
+                                        </p>
                                     </div>
                                 </>
                             )}
