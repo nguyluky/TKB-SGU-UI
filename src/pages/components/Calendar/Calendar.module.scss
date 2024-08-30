@@ -9,7 +9,7 @@
 
 .calendar.layout-column {
     --tiet-width: 50px;
-    --rows: 14;
+    --rows: 10;
     --columns: 7;
     --top-m: 0px;
     --left-m: 50px;
@@ -84,7 +84,7 @@
     --tiet-width: calc(var(--header-height) - 5px);
 
     --rows: 7;
-    --columns: 14;
+    --columns: 10;
     --top-m: calc(var(--header-height) + 2px);
     --left-m: 0px;
     --x-s: 1;
@@ -192,13 +192,14 @@
 }
 
 .item {
-    border-radius: var(--border-radius-g);
     box-sizing: border-box;
     padding: var(--margin-g);
     position: absolute;
     transition: all 0.1s ease-in-out;
-    overflow-y: scroll;
     scrollbar-width: thin;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
     // color: grey;
     // scrollbar-color: grey transparent;
 
@@ -206,19 +207,27 @@
         outline: 2px solid var(--primary-color-1);
     }
 
+    .left-side {
+        position: absolute;
+        height: 100%;
+        width: 5px;
+        border-radius: 5px;
+        top: 0;
+        left: 0;
+    }
+
     .title {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        font-size: 1.2rem;
         font-weight: bold;
         // background: transparent;
     }
 
-    .info {
-        font-size: 1rem;
+    p {
+        margin-left: 10px;
     }
 
     &.entering {
@@ -233,7 +242,7 @@
 
     &.exiting {
         transform: scale(0);
-        opacity: 0;
+        opacity: 1;
     }
 
     &.exited {

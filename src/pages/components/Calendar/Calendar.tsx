@@ -65,15 +65,45 @@ function CalendarCell({
                                     })}
                                     style={tr.style}
                                 >
+                                    <div
+                                        className={cx('left-side')}
+                                        style={{
+                                            background: tr.style.color,
+                                        }}
+                                    ></div>
                                     <p
                                         className={cx('title')}
                                         content={`${tr.ten_mon} (${tr.id_mon})`}
+                                        style={{
+                                            color: tr.style.color,
+                                        }}
                                     >
-                                        {tr.ten_mon} ({tr.id_mon})
+                                        ({tr.nhom}) {tr.ten_mon}
                                     </p>
-                                    <p className={cx('info')}>GV: {tr.gv}</p>
-                                    <p className={cx('info')}>Nhóm: {tr.nhom}</p>
-                                    <p className={cx('info')}>Phòng: {tr.phong}</p>
+                                    <p className={cx('info')}>
+                                        Mã môn:{' '}
+                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
+                                            {tr.id_mon}
+                                        </span>
+                                    </p>
+                                    <p className={cx('info')}>
+                                        GV:{' '}
+                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
+                                            {tr.gv}
+                                        </span>
+                                    </p>
+                                    <p className={cx('info')}>
+                                        Phòng:{' '}
+                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
+                                            {tr.phong}
+                                        </span>
+                                    </p>
+                                    {/* <p className={cx('info')}>
+                                        Nhóm:{' '}
+                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
+                                            {tr.nhom}
+                                        </span>
+                                    </p> */}
                                 </div>
                             );
                         }}
@@ -94,10 +124,11 @@ interface Props {
 }
 
 const RenderTiet = memo(() => {
+    const countRow = 10;
     return (
         <>
             <div className={cx('calendar-day', 'tiet-display')}>
-                {Array.from(Array(14).keys()).map((e, i) => {
+                {Array.from(Array(countRow).keys()).map((e, i) => {
                     return (
                         <div className={cx('tiet')} key={i}>
                             <p>{i + 1}</p>
@@ -108,7 +139,7 @@ const RenderTiet = memo(() => {
             {Array.from(Array(7).keys()).map((t) => {
                 return (
                     <div className={cx('calendar-day')} key={t}>
-                        {Array.from(Array(14).keys()).map((i) => {
+                        {Array.from(Array(countRow).keys()).map((i) => {
                             return (
                                 <div
                                     className={cx('tiet')}
@@ -204,11 +235,12 @@ function Calendar({
                     } * var(--x-s) + ${jj.tbd - 1} * var(--y-s)) + var(--top-m))`,
                     height: `calc((100% - var(--top-m)) / var(--rows) * (${
                         jj.tkt - jj.tbd
-                    } * var(--y-s) + 1) - 5px)`,
-                    width: `calc((100% - var(--left-m)) / var(--columns) * (var(--x-s) + 1) - 5px)`,
+                    } * var(--y-s) + 1))`,
+                    width: `calc((100% - var(--left-m)) / var(--columns) * (var(--x-s) + 1))`,
                     background: `hsl(${Math.abs(
                         hashCode(tiet?.ma_mon || '0'),
-                    )} var(--tkb-nhom-view-HSL) )`,
+                    )} var(--tkb-nhom-view-HSL) / 50%)`,
+                    color: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} 80 50)`,
                     scrollbarColor: `hsl(${Math.abs(
                         hashCode(tiet?.ma_mon || '0'),
                     )} 20 50 )  transparent`,
