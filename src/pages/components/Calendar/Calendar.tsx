@@ -239,8 +239,10 @@ function Calendar({
                     width: `calc((100% - var(--left-m)) / var(--columns) * (var(--x-s) + 1))`,
                     background: `hsl(${Math.abs(
                         hashCode(tiet?.ma_mon || '0'),
-                    )} var(--tkb-nhom-view-HSL) / 50%)`,
-                    color: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} 80 50)`,
+                    )} var(--tkb-nhom-view-HSL-bg))`,
+                    color: `hsl(${Math.abs(
+                        hashCode(tiet?.ma_mon || '0'),
+                    )} var(--tkb-nhom-view-HSL))`,
                     scrollbarColor: `hsl(${Math.abs(
                         hashCode(tiet?.ma_mon || '0'),
                     )} 20 50 )  transparent`,
