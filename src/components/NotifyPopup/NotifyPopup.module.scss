@@ -100,6 +100,19 @@
     &.error {
         background: var(--error-color);
     }
+
+    .btn {
+        display: flex;
+        justify-content: end;
+    }
+
+    button {
+        background-color: rgba($color: #000000, $alpha: 0.2);
+        border: none;
+        outline: none;
+        padding: 3px 5px;
+        border-radius: 3px;
+    }
 }
 
 .loading {

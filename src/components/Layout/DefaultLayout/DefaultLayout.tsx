@@ -28,9 +28,12 @@ function DefaultLayout() {
 
     useEffect(() => {
         notifyMaster.warning(
-            'cập nhật lại tkb k24, xin lỗi k24 về sợ bất tiện này ad ngủ quên, quên mất là mình có cái server. nên quên mất cập nhật',
+            'cập nhật lại tkb k24, xin lỗi k24 về sợ bất tiện này ad ngủ quên, quên mất là mình có cái server. nên quên mất cập nhật. Nếu có bất cứ lỗi, hay sai sót nào thì vui lòng liện hệ',
             'xin lỗi',
             -1,
+            function message() {
+                window.open('https://m.me/61558476525330');
+            },
         );
     }, []);
 
