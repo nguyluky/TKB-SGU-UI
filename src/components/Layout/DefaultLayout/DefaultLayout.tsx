@@ -1,10 +1,11 @@
 import classNames from 'classnames/bind';
 
-import { createContext, Dispatch, ReactElement, SetStateAction, useState } from 'react';
+import { createContext, Dispatch, ReactElement, SetStateAction, useEffect, useState } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { defaultLayoutChildren } from '../../../routes';
 import NotifyPopup from '../../NotifyPopup';
+import notifyMaster from '../../NotifyPopup/NotificationManager';
 import Header from '../components/Header';
 import style from './DefaultLayout.module.scss';
 
@@ -24,6 +25,14 @@ function DefaultLayout() {
     const currentOutlet = useOutlet();
 
     const { nodeRef } = defaultLayoutChildren.find((e) => e.path === location.pathname) || {};
+
+    useEffect(() => {
+        notifyMaster.warning(
+            'cập nhật lại tkb k24, xin lỗi k24 về sợ bất tiện này ad ngủ quên, quên mất là mình có cái server. nên quên mất cập nhật',
+            'xin lỗi',
+            -1,
+        );
+    }, []);
 
     return (
         <headerContent.Provider value={setHeaderPar}>
