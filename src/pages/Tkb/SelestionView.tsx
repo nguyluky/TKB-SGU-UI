@@ -9,10 +9,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
-import { DsNhomHocResp, NhomHoc, TkbData, TkbTiet } from '../../Service';
+import SimpleBar from 'simplebar-react';
+
+import { DsNhomHocResp, NhomHoc, TkbInfo, TkbTiet } from '../../Service';
 import { hashCode } from '../../utils';
 import { AddHp } from './AddHp';
 import { HocPhan } from './HocPhan';
+
 // import { cx } from './Tkb';
 
 import style from './SelestionView.module.scss';
@@ -21,7 +24,9 @@ const cx = classNames.bind(style);
 
 interface selestionViewPro {
     dsNhomHoc?: DsNhomHocResp;
-    tkbData?: TkbData;
+    tkbData?: TkbInfo;
+    ma_hoc_phans: string[];
+    id_to_hocs: string[];
     soTC: number;
     onRemoveHp: (maHocPhan: string) => void;
     onAddHp: (maHocPhan: string) => void;
@@ -34,6 +39,8 @@ export function SelestionView({
     onAddHp,
     onRemoveHp,
     onRemoveNhomHoc,
+    ma_hoc_phans,
+    id_to_hocs,
     tkbData,
     onAddNhomHoc,
     soTC,
@@ -41,13 +48,13 @@ export function SelestionView({
     const [mini, setMini] = useState<number>(0);
     const toggleHp = (mhp: string) => {
         if (!tkbData) return;
-        if (tkbData?.ma_hoc_phans.includes(mhp)) onRemoveHp(mhp);
+        if (ma_hoc_phans.includes(mhp)) onRemoveHp(mhp);
         else onAddHp(mhp);
     };
 
     const toggleNhomHoc = (idToHoc: string) => {
         if (!tkbData) return;
-        if (tkbData?.id_to_hocs.includes(idToHoc)) onRemoveNhomHoc(idToHoc);
+        if (id_to_hocs.includes(idToHoc)) onRemoveNhomHoc(idToHoc);
         else onAddNhomHoc(idToHoc);
     };
 
@@ -64,22 +71,29 @@ export function SelestionView({
                     }}
                 />
                 <Popup trigger={<FontAwesomeIcon icon={faPlus} />} modal>
-                    <AddHp data={dsNhomHoc} onAddHp={toggleHp} maHocPhans={tkbData?.ma_hoc_phans} />
+                    <AddHp data={dsNhomHoc} onAddHp={toggleHp} maHocPhans={ma_hoc_phans} />
                 </Popup>
             </div>
 
             <div className={cx('content')}>
-                {tkbData?.ma_hoc_phans.map((e) => (
-                    <HocPhan
-                        mini={mini}
-                        key={e}
-                        tkb={tkbData}
-                        data={dsNhomHoc}
-                        maHocPhan={e}
-                        onRemoveHp={onRemoveHp}
-                        onAddNhomHoc={toggleNhomHoc}
-                    />
-                ))}
+                <SimpleBar
+                    style={{
+                        maxHeight: '100%',
+                    }}
+                >
+                    {ma_hoc_phans.map((e) => (
+                        <HocPhan
+                            id_to_hocs={id_to_hocs}
+                            mini={mini}
+                            key={e}
+                            tkb={tkbData}
+                            data={dsNhomHoc}
+                            maHocPhan={e}
+                            onRemoveHp={onRemoveHp}
+                            onAddNhomHoc={toggleNhomHoc}
+                        />
+                    ))}
+                </SimpleBar>
             </div>
         </div>
     );
@@ -88,12 +102,15 @@ export function SelestionView({
 function Temp({
     data,
     dsNhomHoc,
-    tkbData,
+    id_to_hocs,
+    ma_hoc_phans,
     onAddNhomHoc,
     maMonHoc,
 }: {
+    id_to_hocs: string[];
+    ma_hoc_phans: string[];
     dsNhomHoc: NhomHoc[];
-    tkbData?: TkbData;
+    tkbData?: TkbInfo;
     onAddNhomHoc: (idToHoc: string) => void;
     data?: DsNhomHocResp;
     maMonHoc: string;
@@ -139,10 +156,10 @@ function Temp({
                         return (
                             <div
                                 className={cx('nhom', {
-                                    check: tkbData?.id_to_hocs.includes(j.id_to_hoc),
+                                    check: id_to_hocs.includes(j.id_to_hoc),
                                 })}
                                 style={{
-                                    background: tkbData?.id_to_hocs.includes(j.id_to_hoc)
+                                    background: id_to_hocs.includes(j.id_to_hoc)
                                         ? `hsl(${Math.abs(
                                               hashCode(maMonHoc || '0'),
                                           )} var(--tkb-nhom-view-HSL) )`
@@ -212,8 +229,10 @@ function timNhomHocTuongTu(tkbs: TkbTiet[], fromDS: NhomHoc[]) {
 
 interface ReplaceViewProps {
     idNhomHocToReplace: string[];
+    ma_hoc_phans: string[];
+    id_to_hocs: string[];
     dsNhomHoc?: DsNhomHocResp;
-    tkbData?: TkbData;
+    tkbData?: TkbInfo;
     onAddNhomHoc: (idToHoc: string, isTimeLine?: boolean, replay?: boolean) => void;
     onRemoveNhomHoc: (idToHoc: string) => void;
     onClose: () => void;
@@ -223,6 +242,8 @@ export function ReplaceView({
     idNhomHocToReplace,
     dsNhomHoc,
     tkbData,
+    ma_hoc_phans,
+    id_to_hocs,
     onAddNhomHoc,
     onRemoveNhomHoc,
     onClose,
@@ -233,7 +254,7 @@ export function ReplaceView({
     const toggleHp = (mhp: string) => {
         console.log(mhp);
         if (!tkbData) return;
-        if (tkbData?.ma_hoc_phans.includes(mhp)) onRemoveNhomHoc(mhp);
+        if (ma_hoc_phans.includes(mhp)) onRemoveNhomHoc(mhp);
         else onAddNhomHoc(mhp, false, true);
     };
 
@@ -249,14 +270,14 @@ export function ReplaceView({
         });
 
         const listAllNhomHocs: NhomHoc[] =
-            dsNhomHoc?.ds_nhom_to.filter((jjj) => tkbData?.ma_hoc_phans.includes(jjj.ma_mon)) || [];
+            dsNhomHoc?.ds_nhom_to.filter((jjj) => ma_hoc_phans.includes(jjj.ma_mon)) || [];
 
         const dsNhomHoc_ = timNhomHocTuongTu(tkbs, listAllNhomHocs);
 
         // console.log(dsNhomHoc_);
         setReplayItem(dsNhomHoc_);
         setDsMaHocPhan(Array.from(new Set(dsNhomHoc_.map((e) => e.ma_mon))));
-    }, [dsNhomHoc?.ds_nhom_to, idNhomHocToReplace, tkbData?.ma_hoc_phans]);
+    }, [dsNhomHoc?.ds_nhom_to, idNhomHocToReplace, ma_hoc_phans]);
 
     return (
         <div className={cx('side-bar-wrapper')}>
@@ -276,6 +297,8 @@ export function ReplaceView({
                         key={i}
                         data={dsNhomHoc}
                         tkbData={tkbData}
+                        ma_hoc_phans={ma_hoc_phans}
+                        id_to_hocs={id_to_hocs}
                         maMonHoc={e}
                         dsNhomHoc={replayItem}
                         onAddNhomHoc={toggleHp}

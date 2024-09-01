@@ -6,7 +6,7 @@ import Popup from 'reactjs-popup';
 
 import images from '../../assets/images';
 import PopupModel from '../../components/PopupModel';
-import { TkbData } from '../../Service';
+import { TkbInfo } from '../../Service';
 import { Rename } from '../components/PagesPopup';
 import { cx } from './DsTkb';
 
@@ -16,10 +16,10 @@ export function CardTkb({
     onDelete,
     isRow,
 }: {
-    data: TkbData;
+    data: TkbInfo;
     isRow: boolean;
-    onRename: (tkbData: TkbData, newName: string) => void;
-    onDelete: (tkbData: TkbData) => void;
+    onRename: (tkbData: TkbInfo, newName: string) => void;
+    onDelete: (tkbData: TkbInfo) => void;
 }) {
     const nati = useNavigate();
 

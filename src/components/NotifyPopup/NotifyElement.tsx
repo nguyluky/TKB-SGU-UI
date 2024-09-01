@@ -75,7 +75,7 @@ function NotifyElement({ data }: { data: NotifyItem }) {
             {data.onClick ? (
                 <div className={cx('btn')}>
                     <button onClick={() => data.onClick && data.onClick()}>
-                        {data.onClick.name}
+                        {data.onClickText}
                     </button>
                 </div>
             ) : (

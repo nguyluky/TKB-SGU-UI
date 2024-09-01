@@ -1,10 +1,7 @@
 .content {
     height: calc(100% - var(--header-height));
     background-color: var(--content-color);
-    overflow-y: visible;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: gray transparent;
+    overflow: hidden;
 }
 
 .wrapper-page {

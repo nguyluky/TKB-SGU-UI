@@ -16,12 +16,8 @@
     box-sizing: border-box;
 }
 
-.calendar-wrapper {
-    flex: 1;
-}
-
 .resizer {
-    width: 5px;
+    min-width: 5px;
     cursor: e-resize;
 
     &.md {

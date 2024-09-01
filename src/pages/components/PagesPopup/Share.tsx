@@ -42,7 +42,7 @@ export default function Share({ tkbid, ...pros }: SharePopupProps) {
         <Popup {...pros}>
             <PopupModel title="Tại lời mời" onCancel={pros.onClose} noFooter>
                 <div className={cx('input')}>
-                    <label>link: (tính năng đang ở bản beta cẫn chưa cập nhật read time)</label>
+                    <label>link: </label>
                     <div className={cx('input-copy')}>
                         <p>
                             {window.location.origin}/join/{link}

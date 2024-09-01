@@ -3,12 +3,12 @@ import classNames from 'classnames/bind';
 import { createContext, Dispatch, ReactElement, SetStateAction, useEffect, useState } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import 'simplebar-react/dist/simplebar.min.css';
 import { defaultLayoutChildren } from '../../../routes';
 import NotifyPopup from '../../NotifyPopup';
 import notifyMaster from '../../NotifyPopup/NotificationManager';
 import Header from '../components/Header';
 import style from './DefaultLayout.module.scss';
-
 const cx = classNames.bind(style);
 
 interface HeaderPar {
@@ -34,6 +34,7 @@ function DefaultLayout() {
             function message() {
                 window.open('https://m.me/61558476525330');
             },
+            'link messenger',
         );
     }, []);
 
@@ -41,6 +42,7 @@ function DefaultLayout() {
         <headerContent.Provider value={setHeaderPar}>
             <NotifyPopup>
                 <Header {...headerPar} />
+
                 <div className={cx('content')} id="default-content">
                     <SwitchTransition>
                         <CSSTransition

@@ -3,14 +3,14 @@ import { useState } from 'react';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
 import PopupModel from '../../../components/PopupModel';
-import { TkbData } from '../../../Service';
+import { TkbInfo } from '../../../Service';
 
 import style from './PagesPopup.module.scss';
 
 const cx = classNames.bind(style);
 
 interface PropertyProps extends Omit<PopupProps, 'children'> {
-    tkbData: TkbData;
+    tkbData: TkbInfo;
 }
 
 export default function Property({ tkbData, ...props }: PropertyProps) {
@@ -61,7 +61,7 @@ export default function Property({ tkbData, ...props }: PropertyProps) {
 
                                 <div className={cx('setting-line')}>
                                     <span>quyền hạn:</span>
-                                    <span>{tkbData.rule}</span>
+                                    <span>{'chưa làm aip'}</span>
                                 </div>
 
                                 <div className={cx('setting-line')}>

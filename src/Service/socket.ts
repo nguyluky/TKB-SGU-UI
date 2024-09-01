@@ -6,9 +6,12 @@ interface SocketEventListener {
     onLeave: (args: [tkbId: string, userId: string]) => void;
     onSelestion: (args: [tkbId: string, idToHocs: string][]) => void;
     onAddHocPhan: (args: [tkbId: string, mxhp: string, isTimeLine: boolean]) => void;
-    onAddNhomHoc: (args: [tkbId: string, idToHoc: string, isTimeLine: boolean, replay: boolean]) => void;
+    onAddNhomHoc: (
+        args: [tkbId: string, idToHoc: string, isTimeLine: boolean, replay: boolean],
+    ) => void;
     onRemoveHocPhan: (args: [tkbId: string, mxhp: string, isTimeLine: boolean]) => void;
     onRemoveNhomHoc: (args: [tkbId: string, idToHoc: string, isTimeLine: boolean]) => void;
+    onRename: (args: [tkbId: string, newName: string]) => void;
 }
 
 interface SocketEventEmit {
@@ -19,6 +22,7 @@ interface SocketEventEmit {
     addNhomHoc: [tkbId: string, idToHoc: string, isTimeLine: boolean, replay: boolean];
     removeHocPhan: [tkbId: string, mxhp: string, isTimeLine: boolean];
     removeNhomHoc: [tkbId: string, idToHoc: string, isTimeLine: boolean];
+    rename: [tkbId: string, newName: string];
 }
 
 export default class SocketManage {
@@ -27,14 +31,17 @@ export default class SocketManage {
     constructor(token: string) {
         this.token = token;
         if (!token) return;
-        this.socket = io(apiConfig.baseUrl.replace('/api/v1', ''), {
+        this.socket = io(apiConfig.baseUrl.replace('/api/v2', ''), {
             extraHeaders: {
                 authorization: `bearer ${token}`,
             },
         });
     }
 
-    addEventListener<Key extends keyof SocketEventListener>(name: Key, callback: SocketEventListener[Key]) {
+    addEventListener<Key extends keyof SocketEventListener>(
+        name: Key,
+        callback: SocketEventListener[Key],
+    ) {
         if (!this.socket) return;
         this.socket.on<keyof SocketEventListener>(name, callback);
     }

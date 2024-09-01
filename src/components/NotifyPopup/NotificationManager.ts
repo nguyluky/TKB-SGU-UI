@@ -25,6 +25,7 @@ export interface NotifyItem {
     message?: string;
     timeOut?: number;
     onClick?: Function;
+    onClickText?: string;
     priority?: boolean;
     nodeRef?: RefObject<HTMLDivElement>;
 }
@@ -43,75 +44,102 @@ class NotifyMaster extends EventEmitter {
             title: undefined,
             message: undefined,
             timeOut: 3000,
-            nodeRef: createRef()
+            nodeRef: createRef(),
         };
+
+        const data = {
+            id: defaultNotify.id,
+            notifyType: notify.notifyType || defaultNotify.notifyType,
+            title: notify.title || defaultNotify.title,
+            message: notify.message || defaultNotify.message,
+            timeOut: notify.timeOut || defaultNotify.timeOut,
+            onClick: notify.onClick,
+            onClickText: notify.onClickText,
+            priority: notify.priority,
+            nodeRef: defaultNotify.nodeRef,
+        };
+
         if (!notify.priority) {
-            this.listNotify.unshift({
-                id: defaultNotify.id,
-                notifyType: notify.notifyType || defaultNotify.notifyType,
-                title: notify.title || defaultNotify.title,
-                message: notify.message || defaultNotify.message,
-                timeOut: notify.timeOut || defaultNotify.timeOut,
-                onClick: notify.onClick,
-                priority: notify.priority,
-                nodeRef: defaultNotify.nodeRef,
-            });
+            this.listNotify.unshift(data);
         } else {
-            this.listNotify.push({
-                id: defaultNotify.id,
-                notifyType: notify.notifyType || defaultNotify.notifyType,
-                title: notify.title || defaultNotify.title,
-                message: notify.message || defaultNotify.message,
-                timeOut: notify.timeOut || defaultNotify.timeOut,
-                onClick: notify.onClick,
-                priority: notify.priority,
-                nodeRef: defaultNotify.nodeRef,
-            });
+            this.listNotify.push(data);
         }
 
         this.emitChange();
     }
 
-    info(message?: string, title?: string, timeOut?: number, onClick?: Function, priority?: boolean) {
+    info(
+        message?: string,
+        title?: string,
+        timeOut?: number,
+        onClick?: Function,
+        onClickText?: string,
+        priority?: boolean,
+    ) {
         this.create({
             notifyType: NotifyType.INFO,
             message: message,
             title: title || 'info',
             timeOut: timeOut,
             onClick: onClick,
+            onClickText: onClickText,
             priority: priority,
         });
     }
 
-    success(message?: string, title?: string, timeOut?: number, onClick?: Function, priority?: boolean) {
+    success(
+        message?: string,
+        title?: string,
+        timeOut?: number,
+        onClick?: Function,
+        onClickText?: string,
+        priority?: boolean,
+    ) {
         this.create({
             notifyType: NotifyType.SUCCESS,
             message: message,
             title: title || 'success',
             timeOut: timeOut,
             onClick: onClick,
+            onClickText: onClickText,
             priority: priority,
         });
     }
 
-    warning(message?: string, title?: string, timeOut?: number, onClick?: Function, priority?: boolean) {
+    warning(
+        message?: string,
+        title?: string,
+        timeOut?: number,
+        onClick?: Function,
+        onClickText?: string,
+        priority?: boolean,
+    ) {
         this.create({
             notifyType: NotifyType.WARNING,
             message: message,
             title: title || 'warning',
             timeOut: timeOut,
             onClick: onClick,
+            onClickText: onClickText,
             priority: priority,
         });
     }
 
-    error(message?: string, title?: string, timeOut?: number, onClick?: Function, priority?: boolean) {
+    error(
+        message?: string,
+        title?: string,
+        timeOut?: number,
+        onClick?: Function,
+        onClickText?: string,
+        priority?: boolean,
+    ) {
         this.create({
             notifyType: NotifyType.ERROR,
             message: message,
             title: title || 'error',
             timeOut: timeOut,
             onClick: onClick,
+            onClickText: onClickText,
             priority: priority,
         });
     }

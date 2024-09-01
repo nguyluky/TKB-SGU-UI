@@ -65,7 +65,7 @@
 }
 
 .list-tkb {
-    min-height: calc(100% - 290px);
+    min-height: calc(100vh - var(--header-height) - 290px);
     background-color: var(--header-color);
 }
 
