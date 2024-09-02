@@ -439,14 +439,17 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
         console.log('lưu thành công');
     }, [globalState.client.localApi, globalState.client.serverApi, tkbId]);
 
-    const onRenameHandler = useCallback((s: string, isSocket?: boolean) => {
-        if (!isSocket) globalState.client.socket.emit('rename', tkbId, s);
-        setTkbInfo((e) => {
-            if (!e) return e;
-            e.name = s;
-            return { ...e };
-        });
-    }, []);
+    const onRenameHandler = useCallback(
+        (s: string, isSocket?: boolean) => {
+            if (!isSocket) globalState.client.socket.emit('rename', tkbId, s);
+            setTkbInfo((e) => {
+                if (!e) return e;
+                e.name = s;
+                return { ...e };
+            });
+        },
+        [globalState.client.socket, tkbId],
+    );
 
     // getTkbData và dsNhomHoc
     useEffect(() => {

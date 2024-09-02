@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import classNames from 'classnames/bind';
 import { useState } from 'react';
-import Auth from '../components/PagesPopup/Auth';
 import style from './Test.module.scss';
 
 const cx = classNames.bind(style);
@@ -11,14 +10,24 @@ function Test() {
     const [open, setopne] = useState(true);
     return (
         <div>
-            <button onClick={() => setopne(true)}>open</button>
-            <Auth
-                open={open}
-                onClose={() => {
-                    setopne(false);
+            <button
+                onClick={() => {
+                    window.addEventListener('message', (e) => {
+                        console.log(e);
+                    });
+                    const win = window.open(
+                        'http://localhost:4000/test',
+                        'login google',
+                        'height=600,width=450',
+                    );
+
+                    if (win) {
+                        win.focus();
+                    }
                 }}
-                onForgotPassword={() => {}}
-            />
+            >
+                login
+            </button>
             <p>hello</p>
         </div>
     );

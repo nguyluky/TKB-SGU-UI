@@ -227,7 +227,7 @@ function Header({
                                     <div className={cx('line')}>
                                         <p
                                             onClick={(e) => {
-                                                navigate('?' + 'registration=1');
+                                                navigate('?registration=1');
                                                 setShowLogin(true);
                                             }}
                                         >

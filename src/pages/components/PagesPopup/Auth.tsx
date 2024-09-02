@@ -3,10 +3,11 @@ import { faEnvelopeCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import classNames from 'classnames/bind';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
+
 import ButtonWithLoading from '../../../components/ButtonWithLoading';
 import { apiConfig } from '../../../config';
 import { Client } from '../../../Service';
@@ -52,6 +53,36 @@ function CustomInput({ name, id, labelTitle, children, ...props }: CustomInputPr
     );
 }
 
+function popupCenter({ url, title, w, h }: { url: string; title: string; w: number; h: number }) {
+    const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+    const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+
+    const width = window.innerWidth
+        ? window.innerWidth
+        : document.documentElement.clientWidth
+        ? document.documentElement.clientWidth
+        : // eslint-disable-next-line no-restricted-globals
+          screen.width;
+    const height = window.innerHeight
+        ? window.innerHeight
+        : document.documentElement.clientHeight
+        ? document.documentElement.clientHeight
+        : // eslint-disable-next-line no-restricted-globals
+          screen.height;
+
+    const systemZoom = width / window.screen.availWidth;
+    const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+    const top = (height - h) / 2 / systemZoom + dualScreenTop;
+    const newWindow = window.open(
+        url,
+        title,
+        `scrollbars=yes,width=${w / systemZoom},height=${h / systemZoom},top=${top},left=${left}`,
+    );
+
+    if (newWindow) newWindow.focus();
+    return newWindow;
+}
+
 export default function Auth(pros: AuthProps) {
     const [globalState, setGlobalState] = useContext(globalContent);
     const [params, setParams] = useSearchParams();
@@ -65,6 +96,7 @@ export default function Auth(pros: AuthProps) {
     const [mess, setMess] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
     const [dk, setDk] = useState(false);
+    const popupWindow = useRef<Window | null>(null);
 
     const changeToRegistration = (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
@@ -138,6 +170,7 @@ export default function Auth(pros: AuthProps) {
 
         if (
             email.match(
+                // eslint-disable-next-line no-useless-escape
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             ) == null
         ) {
@@ -172,16 +205,48 @@ export default function Auth(pros: AuthProps) {
             });
     };
 
-    // useEffect(() => {
-    //     console.log('why');
-    //     console.log(refRegistration.current);
-    //     console.log(refLogin.current);
-    //     setHeight(
-    //         params.get('registration')
-    //             ? refRegistration.current?.clientHeight || 0
-    //             : refLogin.current?.clientHeight || 0,
-    //     );
-    // }, [params]);
+    const googleOauthCallback = (event: MessageEvent) => {
+        const t = event.data.type;
+        if (t === 'googleOauth2') {
+            if (popupWindow.current) {
+                popupWindow.current.close();
+                popupWindow.current = null;
+
+                const accessToken = event.data.data;
+                window.localStorage.setItem('token', accessToken);
+                const client = new Client(accessToken);
+
+                client.getUserInfo().then((resp) => {
+                    if (resp.success) globalState.userInfo = resp.data;
+
+                    globalState.client = client;
+                    setGlobalState({ ...globalState });
+                });
+
+                pros.onClose && pros.onClose();
+            }
+        }
+    };
+
+    const googleOauth = () => {
+        if (popupWindow.current) {
+            popupWindow.current.close();
+        }
+        popupWindow.current = popupCenter({
+            url: 'http://localhost:4000/api/v2/auth/google',
+            title: 'login google',
+            h: 500,
+            w: 400,
+        });
+    };
+
+    useEffect(() => {
+        window.addEventListener('message', googleOauthCallback);
+        return () => {
+            window.removeEventListener('message', googleOauthCallback);
+        };
+    });
+
     return (
         <Popup {...pros}>
             <div
@@ -260,7 +325,11 @@ export default function Auth(pros: AuthProps) {
                         <div className={cx('line')} />
                     </div>
                     <div className={cx('social-icons')}>
-                        <button aria-label="Log in with Google" className={cx('icon')}>
+                        <button
+                            aria-label="Log in with Google"
+                            className={cx('icon')}
+                            onClick={googleOauth}
+                        >
                             <FontAwesomeIcon icon={faGoogle} />
                         </button>
                         <button aria-label="Log in with GitHub" className={cx('icon')}>
