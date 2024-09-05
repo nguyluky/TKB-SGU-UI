@@ -7,8 +7,11 @@ import { useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
+
 import ButtonWithLoading from '../../../components/ButtonWithLoading';
+import notifyMaster from '../../../components/NotifyPopup/NotificationManager';
 import { apiConfig } from '../../../config';
+import useWindowPopup from '../../../Hooks/useWindowPopup';
 import { Client } from '../../../Service';
 import { globalContent } from '../../../store/GlobalContent';
 
@@ -60,6 +63,28 @@ export default function Auth(pros: AuthProps) {
     const [password, setPassword] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [height, setHeight] = useState<number>(0);
+    const popupWindow = useWindowPopup((event) => {
+        const t = event.data.type;
+        if (t === 'googleOauth2') {
+            const accessToken = event.data.data;
+            window.localStorage.setItem('token', accessToken);
+            const client = new Client(accessToken);
+
+            client.getUserInfo().then((resp) => {
+                if (resp.success) globalState.userInfo = resp.data;
+
+                globalState.client = client;
+                setGlobalState({ ...globalState });
+            });
+
+            pros.onClose && pros.onClose();
+            popupWindow.close();
+        } else if (t === 'notify') {
+            const data = event.data;
+            notifyMaster[data.data.notifyType](data.data.mess);
+            popupWindow.close();
+        }
+    });
 
     const [errType, setErrType] = useState<string>('');
     const [mess, setMess] = useState<string>('');
@@ -138,6 +163,7 @@ export default function Auth(pros: AuthProps) {
 
         if (
             email.match(
+                // eslint-disable-next-line no-useless-escape
                 /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             ) == null
         ) {
@@ -172,16 +198,15 @@ export default function Auth(pros: AuthProps) {
             });
     };
 
-    // useEffect(() => {
-    //     console.log('why');
-    //     console.log(refRegistration.current);
-    //     console.log(refLogin.current);
-    //     setHeight(
-    //         params.get('registration')
-    //             ? refRegistration.current?.clientHeight || 0
-    //             : refLogin.current?.clientHeight || 0,
-    //     );
-    // }, [params]);
+    const googleOauth = () => {
+        popupWindow.open({
+            url: apiConfig.baseUrl + apiConfig.googleOauth(),
+            title: 'login google',
+            h: 700,
+            w: 700,
+        });
+    };
+
     return (
         <Popup {...pros}>
             <div
@@ -260,7 +285,11 @@ export default function Auth(pros: AuthProps) {
                         <div className={cx('line')} />
                     </div>
                     <div className={cx('social-icons')}>
-                        <button aria-label="Log in with Google" className={cx('icon')}>
+                        <button
+                            aria-label="Log in with Google"
+                            className={cx('icon')}
+                            onClick={googleOauth}
+                        >
                             <FontAwesomeIcon icon={faGoogle} />
                         </button>
                         <button aria-label="Log in with GitHub" className={cx('icon')}>

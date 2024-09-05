@@ -1,8 +1,8 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { TkbData } from '../../Service';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import { TkbInfo } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';
 import { CreateNewTkb } from '../components/PagesPopup';
 import { cx } from './DsTkb';
@@ -11,7 +11,7 @@ export interface CreateTkbResp {
     code: number;
     msg: string;
     success: boolean;
-    data?: TkbData;
+    data?: TkbInfo;
 }
 
 export function NewTkb() {
@@ -24,22 +24,26 @@ export function NewTkb() {
     const sendCreateTkbReq = (name: string, pos: string) => {
         // send create tkb resp
         if (pos === 'server')
-            globalState.client.serverApi.createNewTkb(name, '', null, false).then((data) => {
-                if (!data.success || !data.data) {
-                    notifyMaster.error(data.msg);
-                    return;
-                }
-                nav(data.data.id);
-            });
+            globalState.client.serverApi
+                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null })
+                .then((data) => {
+                    if (!data.success || !data.data) {
+                        notifyMaster.error(data.msg);
+                        return;
+                    }
+                    nav(data.data.id);
+                });
 
         if (pos === 'client') {
-            globalState.client.localApi.createNewTkb(name, '', null, false).then((data) => {
-                if (!data.success || !data.data) {
-                    notifyMaster.error(data.msg);
-                    return;
-                }
-                nav(data.data.id + '?isclient=true');
-            });
+            globalState.client.localApi
+                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null })
+                .then((data) => {
+                    if (!data.success || !data.data) {
+                        notifyMaster.error(data.msg);
+                        return;
+                    }
+                    nav(data.data.id + '?isclient=true');
+                });
         }
     };
 

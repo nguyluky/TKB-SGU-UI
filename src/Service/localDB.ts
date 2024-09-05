@@ -1,6 +1,16 @@
-import { TkbData } from '.';
-
 let db: IDBDatabase;
+
+export interface TkbInfoIndexDb {
+    id: string;
+    name: string;
+    tkb_describe: string;
+    thumbnails: null | Blob;
+    ma_hoc_phans: string[];
+    id_to_hocs: string[];
+    rule: number;
+    isClient?: boolean;
+    created: Date; //"2024-06-17T12:22:36.000Z"
+}
 
 async function createDataBase() {
     const temp = new Promise<IDBDatabase>((resolve, reject) => {
@@ -24,7 +34,7 @@ async function createDataBase() {
     return await temp;
 }
 
-export async function addRecord(data: TkbData) {
+export async function addRecord(data: TkbInfoIndexDb) {
     if (!db) await createDataBase();
 
     const addRecordPromise = await new Promise<IDBValidKey>(function (resolve, reject) {
@@ -45,7 +55,7 @@ export async function addRecord(data: TkbData) {
     return addRecordPromise;
 }
 
-export async function updateRecord(data: TkbData) {
+export async function updateRecord(data: TkbInfoIndexDb) {
     if (!db) await createDataBase();
 
     const updateRecord = await new Promise<IDBValidKey>(function (resolve, reject) {
@@ -89,14 +99,14 @@ export async function deleteRecord(tkbId: string) {
 export async function getRecord(tkbId: string) {
     if (!db) await createDataBase();
 
-    const getRecord = await new Promise<TkbData>(function (resolve, reject) {
+    const getRecord = await new Promise<TkbInfoIndexDb>(function (resolve, reject) {
         const tran = db.transaction(['tkbStorage'], 'readonly');
         const objStore = tran.objectStore('tkbStorage');
 
         const getRep = objStore.get(tkbId);
 
         getRep.onsuccess = (ev) => {
-            resolve(getRep.result as TkbData);
+            resolve(getRep.result as TkbInfoIndexDb);
         };
 
         getRep.onerror = (ev) => {
@@ -109,14 +119,14 @@ export async function getRecord(tkbId: string) {
 
 export async function getAllRecord() {
     if (!db) await createDataBase();
-    const getALlRecord = await new Promise<TkbData[]>(function (resolve, reject) {
+    const getALlRecord = await new Promise<TkbInfoIndexDb[]>(function (resolve, reject) {
         const tran = db.transaction(['tkbStorage'], 'readonly');
         const objStore = tran.objectStore('tkbStorage');
 
         const getAllRep = objStore.getAll();
 
         getAllRep.onsuccess = (ev) => {
-            resolve(getAllRep.result as TkbData[]);
+            resolve(getAllRep.result as TkbInfoIndexDb[]);
         };
 
         getAllRep.onerror = (ev) => {

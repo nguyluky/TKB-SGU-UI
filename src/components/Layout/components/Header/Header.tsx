@@ -1,5 +1,14 @@
-import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faBug, faGear, faLock, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faDiscord, faFacebook, faGithub } from '@fortawesome/free-brands-svg-icons';
+import {
+    faAt,
+    faBug,
+    faCaretDown,
+    faGear,
+    faLock,
+    faMoon,
+    faSun,
+    faUser,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
 import { ChangeEvent, ReactElement, useContext, useState } from 'react';
@@ -99,9 +108,51 @@ function Header({
                         }}
                         onForgotPassword={() => {}}
                     />
-                    <DropDownButton icon={faDiscord} onClick={openDiscord} className={cx('item')} />
+                    {/* <DropDownButton icon={faDiscord} onClick={openDiscord} className={cx('item')} />
                     <DropDownButton icon={faBug} onClick={openIssues} className={cx('item')} />
-                    <DropDownButton icon={faGithub} onClick={openGitHub} className={cx('item')} />
+                    <DropDownButton icon={faGithub} onClick={openGitHub} className={cx('item')} /> */}
+                    <DropDownButton icon={faCaretDown} className={cx('item')}>
+                        <div className={cx('container')}>
+                            <label onClick={openDiscord}>
+                                <FontAwesomeIcon icon={faDiscord} />
+                                <p>Server discord</p>
+                            </label>
+                            <label onClick={openGitHub}>
+                                <FontAwesomeIcon icon={faGithub} />
+                                <p>Github</p>
+                            </label>
+                            <label onClick={openIssues}>
+                                <FontAwesomeIcon icon={faBug} />
+                                <p>Báo cáo lỗi</p>
+                            </label>
+                            <label
+                                onClick={() => {
+                                    window.open('mailto:nguyluky@gmail.com');
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faAt} />
+                                <p>Email liên hệ</p>
+                            </label>
+                            <label
+                                onClick={() => {
+                                    window.open(
+                                        'https://www.facebook.com/profile.php?id=61558476525330',
+                                    );
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faFacebook} />
+                                <p>Facebook</p>
+                            </label>
+                            <label
+                                onClick={() => {
+                                    navigate('/privacy-policy');
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faLock} />
+                                <p>Chính sách bảo mật</p>
+                            </label>
+                        </div>
+                    </DropDownButton>
                     <DropDownButton icon={faSun} className={cx('item')}>
                         <div className={cx('container')}>
                             <label>
@@ -227,7 +278,7 @@ function Header({
                                     <div className={cx('line')}>
                                         <p
                                             onClick={(e) => {
-                                                navigate('?' + 'registration=1');
+                                                navigate('?registration=1');
                                                 setShowLogin(true);
                                             }}
                                         >

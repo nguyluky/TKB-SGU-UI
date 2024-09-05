@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
 import { NotifyMaster } from '../../components/NotifyPopup';
-import { DsNhomHocResp, TkbData } from '../../Service';
+import { DsNhomHocResp, TkbInfo } from '../../Service';
 import { hashCode } from '../../utils';
 // import { cx } from './Tkb';
 import style from './HocPhan.module.scss';
@@ -12,14 +12,23 @@ const cx = classNames.bind(style);
 
 interface HocPhanProps {
     data?: DsNhomHocResp;
-    tkb?: TkbData;
+    tkb?: TkbInfo;
+    id_to_hocs: string[];
     maHocPhan: string;
     mini: number;
     onAddNhomHoc: (idToHoc: string) => void;
     onRemoveHp: (maHocPhan: string) => void;
 }
 
-export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }: HocPhanProps) {
+export function HocPhan({
+    mini,
+    data,
+    tkb,
+    maHocPhan,
+    id_to_hocs,
+    onAddNhomHoc,
+    onRemoveHp,
+}: HocPhanProps) {
     const nhomHoc = data?.ds_nhom_to.filter((j) => j.ma_mon === maHocPhan);
     const [show, setShow] = useState(false);
     const [closeShow, setCloseShow] = useState(false);
@@ -65,7 +74,7 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                 }}
             >
                 {nhomHoc?.map((j) => {
-                    const noData = j.tkb.find((e) => e.thu === '??');
+                    const noData = j.tkb.find((e) => e.thu + '' === '??');
 
                     return (
                         <div
@@ -73,7 +82,7 @@ export function HocPhan({ mini, data, tkb, maHocPhan, onAddNhomHoc, onRemoveHp }
                                 // check: tkb?.id_to_hocs.includes(j.id_to_hoc),
                             })}
                             style={{
-                                background: tkb?.id_to_hocs.includes(j.id_to_hoc)
+                                background: id_to_hocs.includes(j.id_to_hoc)
                                     ? `hsl(${Math.abs(
                                           hashCode(maHocPhan || '0'),
                                       )} var(--tkb-nhom-view-HSL) )`

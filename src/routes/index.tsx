@@ -8,6 +8,7 @@ import DsTkb from '../pages/DsTkb';
 import ErrorPage from '../pages/Error';
 import Home from '../pages/Home';
 import Join from '../pages/Join';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 import Test from '../pages/Test/Test';
 import Tkb from '../pages/Tkb';
 
@@ -35,6 +36,11 @@ export const defaultLayoutChildren = [
     {
         path: routerConfig.join,
         element: <Join />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
+    {
+        path: routerConfig.privacyPolicy,
+        element: <PrivacyPolicy />,
         nodeRef: createRef<HTMLDivElement>(),
     },
 ];

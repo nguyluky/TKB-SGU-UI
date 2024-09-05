@@ -102,3 +102,31 @@ body {
     box-shadow: none;
     background-color: transparent !important;
 }
+
+*::-webkit-scrollbar {
+    top: 0;
+    right: 0;
+    position: absolute;
+    width: 7px;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 10rem;
+    width: 3px;
+}
+
+*::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+}
+
+.simplebar-content {
+    min-height: 100%;
+}
+
+.simplebar-content-wrapper {
+    min-height: 100%;
+}

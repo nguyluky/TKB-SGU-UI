@@ -1,28 +1,41 @@
 import axios, { AxiosInstance } from 'axios';
 import api from '../config/api';
 import { apiConfig } from '../config';
-import { addRecord, deleteRecord, getAllRecord, getRecord, updateRecord } from './localDB';
+import {
+    addRecord,
+    deleteRecord,
+    getAllRecord,
+    getRecord,
+    TkbInfoIndexDb,
+    updateRecord,
+} from './localDB';
 import { generateUUID } from '../utils';
 import SocketManage from './socket';
 import { UserInfoType } from '../store/GlobalContent/Content';
 
 const ApiEndPoint = api.baseUrl;
 
-export interface TkbData {
+export interface TkbInfo {
     id: string;
     name: string;
     tkb_describe: string;
-    thumbnails: null;
-    ma_hoc_phans: string[];
-    id_to_hocs: string[];
-    rule: number;
+    thumbnails: null | Blob;
     isClient?: boolean;
     created: Date; //"2024-06-17T12:22:36.000Z"
 }
 
+export type TkbContent = string[];
+
+export type TkbContentMmh = string[];
+
 export interface DsNhomHocResp {
     ds_nhom_to: NhomHoc[];
     ds_mon_hoc: { [key: string]: string };
+}
+
+export interface DsNhomHocRespData {
+    ds_nhom_to: NhomHoc[];
+    ds_mon_hoc: { id: string; display_name: string }[];
 }
 
 export interface NhomHoc {
@@ -44,7 +57,7 @@ export interface Lop {
 }
 
 export interface TkbTiet {
-    thu: string;
+    thu: number;
     tbd: number;
     tkt: number;
     phong: string;
@@ -66,26 +79,36 @@ export interface ApiResponse<T> {
 }
 
 interface BaseApi {
-    getDsTkb(): Promise<ApiResponse<TkbData[]>>;
-    getTkb(tkbId: string): Promise<ApiResponse<TkbData>>;
-    createNewTkb(
-        name: string,
-        tkb_describe: string,
-        thumbnail: any,
-        public_: boolean,
-        id_to_hocs?: string[],
-        ma_hoc_phans?: string[],
-    ): Promise<ApiResponse<TkbData>>;
-    updateTkb(tkbData: TkbData): Promise<ApiResponse<null>>;
+    // /
+    createNewTkb({ ...arg }: Omit<TkbInfo, 'id' | 'created'>): Promise<ApiResponse<TkbInfo>>;
+    getDsTkb(): Promise<ApiResponse<TkbInfo[]>>;
+
+    // /:tkbId
     deleteTkb(tkbId: string): Promise<ApiResponse<null>>;
+    getTkb(tkbId: string): Promise<ApiResponse<TkbInfo>>;
+    updateTkbInfo(tkbData: TkbInfo): Promise<ApiResponse<null>>;
 
-    getDsNhomHoc(): Promise<DsNhomHocResp>;
+    // /:tkbId/id_to_hoc
+    getTkbContent(tkbId: string): Promise<ApiResponse<TkbContent>>;
+    updateTkbContent(tkbId: string, idToHocs: string[]): Promise<ApiResponse<string[]>>;
 
+    // /:tkbId/ma_mom_hoc
+    getTkbContentMmh(tkbId: string): Promise<ApiResponse<TkbContentMmh>>;
+    updateTkbContentMmh(tkbId: string, Mmh: string[]): Promise<ApiResponse<string[]>>;
+
+    // /:tkbId/invite
     createInviteLink(tkbId: string): Promise<ApiResponse<string>>;
+    // /join
     join(inviteLink: string): Promise<ApiResponse<string>>;
+
+    // /:tkbId/member
     getDsMember(tkbId: string): Promise<ApiResponse<Member[]>>;
+    // /:tkbId/member/:userId
     updateRuleMember(tkbId: string, memberId: string, rule: number): Promise<ApiResponse<null>>;
     removeMember(tkbId: string, memberId: string): Promise<ApiResponse<null>>;
+
+    //
+    getDsNhomHoc(): Promise<DsNhomHocRespData>;
 }
 
 class ServerApi implements BaseApi {
@@ -94,7 +117,7 @@ class ServerApi implements BaseApi {
         this.request = request;
     }
 
-    async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
+    async getDsTkb(): Promise<ApiResponse<TkbInfo[]>> {
         if (!window.navigator.onLine) {
             return new Promise((r, a) => {
                 r({
@@ -105,7 +128,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        const resp = await this.request.get<ApiResponse<TkbData[]>>(apiConfig.getDsTkb());
+        const resp = await this.request.get<ApiResponse<TkbInfo[]>>(apiConfig.getDsTkb());
         if (resp.data.data)
             resp.data.data.forEach((e) => {
                 e.created = new Date(e.created);
@@ -113,7 +136,7 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
+    async getTkb(tkbId: string): Promise<ApiResponse<TkbInfo>> {
         if (!window.navigator.onLine) {
             return new Promise((r, a) => {
                 r({
@@ -123,24 +146,14 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        const resp = await this.request.get<ApiResponse<TkbData>>(apiConfig.getTkb(tkbId));
+        const resp = await this.request.get<ApiResponse<TkbInfo>>(apiConfig.getTkb(tkbId));
         if (resp.data.data) {
             resp.data.data.created = new Date(resp.data.data.created);
-            resp.data.data.id_to_hocs = resp.data.data.id_to_hocs || [];
-            resp.data.data.ma_hoc_phans = resp.data.data.ma_hoc_phans || [];
         }
-
         return resp.data;
     }
 
-    async createNewTkb(
-        name: string,
-        tkb_describe: string,
-        thumbnail: any,
-        public_: boolean,
-        id_to_hocs?: string[],
-        ma_hoc_phans?: string[],
-    ): Promise<ApiResponse<TkbData>> {
+    async createNewTkb(tkb: Omit<TkbInfo, 'id' | 'created'>): Promise<ApiResponse<TkbInfo>> {
         if (!window.navigator.onLine) {
             return new Promise((r, a) => {
                 r({
@@ -150,13 +163,11 @@ class ServerApi implements BaseApi {
                 });
             });
         }
-        const resp = await this.request.post<ApiResponse<TkbData>>(apiConfig.createTkb(), {
-            name: name,
-            tkb_describe: tkb_describe,
-            thumbnail: null,
+        const resp = await this.request.post<ApiResponse<TkbInfo>>(apiConfig.createTkb(), {
+            name: tkb.name,
+            tkb_describe: tkb.tkb_describe,
+            thumbnail: tkb.thumbnails,
             public: false,
-            id_to_hocs: id_to_hocs,
-            ma_hoc_phans: ma_hoc_phans,
         });
 
         if (resp.data.data) resp.data.data.created = new Date(resp.data.data.created);
@@ -164,7 +175,7 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
+    async updateTkbInfo(tkbData: TkbInfo): Promise<ApiResponse<null>> {
         if (!window.navigator.onLine) {
             return new Promise((r, a) => {
                 r({
@@ -175,7 +186,7 @@ class ServerApi implements BaseApi {
             });
         }
         const resp = await this.request.put<ApiResponse<null>>(
-            apiConfig.updateTkb(tkbData.id),
+            apiConfig.updateTkbInfo(tkbData.id),
             tkbData,
         );
         return resp.data;
@@ -254,8 +265,7 @@ class ServerApi implements BaseApi {
             });
         }
         const resp = await this.request.put<ApiResponse<null>>(
-            apiConfig.updateRuleMember(tkbId, memberId),
-            { rule: rule },
+            apiConfig.updateRuleMember(tkbId, memberId) + '?rule=' + encodeURIComponent(rule),
         );
         return resp.data;
     }
@@ -276,14 +286,86 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async getDsNhomHoc(): Promise<DsNhomHocResp> {
+    async getDsNhomHoc(): Promise<DsNhomHocRespData> {
         if (!window.navigator.onLine) {
             return JSON.parse(localStorage.getItem('dsNhomHoc') || '{}');
         }
 
-        const getData = this.request.get<DsNhomHocResp>(apiConfig.getDsNhomHoc());
+        const getData = this.request.get<DsNhomHocRespData>(apiConfig.getDsNhomHoc());
         const data = (await getData).data;
         return data;
+    }
+
+    async updateTkbContent(tkbId: string, idToHocs: string[]): Promise<ApiResponse<string[]>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
+
+        const resp = await this.request.put<ApiResponse<string[]>>(
+            apiConfig.updateTkbContent(tkbId),
+            idToHocs,
+        );
+
+        return resp.data;
+    }
+
+    async updateTkbContentMmh(tkbId: string, Mmh: string[]): Promise<ApiResponse<string[]>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
+
+        const resp = await this.request.put<ApiResponse<string[]>>(
+            apiConfig.updateTkbContentMmh(tkbId),
+            Mmh,
+        );
+
+        return resp.data;
+    }
+
+    async getTkbContent(tkbId: string): Promise<ApiResponse<TkbContent>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
+
+        const resp = await this.request.get<ApiResponse<TkbContent>>(
+            apiConfig.getTkbContent(tkbId),
+        );
+        return resp.data;
+    }
+
+    async getTkbContentMmh(tkbId: string): Promise<ApiResponse<TkbContentMmh>> {
+        if (!window.navigator.onLine) {
+            return new Promise((r, a) => {
+                r({
+                    code: 500,
+                    msg: 'Không có kết nối mạng',
+                    success: false,
+                });
+            });
+        }
+
+        const resp = await this.request.get<ApiResponse<TkbContentMmh>>(
+            apiConfig.getTkbContentMmh(tkbId),
+        );
+        return resp.data;
     }
 }
 
@@ -299,7 +381,7 @@ class localApi
             | 'getDsNhomHoc'
         >
 {
-    async getDsTkb(): Promise<ApiResponse<TkbData[]>> {
+    async getDsTkb(): Promise<ApiResponse<TkbInfo[]>> {
         const ev = await getAllRecord();
 
         return {
@@ -310,7 +392,7 @@ class localApi
         };
     }
 
-    async getTkb(tkbId: string): Promise<ApiResponse<TkbData>> {
+    async getTkb(tkbId: string): Promise<ApiResponse<TkbInfo>> {
         const ev = await getRecord(tkbId);
 
         return {
@@ -321,8 +403,20 @@ class localApi
         };
     }
 
-    async updateTkb(tkbData: TkbData): Promise<ApiResponse<null>> {
-        await updateRecord(tkbData);
+    async updateTkbInfo(tkbData: TkbInfo): Promise<ApiResponse<null>> {
+        const a = await getRecord(tkbData.id);
+
+        await updateRecord({
+            id: tkbData.id,
+            name: tkbData.name,
+            tkb_describe: tkbData.tkb_describe,
+            thumbnails: tkbData.thumbnails,
+            ma_hoc_phans: a.ma_hoc_phans,
+            id_to_hocs: a.id_to_hocs,
+            rule: a.rule,
+            isClient: a.isClient,
+            created: a.created,
+        });
 
         return {
             code: 200,
@@ -341,21 +435,14 @@ class localApi
         };
     }
 
-    async createNewTkb(
-        name: string,
-        tkb_describe: string,
-        thumbnail: any,
-        public_: boolean,
-        id_to_hocs?: string[],
-        ma_hoc_phans?: string[],
-    ): Promise<ApiResponse<TkbData>> {
-        const newTkb: TkbData = {
+    async createNewTkb(tkbInfo: Omit<TkbInfo, 'id' | 'created'>): Promise<ApiResponse<TkbInfo>> {
+        const newTkb: TkbInfoIndexDb = {
             id: generateUUID(),
-            name: name,
-            tkb_describe: tkb_describe,
-            thumbnails: thumbnail,
-            id_to_hocs: id_to_hocs || [],
-            ma_hoc_phans: ma_hoc_phans || [],
+            name: tkbInfo.name,
+            tkb_describe: tkbInfo.tkb_describe,
+            thumbnails: tkbInfo.thumbnails,
+            id_to_hocs: [],
+            ma_hoc_phans: [],
             rule: 0,
             isClient: true,
             created: new Date(),
@@ -370,16 +457,58 @@ class localApi
             data: newTkb,
         };
     }
+
+    async getTkbContent(tkbId: string): Promise<ApiResponse<TkbContent>> {
+        const a = await getRecord(tkbId);
+        return {
+            code: 200,
+            success: true,
+            msg: '',
+            data: a.id_to_hocs,
+        };
+    }
+
+    async getTkbContentMmh(tkbId: string): Promise<ApiResponse<TkbContentMmh>> {
+        const a = await getRecord(tkbId);
+        return {
+            code: 200,
+            success: true,
+            msg: '',
+            data: a.ma_hoc_phans,
+        };
+    }
+
+    async updateTkbContent(tkbId: string, idToHocs: string[]): Promise<ApiResponse<string[]>> {
+        const old = await getRecord(tkbId);
+        old.id_to_hocs = idToHocs;
+        await updateRecord(old);
+        return {
+            code: 200,
+            success: true,
+            msg: '',
+            data: idToHocs,
+        };
+    }
+
+    async updateTkbContentMmh(tkbId: string, Mmh: string[]): Promise<ApiResponse<string[]>> {
+        const old = await getRecord(tkbId);
+        old.ma_hoc_phans = Mmh;
+        await updateRecord(old);
+        return {
+            code: 200,
+            success: true,
+            msg: '',
+            data: Mmh,
+        };
+    }
 }
-
-
 
 let ClientInstance: Client;
 export class Client {
     public request: AxiosInstance;
     public serverApi: ServerApi;
     public localApi: localApi;
-    private token?: string;
+    public token?: string;
     public socket: SocketManage;
 
     constructor(token?: string) {
@@ -398,7 +527,7 @@ export class Client {
     }
 
     async getUserInfo() {
-        const res = await this.request.get<ApiResponse<UserInfoType>>(api.getUserInfo())
+        const res = await this.request.get<ApiResponse<UserInfoType>>(api.getUserInfo());
         return res.data;
     }
 

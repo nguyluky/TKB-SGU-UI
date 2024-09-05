@@ -6,6 +6,7 @@ import {
     faFolderOpen,
     faReply,
     faRightFromBracket,
+    faRotate,
     faShare,
     faShareFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
@@ -169,11 +170,18 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                     pos: 'Left',
                 },
                 {
+                    icon: faRotate,
+                    title: 'Đồng bộ với google lịch',
+                    onclick: createdCommand('googleCalendar'),
+                    pos: 'Left',
+                },
+                {
                     icon: faDownload,
                     title: 'Tải xuống',
                     onclick: createdCommand('saveAsFile'),
                     pos: 'Left',
                 },
+
                 {
                     title: 'Properties',
                     onclick: createdCommand('property'),

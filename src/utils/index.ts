@@ -1,7 +1,8 @@
 function generateUUID() {
     // Public Domain/MIT
     let d = new Date().getTime(); //Timestamp
-    let d2 = (typeof performance !== 'undefined' && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
+    let d2 =
+        (typeof performance !== 'undefined' && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         let r = Math.random() * 16; //random number between 0 and 16
         if (d > 0) {
@@ -17,11 +18,11 @@ function generateUUID() {
     });
 }
 
-function textSaveAsFile(text: string) {   
-    const element = document.createElement("a");
-    const file = new Blob([text], {type: 'text/plain'});
+function textSaveAsFile(text: string) {
+    const element = document.createElement('a');
+    const file = new Blob([text], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = "tkb.json";
+    element.download = 'tkb.json';
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
 }
@@ -30,10 +31,38 @@ function hashCode(s: string) {
     let h = 0;
     let i = 0;
     const l = s.length;
-    if ( l > 0 )
-      while (i < l)
-        h = (h << 5) - h + s.charCodeAt(i++) | 0;
+    if (l > 0) while (i < l) h = ((h << 5) - h + s.charCodeAt(i++)) | 0;
     return h;
-  };
+}
 
-export { generateUUID, textSaveAsFile , hashCode};
+function popupCenter({ url, title, w, h }: { url: string; title: string; w: number; h: number }) {
+    const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+    const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+
+    const width = window.innerWidth
+        ? window.innerWidth
+        : document.documentElement.clientWidth
+        ? document.documentElement.clientWidth
+        : // eslint-disable-next-line no-restricted-globals
+          screen.width;
+    const height = window.innerHeight
+        ? window.innerHeight
+        : document.documentElement.clientHeight
+        ? document.documentElement.clientHeight
+        : // eslint-disable-next-line no-restricted-globals
+          screen.height;
+
+    const systemZoom = width / window.screen.availWidth;
+    const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+    const top = (height - h) / 2 / systemZoom + dualScreenTop;
+    const newWindow = window.open(
+        url,
+        title,
+        `scrollbars=yes,width=${w / systemZoom},height=${h / systemZoom},top=${top},left=${left}`,
+    );
+
+    if (newWindow) newWindow.focus();
+    return newWindow;
+}
+
+export { generateUUID, textSaveAsFile, hashCode, popupCenter };
