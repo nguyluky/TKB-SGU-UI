@@ -5,7 +5,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 } else {
     // baseUrl = 'http://localhost:4000/api/v1';
     // TODO change to poducstion endpoint
-    baseUrl = 'https://apitest.tkbsgusort.id.vn/api/v2';
+    baseUrl = 'https://api.tkbsgusort.id.vn/api/v2';
 }
 
 const config = {
