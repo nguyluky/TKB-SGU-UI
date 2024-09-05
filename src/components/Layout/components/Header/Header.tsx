@@ -125,15 +125,29 @@ function Header({
                                 <FontAwesomeIcon icon={faBug} />
                                 <p>Báo cáo lỗi</p>
                             </label>
-                            <label>
+                            <label
+                                onClick={() => {
+                                    window.open('mailto:nguyluky@gmail.com');
+                                }}
+                            >
                                 <FontAwesomeIcon icon={faAt} />
                                 <p>Email liên hệ</p>
                             </label>
-                            <label>
+                            <label
+                                onClick={() => {
+                                    window.open(
+                                        'https://www.facebook.com/profile.php?id=61558476525330',
+                                    );
+                                }}
+                            >
                                 <FontAwesomeIcon icon={faFacebook} />
                                 <p>Facebook</p>
                             </label>
-                            <label>
+                            <label
+                                onClick={() => {
+                                    navigate('/privacy-policy');
+                                }}
+                            >
                                 <FontAwesomeIcon icon={faLock} />
                                 <p>Chính sách bảo mật</p>
                             </label>

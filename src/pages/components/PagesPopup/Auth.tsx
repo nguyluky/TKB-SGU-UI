@@ -63,7 +63,7 @@ export default function Auth(pros: AuthProps) {
     const [password, setPassword] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [height, setHeight] = useState<number>(0);
-    const popupWindow = useWindowPopup((event: MessageEvent) => {
+    const popupWindow = useWindowPopup((event) => {
         const t = event.data.type;
         if (t === 'googleOauth2') {
             const accessToken = event.data.data;
@@ -80,15 +80,8 @@ export default function Auth(pros: AuthProps) {
             pros.onClose && pros.onClose();
             popupWindow.close();
         } else if (t === 'notify') {
-            const data = event.data as {
-                type: string;
-                notifyType: 'success' | 'error';
-                data: string;
-            };
-
-            if (data.notifyType in notifyMaster) {
-                notifyMaster[data.notifyType](data.data);
-            }
+            const data = event.data;
+            notifyMaster[data.data.notifyType](data.data.mess);
             popupWindow.close();
         }
     });

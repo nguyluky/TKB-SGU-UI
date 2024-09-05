@@ -50,16 +50,10 @@ export default function Tkb() {
     const { tkbid } = useParams();
     const [searchParams] = useSearchParams();
     const windowPopup = useWindowPopup((event) => {
-        const data = event.data as {
-            type: string;
-            notifyType: 'success' | 'error';
-            data: string;
-        };
+        const data = event.data;
 
         if (data.type === 'notify') {
-            if (data.notifyType in notifyMaster) {
-                notifyMaster[data.notifyType](data.data);
-            }
+            notifyMaster[data.data.notifyType](data.data.mess);
             windowPopup.close();
         }
     });

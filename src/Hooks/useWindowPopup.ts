@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useRef } from 'react';
 
+interface GoogleRespType {
+    notify: { notifyType: 'error' | 'success' | 'info' | 'warning'; mess: string };
+    googleOauth2: string;
+}
+
+interface windowPopupMessageRep<T extends keyof GoogleRespType> {
+    type: T;
+    data: GoogleRespType[T];
+}
+
 function popupCenter({ url, title, w, h }: { url: string; title: string; w: number; h: number }) {
     const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
     const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
@@ -30,7 +40,13 @@ function popupCenter({ url, title, w, h }: { url: string; title: string; w: numb
     return newWindow;
 }
 
-export default function useWindowPopup(eventListener: (event: MessageEvent) => void) {
+export default function useWindowPopup(
+    eventListener: (
+        event: MessageEvent<
+            windowPopupMessageRep<'notify'> | windowPopupMessageRep<'googleOauth2'>
+        >,
+    ) => void,
+) {
     const windownRef = useRef<Window | null>();
 
     useEffect(() => {
@@ -39,6 +55,7 @@ export default function useWindowPopup(eventListener: (event: MessageEvent) => v
         return () => {
             window.removeEventListener('message', eventListener);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const open = useCallback((arg: { url: string; title: string; w: number; h: number }) => {
