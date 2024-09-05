@@ -8,6 +8,7 @@ const routers = {
     changePassword: '/change-password',
     forgotPassword: '/forgot-password',
     join: '/join/:joinId',
+    privacyPolicy: 'privacy-policy',
 };
 
 export default routers;

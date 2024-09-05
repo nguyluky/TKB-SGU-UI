@@ -4,8 +4,8 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
 } else {
     // baseUrl = 'http://localhost:4000/api/v1';
-
-    baseUrl = 'https://api.tkbsgusort.id.vn/api/v2';
+    // TODO change to poducstion endpoint
+    baseUrl = 'https://apitest.tkbsgusort.id.vn/api/v2';
 }
 
 const config = {
@@ -15,6 +15,10 @@ const config = {
 
     logIn: () => '/auth/login',
     logUp: () => '/auth/signup',
+
+    googleOauth: () => '/auth/google',
+    googleOauthCalendar: () => '/auth/google_calendar',
+
     verifyEmail: (token: string) => '/auth/verify/' + encodeURIComponent(token),
     forgotPassword: () => '/auth/forgot-password',
     resetPassword: (tokenResetPassword: string) =>

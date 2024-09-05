@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
     ApiResponse,
     DsNhomHocResp,
+    DsNhomHocRespData,
     NhomHoc,
     TkbContent,
     TkbContentMmh,
@@ -472,7 +473,16 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                     }
                     setTkbInfo(tkbDataResp.data);
 
-                    setDsNhomHoc(dsNhomHocResp);
+                    const dsMonHoc: { [key: string]: string } = {};
+
+                    for (const { id, display_name } of dsNhomHocResp.ds_mon_hoc) {
+                        dsMonHoc[id] = display_name;
+                    }
+
+                    setDsNhomHoc({
+                        ds_nhom_to: dsNhomHocResp.ds_nhom_to,
+                        ds_mon_hoc: dsMonHoc,
+                    });
 
                     if (idToHocs.success && idToHocs.data) {
                         setIdToHocs(idToHocs.data);

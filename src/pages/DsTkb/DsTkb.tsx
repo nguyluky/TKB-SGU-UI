@@ -117,32 +117,21 @@ function DsTkb() {
                 const fileTkb = Convert.toFileTkb(reader.result as string);
                 const api =
                     pos === 'client' ? globalState.client.localApi : globalState.client.serverApi;
-                api.createNewTkb(
-                    { name: fileTkb.name, tkb_describe: '', thumbnails: null },
-                    // fileTkb.name,
-                    // '',
-                    // null,
-                    // false,
-                    // fileTkb.data.map((e) => e.id_to_hoc),
-                    // fileTkb.data.map((e) => e.mhp),
-                )
+                api.createNewTkb({ name: fileTkb.name, tkb_describe: '', thumbnails: null })
                     .then(async (e) => {
                         if (!e.success || !e.data?.id) {
                             notifyMaster.error('Upload tkb không thành công');
                             return;
                         }
 
-                        await Promise.all([
-                            api.updateTkbContent(
-                                e.data.id,
-                                fileTkb.data.map((e) => e.id_to_hoc),
-                            ),
-                            api.updateTkbContentMmh(
-                                e.data.id,
-                                fileTkb.data.map((e) => e.mhp),
-                            ),
-                        ]);
-
+                        await api.updateTkbContent(
+                            e.data.id,
+                            fileTkb.data.map((e) => e.id_to_hoc),
+                        );
+                        await api.updateTkbContentMmh(
+                            e.data.id,
+                            fileTkb.data.map((e) => e.mhp),
+                        );
                         setUploadTkbShow(false);
                         if (!e.success) {
                             notifyMaster.error(e.msg);

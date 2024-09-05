@@ -33,6 +33,11 @@ export interface DsNhomHocResp {
     ds_mon_hoc: { [key: string]: string };
 }
 
+export interface DsNhomHocRespData {
+    ds_nhom_to: NhomHoc[];
+    ds_mon_hoc: { id: string; display_name: string }[];
+}
+
 export interface NhomHoc {
     id_to_hoc: string;
     id_mon: string;
@@ -103,7 +108,7 @@ interface BaseApi {
     removeMember(tkbId: string, memberId: string): Promise<ApiResponse<null>>;
 
     //
-    getDsNhomHoc(): Promise<DsNhomHocResp>;
+    getDsNhomHoc(): Promise<DsNhomHocRespData>;
 }
 
 class ServerApi implements BaseApi {
@@ -281,12 +286,12 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async getDsNhomHoc(): Promise<DsNhomHocResp> {
+    async getDsNhomHoc(): Promise<DsNhomHocRespData> {
         if (!window.navigator.onLine) {
             return JSON.parse(localStorage.getItem('dsNhomHoc') || '{}');
         }
 
-        const getData = this.request.get<DsNhomHocResp>(apiConfig.getDsNhomHoc());
+        const getData = this.request.get<DsNhomHocRespData>(apiConfig.getDsNhomHoc());
         const data = (await getData).data;
         return data;
     }
@@ -503,7 +508,7 @@ export class Client {
     public request: AxiosInstance;
     public serverApi: ServerApi;
     public localApi: localApi;
-    private token?: string;
+    public token?: string;
     public socket: SocketManage;
 
     constructor(token?: string) {

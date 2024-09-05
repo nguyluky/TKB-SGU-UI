@@ -4,9 +4,11 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import { apiConfig } from '../../config';
 import useSelection from '../../Hooks/useSelection';
 import useTkbHandler from '../../Hooks/useTkbHandler';
 import useTkbSocket from '../../Hooks/useTkbSocket';
+import useWindowPopup from '../../Hooks/useWindowPopup';
 import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
 import Calendar from '../components/Calendar';
@@ -34,6 +36,7 @@ export interface commandsInterface {
     cut?: () => void;
     past?: () => void;
     manageMenber?: () => void;
+    googleCalendar?: () => void;
 }
 
 export default function Tkb() {
@@ -46,6 +49,20 @@ export default function Tkb() {
     // useParams
     const { tkbid } = useParams();
     const [searchParams] = useSearchParams();
+    const windowPopup = useWindowPopup((event) => {
+        const data = event.data as {
+            type: string;
+            notifyType: 'success' | 'error';
+            data: string;
+        };
+
+        if (data.type === 'notify') {
+            if (data.notifyType in notifyMaster) {
+                notifyMaster[data.notifyType](data.data);
+            }
+            windowPopup.close();
+        }
+    });
 
     // tkb data
     const [replayIdToHoc, setReplayIdToHoc] = useState<string[]>([]);
@@ -348,10 +365,46 @@ export default function Tkb() {
                             />,
                         );
                 },
+                googleCalendar: () => {
+                    let url = '';
+
+                    if (tkbHandler.tkbData?.isClient) {
+                        url =
+                            apiConfig.baseUrl +
+                            apiConfig.googleOauthCalendar() +
+                            '?tkbData=' +
+                            encodeURI(JSON.stringify(tkbHandler.id_to_hocs)) +
+                            '&access_token=' +
+                            encodeURI(globalState.client.token || '');
+                    } else {
+                        url =
+                            apiConfig.baseUrl +
+                            apiConfig.googleOauthCalendar() +
+                            '?tkbId=' +
+                            encodeURI(tkbid || '') +
+                            '&access_token=' +
+                            encodeURI(globalState.client.token || '');
+                    }
+
+                    windowPopup.open({
+                        url: url,
+                        title: 'login google',
+                        h: 500,
+                        w: 400,
+                    });
+                },
             };
             return commandObj[key];
         },
-        [globalState.client.localApi, globalState.client.serverApi, nav, tkbHandler, tkbid],
+        [
+            globalState.client.localApi,
+            globalState.client.serverApi,
+            globalState.client.token,
+            nav,
+            tkbHandler,
+            tkbid,
+            windowPopup,
+        ],
     );
 
     const onCommandHandel = useCallback(
