@@ -3,11 +3,10 @@ import { faEnvelopeCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import classNames from 'classnames/bind';
-import { useContext, useState } from 'react';
+import { forwardRef, useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
-
 import ButtonWithLoading from '../../../components/ButtonWithLoading';
 import notifyMaster from '../../../components/NotifyPopup/NotificationManager';
 import { apiConfig } from '../../../config';
@@ -36,10 +35,6 @@ interface logupResp {
     data?: null;
 }
 
-interface AuthProps extends Omit<PopupProps, 'children'> {
-    onForgotPassword: () => void;
-}
-
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     labelTitle: string;
     children?: React.ReactNode;
@@ -55,7 +50,17 @@ function CustomInput({ name, id, labelTitle, children, ...props }: CustomInputPr
     );
 }
 
-export default function Auth(pros: AuthProps) {
+interface AuthProps extends Omit<PopupProps, 'children' | 'open' | 'onClose'> {
+    onForgotPassword: () => void;
+}
+
+export interface AuthRef {
+    openLogin: () => void;
+    openRegistrastion: () => void;
+    close: () => void;
+}
+
+function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
     const [globalState, setGlobalState] = useContext(globalContent);
     const [params, setParams] = useSearchParams();
 
@@ -77,7 +82,7 @@ export default function Auth(pros: AuthProps) {
                 setGlobalState({ ...globalState });
             });
 
-            pros.onClose && pros.onClose();
+            // onClose && onClose();
             popupWindow.close();
         } else if (t === 'notify') {
             const data = event.data;
@@ -91,12 +96,67 @@ export default function Auth(pros: AuthProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [dk, setDk] = useState(false);
 
+    useEffect(() => {
+        // MutableRefObject
+
+        const openLogin = () => {
+            setParams((e) => {
+                const a: { [key: string]: string } = {};
+                e.forEach((v, k) => {
+                    a[k] = v;
+                });
+
+                return { ...a, login: '1' };
+            });
+        };
+
+        const openRegistrastion = () => {
+            setParams((e) => {
+                const a: { [key: string]: string } = {};
+                e.forEach((v, k) => {
+                    a[k] = v;
+                });
+
+                return { ...a, registration: '1' };
+            });
+        };
+
+        const close_ = () => {
+            setParams((e) => {
+                e.delete('login');
+                e.delete('registration');
+
+                return e;
+            });
+        };
+
+        if (ref && typeof ref === 'function') {
+            ref({
+                openLogin: openLogin,
+                openRegistrastion: openRegistrastion,
+                close: close_,
+            });
+        } else if (ref) {
+            ref.current = {
+                openLogin: openLogin,
+                openRegistrastion: openRegistrastion,
+                close: close_,
+            };
+        }
+    }, [ref, setParams]);
+
     const changeToRegistration = (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         setPassword('');
         setUserName('');
-        setParams({
-            registration: '1',
+        setParams((e) => {
+            const a: { [key: string]: string } = {};
+            e.forEach((v, k) => {
+                if (k === 'login') return;
+                a[k] = v;
+            });
+
+            return { ...a, registration: '1' };
         });
     };
 
@@ -104,8 +164,16 @@ export default function Auth(pros: AuthProps) {
         event.preventDefault();
         setPassword('');
         setUserName('');
-        setParams({});
         setEmail('');
+        setParams((e) => {
+            const a: { [key: string]: string } = {};
+            e.forEach((v, k) => {
+                if (k === 'registration') return;
+                a[k] = v;
+            });
+
+            return { ...a, login: '1' };
+        });
     };
 
     const onLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -135,7 +203,7 @@ export default function Auth(pros: AuthProps) {
                         setGlobalState({ ...globalState });
                     });
 
-                    pros.onClose && pros.onClose();
+                    // onClose && onClose();
 
                     return;
                 }
@@ -208,7 +276,19 @@ export default function Auth(pros: AuthProps) {
     };
 
     return (
-        <Popup {...pros}>
+        <Popup
+            {...pros}
+            open={!!(params.get('login') || params.get('registration'))}
+            onClose={() => {
+                setParams((e) => {
+                    e.delete('login');
+                    e.delete('registration');
+
+                    return e;
+                });
+                // onClose && onClose();
+            }}
+        >
             <div
                 className={cx('wrapper', {
                     registration: params.get('registration'),
@@ -353,7 +433,11 @@ export default function Auth(pros: AuthProps) {
                         <div className={cx('line')} />
                     </div>
                     <div className={cx('social-icons')}>
-                        <button aria-label="Log in with Google" className={cx('icon')}>
+                        <button
+                            aria-label="Log in with Google"
+                            className={cx('icon')}
+                            onClick={googleOauth}
+                        >
                             <FontAwesomeIcon icon={faGoogle} />
                         </button>
                         <button aria-label="Log in with GitHub" className={cx('icon')}>
@@ -376,3 +460,7 @@ export default function Auth(pros: AuthProps) {
         </Popup>
     );
 }
+
+const Auth = forwardRef<AuthRef, AuthProps>(Auth_);
+
+export default Auth;

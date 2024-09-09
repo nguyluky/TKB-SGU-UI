@@ -1,10 +1,7 @@
 let baseUrl;
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    baseUrl = 'http://localhost:4000/api/v2';
-    // baseUrl = 'https://api.tkbsgusort.id.vn/api/v1';
+    baseUrl = 'http://192.168.31.53:4000/api/v2';
 } else {
-    // baseUrl = 'http://localhost:4000/api/v1';
-    // TODO change to poducstion endpoint
     baseUrl = 'https://api.tkbsgusort.id.vn/api/v2';
 }
 

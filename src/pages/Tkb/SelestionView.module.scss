@@ -79,6 +79,11 @@
         padding: 0 5px;
         border-bottom: 1px solid var(--content-color);
 
+        p {
+            text-overflow: clip;
+            text-wrap: nowrap;
+        }
+
         svg {
             color: var(--primary-color-1);
             cursor: pointer;

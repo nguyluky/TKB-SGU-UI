@@ -11,13 +11,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
-import { ChangeEvent, ReactElement, useContext, useState } from 'react';
+import { ChangeEvent, ReactElement, useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 
 import images from '../../../../assets/images';
 import { apiConfig } from '../../../../config';
-import Auth from '../../../../pages/components/PagesPopup/Auth';
+import Auth, { AuthRef } from '../../../../pages/components/PagesPopup/Auth';
 import { ApiResponse, Client } from '../../../../Service';
 import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
@@ -43,7 +43,8 @@ function Header({
     const [p1, setP1] = useState<string>('');
     const [p2, setP2] = useState<string>('');
     const [p3, setP3] = useState<string>('');
-    const [showLogin, setShowLogin] = useState(false);
+
+    const googleOauthRef = useRef<AuthRef>(null);
 
     const openGitHub = () => {
         window.open('https://github.com/nguyluky/TKB-SGU-UI');
@@ -101,16 +102,7 @@ function Header({
             <div className={cx('right')}>
                 {right}
                 <div className={cx('activity')}>
-                    <Auth
-                        open={showLogin}
-                        onClose={() => {
-                            setShowLogin(false);
-                        }}
-                        onForgotPassword={() => {}}
-                    />
-                    {/* <DropDownButton icon={faDiscord} onClick={openDiscord} className={cx('item')} />
-                    <DropDownButton icon={faBug} onClick={openIssues} className={cx('item')} />
-                    <DropDownButton icon={faGithub} onClick={openGitHub} className={cx('item')} /> */}
+                    <Auth onForgotPassword={() => {}} ref={googleOauthRef} />
                     <DropDownButton icon={faCaretDown} className={cx('item')}>
                         <div className={cx('container')}>
                             <label onClick={openDiscord}>
@@ -269,7 +261,8 @@ function Header({
                                     <div className={cx('line')}>
                                         <p
                                             onClick={(e) => {
-                                                setShowLogin(true);
+                                                // todo
+                                                googleOauthRef.current?.openLogin();
                                             }}
                                         >
                                             Đăng nhập
@@ -278,8 +271,8 @@ function Header({
                                     <div className={cx('line')}>
                                         <p
                                             onClick={(e) => {
-                                                navigate('?registration=1');
-                                                setShowLogin(true);
+                                                // todo
+                                                googleOauthRef.current?.openRegistrastion();
                                             }}
                                         >
                                             Đăng ký

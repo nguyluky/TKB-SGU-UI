@@ -7,6 +7,7 @@ interface GoogleRespType {
 
 interface windowPopupMessageRep<T extends keyof GoogleRespType> {
     type: T;
+    name: string;
     data: GoogleRespType[T];
 }
 
@@ -41,21 +42,31 @@ function popupCenter({ url, title, w, h }: { url: string; title: string; w: numb
 }
 
 export default function useWindowPopup(
-    eventListener: (
+    eventListener?: (
         event: MessageEvent<
             windowPopupMessageRep<'notify'> | windowPopupMessageRep<'googleOauth2'>
         >,
     ) => void,
 ) {
     const windownRef = useRef<Window | null>();
+    const name = useRef<string>('');
 
     useEffect(() => {
-        window.addEventListener('message', eventListener);
+        function t(
+            event: MessageEvent<
+                windowPopupMessageRep<'notify'> | windowPopupMessageRep<'googleOauth2'>
+            >,
+        ) {
+            if (event.data.name === name.current) {
+                eventListener && eventListener(event);
+            }
+        }
+
+        eventListener && window.addEventListener('message', t);
 
         return () => {
-            window.removeEventListener('message', eventListener);
+            eventListener && window.removeEventListener('message', t);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const open = useCallback((arg: { url: string; title: string; w: number; h: number }) => {
@@ -63,6 +74,8 @@ export default function useWindowPopup(
             windownRef.current.close();
             windownRef.current = null;
         }
+
+        name.current = arg.title;
         windownRef.current = popupCenter(arg);
     }, []);
 

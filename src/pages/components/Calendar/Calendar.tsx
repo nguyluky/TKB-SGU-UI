@@ -122,6 +122,7 @@ interface Props {
     selection: ReturnType<typeof useSelection>;
     onDeleteNhomHoc: (idToHoc: string) => void;
     onTimMonHocTuTu: (idToHocs: string[]) => void;
+    onMiniSide: () => void;
 }
 
 function Calendar({
@@ -131,6 +132,7 @@ function Calendar({
     onTimMonHocTuTu,
     conflict,
     selection,
+    onMiniSide,
 }: Props) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const countRow = 10;
@@ -318,7 +320,11 @@ function Calendar({
             onMouseMove={handleMouseMove}
         >
             <div className={cx('thu')}>
-                <div className={cx('day-name', 'layout')} onClick={() => setDirectiom((e) => !e)}>
+                <div
+                    className={cx('day-name', 'layout')}
+                    // onClick={() => setDirectiom((e) => !e)}
+                    onClick={onMiniSide}
+                >
                     <FontAwesomeIcon icon={faGripLines} />
                 </div>
 

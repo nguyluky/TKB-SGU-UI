@@ -67,6 +67,7 @@ export default function Tkb() {
     const [popup, setPopup] = useState<ReactNode>();
     const selection = useSelection();
     const [sideBarWidth, setSideBarWidth] = useState<number>(290);
+    const [miniSide, setMintSide] = useState(false);
     const [isResize, setResize] = useState(false);
 
     const idAutoSaveTimeOut = useRef<NodeJS.Timeout>();
@@ -79,6 +80,10 @@ export default function Tkb() {
         tkbHandler.onRemoveNhomHocHandler,
         tkbHandler.onRenameHandler,
     );
+
+    const miniSideBar = () => {
+        setMintSide((e) => !e);
+    };
 
     const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
         console.log(idToHocs);
@@ -382,7 +387,7 @@ export default function Tkb() {
 
                     windowPopup.open({
                         url: url,
-                        title: 'login google',
+                        title: 'tkb',
                         h: 500,
                         w: 400,
                     });
@@ -550,7 +555,7 @@ export default function Tkb() {
                     <div
                         className={cx('side-bar')}
                         style={{
-                            width: sideBarWidth + 'px',
+                            width: miniSide ? 0 : sideBarWidth + 'px',
                         }}
                     >
                         {sideBars[sideBar] || (
@@ -577,10 +582,11 @@ export default function Tkb() {
                     <div
                         className={cx('calendar-wrapper')}
                         style={{
-                            width: `calc(100% - 5px - ${sideBarWidth}px)`,
+                            width: `calc(100% - 5px - ${miniSide ? 0 : sideBarWidth}px)`,
                         }}
                     >
                         <Calendar
+                            onMiniSide={miniSideBar}
                             conflict={tkbHandler.conflict}
                             data={tkbHandler.dsNhomHoc?.ds_nhom_to}
                             idToHocs={tkbHandler.id_to_hocs}
