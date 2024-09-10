@@ -1,14 +1,16 @@
+import classNames from 'classnames/bind';
 import { useState } from 'react';
-import SvgIcon from '../../assets/svg/index';
+import { Cloud, CloudOff, CloudUpload } from '../../assets/svg/index';
 
-import { RenameModal } from '../components/PagesPopup';
-import { cx } from './Tkb';
-
+import { Rename } from '../components/PagesPopup';
+import style from './ReName.module.scss';
 const icons = {
-    saved: <SvgIcon.Cloud />,
-    notsave: <SvgIcon.CloudOff />,
-    saving: <SvgIcon.CloudUpload />,
+    saved: <Cloud />,
+    notsave: <CloudOff />,
+    saving: <CloudUpload />,
 };
+
+const cx = classNames.bind(style);
 
 export function ReName({
     defaultName,
@@ -49,7 +51,7 @@ export function ReName({
 
             {icons[isSave]}
 
-            <RenameModal
+            <Rename
                 open={show}
                 currName={defaultName}
                 onRename={renameHandle}

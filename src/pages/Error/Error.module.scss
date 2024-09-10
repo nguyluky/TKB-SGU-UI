@@ -4,6 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 * {
@@ -23,7 +24,7 @@
 
 .context .code,
 .context .msg {
-    color: #fff;
+    stroke: var(--text-color);
 }
 
 .context .code {
@@ -76,13 +77,13 @@
 }
 
 .context .icon svg {
-    stroke: #fff;
+    stroke: var(--text-color);
     height: 100%;
     width: 100%;
 }
 
 .area {
-    background: #1a1e23;
+    background: var(--content-color);
     width: 100%;
     height: 100%;
 }
@@ -102,7 +103,7 @@
     list-style: none;
     width: 20px;
     height: 20px;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--hover-color);
     animation: animate 25s linear infinite;
     bottom: -150px;
 }

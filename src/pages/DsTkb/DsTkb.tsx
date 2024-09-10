@@ -1,13 +1,20 @@
-import { faArrowDownAZ, faEllipsisVertical, faFolderOpen, faGrip, faList } from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowDownAZ,
+    faEllipsisVertical,
+    faFolderOpen,
+    faGrip,
+    faList,
+} from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import SimpleBar from 'simplebar-react';
 
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { routerConfig } from '../../config';
-import { TkbData } from '../../Service';
+import { TkbInfo } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import { UploadTkb } from '../components/PagesPopup';
@@ -35,7 +42,7 @@ export interface DsTkbRep {
     code: number;
     msg: string;
     success: boolean;
-    data?: TkbData[];
+    data?: TkbInfo[];
 }
 
 function DsTkb() {
@@ -44,11 +51,11 @@ function DsTkb() {
 
     const [sortBy] = useState<'name' | 'time' | ''>('');
     const [isLoading, setLoading] = useState(true);
-    const [dsTkb, setDsTkb] = useState<TkbData[]>([]);
+    const [dsTkb, setDsTkb] = useState<TkbInfo[]>([]);
     const [isRow, setIsRow] = useState<boolean>(false);
     const [uploadTkbShow, setUploadTkbShow] = useState<boolean>(false);
 
-    const onDeletehandle = (tkbData: TkbData) => {
+    const onDeletehandle = (tkbData: TkbInfo) => {
         if (!tkbData.isClient) {
             globalState.client.serverApi.deleteTkb(tkbData.id).then((e) => {
                 console.log(e);
@@ -79,18 +86,18 @@ function DsTkb() {
         });
     };
 
-    const onRenameHandle = (tkbData: TkbData, newName: string) => {
+    const onRenameHandle = (tkbData: TkbInfo, newName: string) => {
         if (tkbData.name === newName) return;
         tkbData.name = newName;
         if (!tkbData.isClient) {
-            globalState.client.serverApi.updateTkb(tkbData).then((e) => {
+            globalState.client.serverApi.updateTkbInfo(tkbData).then((e) => {
                 console.log(e);
                 if (e.success) {
                     notifyMaster.success('Đổi tên thành công');
                 }
             });
         } else {
-            globalState.client.localApi.updateTkb(tkbData).then((e) => {
+            globalState.client.localApi.updateTkbInfo(tkbData).then((e) => {
                 console.log(e);
                 if (e.success) {
                     notifyMaster.success('Đổi tên thành công');
@@ -108,17 +115,23 @@ function DsTkb() {
             if (!reader.result) return;
             try {
                 const fileTkb = Convert.toFileTkb(reader.result as string);
+                const api =
+                    pos === 'client' ? globalState.client.localApi : globalState.client.serverApi;
+                api.createNewTkb({ name: fileTkb.name, tkb_describe: '', thumbnails: null })
+                    .then(async (e) => {
+                        if (!e.success || !e.data?.id) {
+                            notifyMaster.error('Upload tkb không thành công');
+                            return;
+                        }
 
-                (pos === 'client' ? globalState.client.localApi : globalState.client.serverApi)
-                    .createNewTkb(
-                        fileTkb.name,
-                        '',
-                        null,
-                        false,
-                        fileTkb.data.map((e) => e.id_to_hoc),
-                        fileTkb.data.map((e) => e.mhp),
-                    )
-                    .then((e) => {
+                        await api.updateTkbContent(
+                            e.data.id,
+                            fileTkb.data.map((e) => e.id_to_hoc),
+                        );
+                        await api.updateTkbContentMmh(
+                            e.data.id,
+                            fileTkb.data.map((e) => e.mhp),
+                        );
                         setUploadTkbShow(false);
                         if (!e.success) {
                             notifyMaster.error(e.msg);
@@ -177,68 +190,98 @@ function DsTkb() {
     }, [globalState.client]);
 
     return (
-        <div className={cx('DsTkb')}>
-            <div className={cx('template-tkb')}>
-                <div className={cx('template-wrapper')}>
-                    <header className={cx('template-header-wrapper')}>
-                        <div className={cx('left')}>
-                            <span>Bắt đầu thời khoá biểu mới</span>
+        <SimpleBar
+            style={{
+                maxHeight: '100%',
+            }}
+        >
+            <div className={cx('DsTkb')}>
+                <div className={cx('template-tkb')}>
+                    <div className={cx('template-wrapper')}>
+                        <header className={cx('template-header-wrapper')}>
+                            <div className={cx('left')}>
+                                <span>Bắt đầu thời khoá biểu mới</span>
+                            </div>
+                            <div className={cx('right')}>
+                                <DropDownButton
+                                    icon={faEllipsisVertical}
+                                    className={cx('activity-btn')}
+                                >
+                                    <p>ẩn template</p>
+                                </DropDownButton>
+                            </div>
+                        </header>
+                        <div className={cx('content')}>
+                            <NewTkb />
+                            {/* todo remove */}
+                            {/* <div id="container-75197156ea632851c597b2a396a17705"></div> */}
                         </div>
-                        <div className={cx('right')}>
-                            <DropDownButton icon={faEllipsisVertical} className={cx('activity-btn')}>
-                                <p>ẩn template</p>
-                            </DropDownButton>
-                        </div>
-                    </header>
-                    <div className={cx('content')}>
-                        <NewTkb />
                     </div>
                 </div>
-            </div>
 
-            <div className={cx('list-tkb')}>
-                <div className={cx('list-tkb-wrapper')}>
-                    <header className={cx('template-list-wrapper')}>
-                        <div className={cx('left')}>
-                            <span>Thời khoá biểu đã lưu</span>
-                        </div>
-                        <div className={cx('right')}>
-                            <DropDownButton className={cx('activity-btn')} icon={isRow ? faGrip : faList} onClick={() => setIsRow((e) => !e)} />
-                            <DropDownButton className={cx('activity-btn')} icon={faArrowDownAZ} />
-                            <DropDownButton
-                                className={cx('activity-btn')}
-                                icon={faFolderOpen}
-                                onClick={() => {
-                                    setUploadTkbShow(true);
-                                }}
-                            />
-                        </div>
-                    </header>
-                    <div className={cx('content')}>
-                        <Loader isLoading={isLoading}>
-                            <>
-                                {[...dsTkb]
-                                    .sort((a, b) => {
-                                        if (sortBy === 'time') {
-                                            return a.created.getTime() - b.created.getTime();
-                                        }
+                <div className={cx('list-tkb')}>
+                    <div className={cx('list-tkb-wrapper')}>
+                        <header className={cx('template-list-wrapper')}>
+                            <div className={cx('left')}>
+                                <span>Thời khoá biểu đã lưu</span>
+                            </div>
+                            <div className={cx('right')}>
+                                <DropDownButton
+                                    className={cx('activity-btn')}
+                                    icon={isRow ? faGrip : faList}
+                                    onClick={() => setIsRow((e) => !e)}
+                                />
+                                <DropDownButton
+                                    className={cx('activity-btn')}
+                                    icon={faArrowDownAZ}
+                                />
+                                <DropDownButton
+                                    className={cx('activity-btn')}
+                                    icon={faFolderOpen}
+                                    onClick={() => {
+                                        setUploadTkbShow(true);
+                                    }}
+                                />
+                            </div>
+                        </header>
+                        <div className={cx('content')}>
+                            <Loader isLoading={isLoading}>
+                                <>
+                                    {[...dsTkb]
+                                        .sort((a, b) => {
+                                            if (sortBy === 'time') {
+                                                return a.created.getTime() - b.created.getTime();
+                                            }
 
-                                        if (sortBy === 'name') {
-                                            return a.name.localeCompare(b.name);
-                                        }
-                                        return 0;
-                                    })
-                                    .map((e) => {
-                                        return <CardTkb isRow={isRow} data={e} key={e.id} onDelete={onDeletehandle} onRename={onRenameHandle} />;
-                                    })}
-                            </>
-                        </Loader>
+                                            if (sortBy === 'name') {
+                                                return a.name.localeCompare(b.name);
+                                            }
+                                            return 0;
+                                        })
+                                        .map((e) => {
+                                            return (
+                                                <CardTkb
+                                                    isRow={isRow}
+                                                    data={e}
+                                                    key={e.id}
+                                                    onDelete={onDeletehandle}
+                                                    onRename={onRenameHandle}
+                                                />
+                                            );
+                                        })}
+                                </>
+                            </Loader>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <UploadTkb open={uploadTkbShow} onClose={() => setUploadTkbShow(false)} uploadTkb={onUpdateFileHandle} />
-        </div>
+                <UploadTkb
+                    open={uploadTkbShow}
+                    onClose={() => setUploadTkbShow(false)}
+                    uploadTkb={onUpdateFileHandle}
+                />
+            </div>
+        </SimpleBar>
     );
 }
 

@@ -43,7 +43,11 @@ function DropDownButton({ className, icon, children, onClick, url }: ActivityIte
     return (
         <div className={classNames(cx('button-wrapper'), className)} ref={dorpDownRef}>
             <div className={cx('icon-wrapper')} onClick={handleOnClickIcon}>
-                {!url ? <FontAwesomeIcon icon={icon} /> : <img src={url} alt="avt" />}
+                {!url ? (
+                    <FontAwesomeIcon icon={icon} />
+                ) : (
+                    <img src={url} alt="avt" referrerPolicy="no-referrer" />
+                )}
             </div>
             <div
                 className={cx('activity-drop-down', {

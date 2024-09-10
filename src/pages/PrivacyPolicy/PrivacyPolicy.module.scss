@@ -1,0 +1,27 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    padding-top: 20px;
+    padding-bottom: 100px;
+    width: 80%;
+    max-width: 900px;
+
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+
+    ul {
+        margin-left: 25px;
+    }
+
+    * {
+        margin-top: 16px;
+    }
+
+    h2 {
+        font-size: 32px;
+        line-height: 48px;
+    }
+}

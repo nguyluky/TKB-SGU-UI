@@ -72,6 +72,15 @@ function NotifyElement({ data }: { data: NotifyItem }) {
                     width: data.timeOut ? (countDown / data.timeOut) * 100 + '%' : '100%',
                 }}
             ></div>
+            {data.onClick ? (
+                <div className={cx('btn')}>
+                    <button onClick={() => data.onClick && data.onClick()}>
+                        {data.onClickText}
+                    </button>
+                </div>
+            ) : (
+                ''
+            )}
         </div>
     );
 }

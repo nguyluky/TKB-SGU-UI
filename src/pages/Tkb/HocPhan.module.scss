@@ -1,0 +1,66 @@
+.hocphan {
+    .hocphan-title {
+        margin: 5px;
+        padding: 3px;
+        display: flex;
+        align-items: center;
+        border-bottom: 2px solid var(--content-color);
+
+        svg {
+            padding-right: 5px;
+        }
+    }
+
+    .hocphan-dropdown.show {
+        height: calc-size(auto);
+        max-height: 9999px;
+    }
+    .hocphan-dropdown {
+        transition: all 0.2s ease;
+        overflow: hidden;
+        max-height: 0px;
+        .nhom {
+            padding: 5px;
+            margin-left: 25px;
+            border-radius: var(--border-radius-g);
+            margin-top: var(--margin-g);
+            background-color: rgba($color: #000000, $alpha: 0.05);
+            // position: relative;
+            z-index: 0;
+        }
+
+        .nhom + .nhom::before {
+            content: '';
+            top: 0;
+            left: 0;
+            position: absolute;
+            height: 1px;
+            width: 100%;
+            border-top: 1px solid rgba($color: #000000, $alpha: 0.2);
+        }
+
+        .nhom.check::before {
+            border-top: 1px solid rgba($color: #000000, $alpha: 0);
+        }
+
+        .nhom.check {
+            background-color: #838df4;
+        }
+    }
+
+    .close-icon {
+        margin-left: auto;
+        cursor: pointer;
+        svg {
+            color: var(--error-color);
+        }
+    }
+
+    .hocphan-name {
+        // max-width: calc(100% -);
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}

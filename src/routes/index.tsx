@@ -8,7 +8,7 @@ import DsTkb from '../pages/DsTkb';
 import ErrorPage from '../pages/Error';
 import Home from '../pages/Home';
 import Join from '../pages/Join';
-import LoginUp from '../pages/LoginUp';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 import Test from '../pages/Test/Test';
 import Tkb from '../pages/Tkb';
 
@@ -38,6 +38,11 @@ export const defaultLayoutChildren = [
         element: <Join />,
         nodeRef: createRef<HTMLDivElement>(),
     },
+    {
+        path: routerConfig.privacyPolicy,
+        element: <PrivacyPolicy />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
 ];
 
 const routers = createBrowserRouter([
@@ -62,14 +67,14 @@ const routers = createBrowserRouter([
             </AuthLayout>
         ),
     },
-    {
-        path: routerConfig.logInUp,
-        element: (
-            <AuthLayout>
-                <LoginUp />
-            </AuthLayout>
-        ),
-    },
+    // {
+    //     path: routerConfig.logInUp,
+    //     element: (
+    //         <AuthLayout>
+    //             <LoginUp />
+    //         </AuthLayout>
+    //     ),
+    // },
     {
         path: routerConfig.errorPage,
         element: <ErrorPage />,

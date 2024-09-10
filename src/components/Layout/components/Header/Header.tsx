@@ -1,13 +1,23 @@
-import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faBug, faGear, faLock, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faDiscord, faFacebook, faGithub } from '@fortawesome/free-brands-svg-icons';
+import {
+    faAt,
+    faBug,
+    faCaretDown,
+    faGear,
+    faLock,
+    faMoon,
+    faSun,
+    faUser,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
-import { ChangeEvent, ReactElement, useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { ChangeEvent, ReactElement, useContext, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 
 import images from '../../../../assets/images';
-import { apiConfig, routerConfig } from '../../../../config';
+import { apiConfig } from '../../../../config';
+import Auth, { AuthRef } from '../../../../pages/components/PagesPopup/Auth';
 import { ApiResponse, Client } from '../../../../Service';
 import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
@@ -28,10 +38,13 @@ function Header({
     right?: ReactElement;
 }) {
     const [globalState, setGlobalState] = useContext(globalContent);
+    const navigate = useNavigate();
 
     const [p1, setP1] = useState<string>('');
     const [p2, setP2] = useState<string>('');
     const [p3, setP3] = useState<string>('');
+
+    const googleOauthRef = useRef<AuthRef>(null);
 
     const openGitHub = () => {
         window.open('https://github.com/nguyluky/TKB-SGU-UI');
@@ -89,9 +102,49 @@ function Header({
             <div className={cx('right')}>
                 {right}
                 <div className={cx('activity')}>
-                    <DropDownButton icon={faDiscord} onClick={openDiscord} className={cx('item')} />
-                    <DropDownButton icon={faBug} onClick={openIssues} className={cx('item')} />
-                    <DropDownButton icon={faGithub} onClick={openGitHub} className={cx('item')} />
+                    <Auth onForgotPassword={() => {}} ref={googleOauthRef} />
+                    <DropDownButton icon={faCaretDown} className={cx('item')}>
+                        <div className={cx('container')}>
+                            <label onClick={openDiscord}>
+                                <FontAwesomeIcon icon={faDiscord} />
+                                <p>Server discord</p>
+                            </label>
+                            <label onClick={openGitHub}>
+                                <FontAwesomeIcon icon={faGithub} />
+                                <p>Github</p>
+                            </label>
+                            <label onClick={openIssues}>
+                                <FontAwesomeIcon icon={faBug} />
+                                <p>Báo cáo lỗi</p>
+                            </label>
+                            <label
+                                onClick={() => {
+                                    window.open('mailto:nguyluky@gmail.com');
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faAt} />
+                                <p>Email liên hệ</p>
+                            </label>
+                            <label
+                                onClick={() => {
+                                    window.open(
+                                        'https://www.facebook.com/profile.php?id=61558476525330',
+                                    );
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faFacebook} />
+                                <p>Facebook</p>
+                            </label>
+                            <label
+                                onClick={() => {
+                                    navigate('/privacy-policy');
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faLock} />
+                                <p>Chính sách bảo mật</p>
+                            </label>
+                        </div>
+                    </DropDownButton>
                     <DropDownButton icon={faSun} className={cx('item')}>
                         <div className={cx('container')}>
                             <label>
@@ -206,10 +259,24 @@ function Header({
                             ) : (
                                 <>
                                     <div className={cx('line')}>
-                                        <Link to={routerConfig.logInUp}>Đăng nhập</Link>
+                                        <p
+                                            onClick={(e) => {
+                                                // todo
+                                                googleOauthRef.current?.openLogin();
+                                            }}
+                                        >
+                                            Đăng nhập
+                                        </p>
                                     </div>
                                     <div className={cx('line')}>
-                                        <Link to={routerConfig.logInUp + '?up=t'}>Đăng ký</Link>
+                                        <p
+                                            onClick={(e) => {
+                                                // todo
+                                                googleOauthRef.current?.openRegistrastion();
+                                            }}
+                                        >
+                                            Đăng ký
+                                        </p>
                                     </div>
                                 </>
                             )}

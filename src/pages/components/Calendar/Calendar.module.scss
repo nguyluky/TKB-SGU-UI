@@ -8,24 +8,57 @@
 }
 
 .calendar.layout-column {
-    --tiet-width: 50px;
-    --rows: 14;
+    --tiet-width: 40px;
+    --rows: 10;
     --columns: 7;
     --top-m: 0px;
     --left-m: 50px;
     --x-s: 0;
     --y-s: 1;
+
+    --sell-width: max(calc(100% / var(--columns)), 150px);
+    --sell-height: max(calc(100% / var(--rows)), 70px);
     height: calc(100% - var(--margin-g));
-    display: flex;
-    flex-direction: column;
-    margin-right: var(--margin-g);
+    padding-right: var(--margin-g);
+
+    .calendar-day:not(.tiet-display) {
+        min-width: var(--sell-width);
+    }
 
     .thu {
         height: calc(var(--header-height) - 5px);
         display: flex;
-        margin: var(--margin-g) 0px;
+        margin: var(--margin-g) 0 0 0;
         background-color: var(--content-color-1);
         border-radius: var(--border-radius-g);
+    }
+
+    .cscrollbar-x {
+        min-height: var(--margin-g);
+        width: calc(100% - var(--tiet-width));
+        margin-left: var(--tiet-width);
+        position: relative;
+        .bar {
+            border-radius: 2.5px;
+            position: absolute;
+            width: 10%;
+            height: 100%;
+            background: rgba($color: #000000, $alpha: 0.3);
+        }
+    }
+
+    .the-content {
+        width: 100%;
+        overflow-x: scroll;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        display: flex;
+    }
+
+    .day-name:not(.layout) {
+        min-width: var(--sell-width);
     }
 
     .day-name {
@@ -33,18 +66,19 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        &:first-child {
-            flex: unset;
-            width: var(--tiet-width);
-        }
+    }
+
+    .day-name.layout {
+        flex: unset;
+        min-width: var(--tiet-width);
     }
 
     .tiets {
-        position: relative;
         flex: 1;
         display: flex;
         border-radius: var(--border-radius-g);
         background-color: transparent;
+        height: calc(100% - var(--header-height) - 5px);
     }
 
     .calendar-day {
@@ -53,6 +87,8 @@
         display: flex;
         flex-direction: column;
         .tiet {
+            box-sizing: border-box;
+            min-height: var(--sell-height);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -64,7 +100,7 @@
         }
     }
 
-    .calendar-day + .calendar-day + .calendar-day .tiet {
+    .calendar-day + .calendar-day .tiet {
         border-left: 1px solid var(--content-color-1);
     }
 
@@ -72,11 +108,43 @@
         background-color: var(--content-color-1);
         border-radius: var(--border-radius-g);
         flex: unset;
-        width: calc(var(--tiet-width) - 5px);
-        margin-right: 5px;
-        .tiet {
-            width: calc(var(--tiet-width) - 5px);
+        min-width: calc(var(--tiet-width) - 5px);
+
+        overflow-y: scroll;
+        &::-webkit-scrollbar {
+            display: none;
         }
+    }
+
+    .cscrollbar-y {
+        min-width: 5px;
+        height: 100%;
+        position: relative;
+        .bar {
+            border-radius: 2.5px;
+
+            position: absolute;
+            width: 100%;
+            height: 10%;
+            background: rgba($color: #000000, $alpha: 0.3);
+        }
+    }
+
+    .tkb-grip-wrapper {
+        height: 100%;
+        width: 100%;
+        overflow: scroll;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .tkb-grip-content {
+        position: relative;
+        display: flex;
+        height: 100%;
+        width: 100%;
     }
 }
 
@@ -84,7 +152,7 @@
     --tiet-width: calc(var(--header-height) - 5px);
 
     --rows: 7;
-    --columns: 14;
+    --columns: 10;
     --top-m: calc(var(--header-height) + 2px);
     --left-m: 0px;
     --x-s: 1;
@@ -192,13 +260,14 @@
 }
 
 .item {
-    border-radius: var(--border-radius-g);
     box-sizing: border-box;
     padding: var(--margin-g);
     position: absolute;
     transition: all 0.1s ease-in-out;
-    overflow-y: scroll;
     scrollbar-width: thin;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
     // color: grey;
     // scrollbar-color: grey transparent;
 
@@ -206,19 +275,27 @@
         outline: 2px solid var(--primary-color-1);
     }
 
+    .left-side {
+        position: absolute;
+        height: 100%;
+        width: 5px;
+        border-radius: 5px;
+        top: 0;
+        left: 0;
+    }
+
     .title {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        font-size: 1.2rem;
         font-weight: bold;
         // background: transparent;
     }
 
-    .info {
-        font-size: 1rem;
+    p {
+        margin-left: 10px;
     }
 
     &.entering {
@@ -233,7 +310,7 @@
 
     &.exiting {
         transform: scale(0);
-        opacity: 0;
+        opacity: 1;
     }
 
     &.exited {
