@@ -1,0 +1,14 @@
+.footer {
+    width: 100%;
+    background-color: var(--header-color);
+
+    box-sizing: border-box;
+    padding: 20px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.icon-wrapper {
+    display: flex;
+    gap: 10px;
+}

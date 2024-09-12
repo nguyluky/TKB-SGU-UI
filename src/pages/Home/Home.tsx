@@ -8,6 +8,7 @@ import SimpleBar from 'simplebar-react';
 import images from '../../assets/images';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { routerConfig } from '../../config';
+import Footer from '../components/Footer';
 import style from './Home.module.scss';
 
 const cx = classNames.bind(style);
@@ -107,6 +108,7 @@ function Home() {
                     <div className={cx('item')}></div>
                 </div>
             </div>
+            <Footer></Footer>
         </SimpleBar>
     );
 }

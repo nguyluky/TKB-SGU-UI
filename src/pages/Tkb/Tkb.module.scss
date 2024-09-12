@@ -25,3 +25,19 @@
         background-color: var(--primary-color-1);
     }
 }
+
+@media screen and (max-width: 800px) {
+    .calendar-wrapper {
+        width: 100% !important;
+        height: 100%;
+    }
+
+    .wrapper {
+        flex-direction: column-reverse;
+    }
+
+    .side-bar {
+        height: 250px;
+        width: 100% !important;
+    }
+}

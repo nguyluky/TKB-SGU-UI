@@ -41,7 +41,10 @@ function NotifyPopup({ children }: { children: ReactElement | ReactElement[] }) 
                             >
                                 {(state) => {
                                     return (
-                                        <div className={cx('animation-wrapper', state)} ref={e.nodeRef}>
+                                        <div
+                                            className={cx('animation-wrapper', state)}
+                                            ref={e.nodeRef}
+                                        >
                                             <NotifyElement data={e} />
                                         </div>
                                     );

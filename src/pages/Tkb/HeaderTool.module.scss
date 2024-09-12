@@ -25,7 +25,7 @@
         z-index: 10;
     }
 
-    .drop-down-item:has(svg) {
+    .drop-down-item:has(> .tool-item > .title svg) {
         .icon {
             height: 20px;
             width: 20px;
