@@ -5,6 +5,10 @@
     p {
         padding: 3px 5px;
         cursor: pointer;
+        text-wrap: nowrap;
+        width: 15vw;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     svg {

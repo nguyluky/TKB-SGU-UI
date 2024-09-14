@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { routerConfig } from '../../config';
+import Footer from '../components/Footer';
 import style from './PrivacyPolicy.module.scss';
 
 const cx = classNames.bind(style);
@@ -528,6 +529,7 @@ export default function PrivacyPolicy() {
                     </ul>
                 </div>
             </div>
+            <Footer />
         </SimpleBar>
     );
 }

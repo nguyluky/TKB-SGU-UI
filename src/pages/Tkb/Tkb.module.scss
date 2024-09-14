@@ -38,6 +38,6 @@
 
     .side-bar {
         height: 250px;
-        width: 100% !important;
+        width: calc(100% - 5px) !important;
     }
 }

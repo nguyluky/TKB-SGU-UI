@@ -54,9 +54,12 @@ function Home() {
                                 quan. Bạn sẽ không còn phải loay hoay với những dòng chữ dài dòng
                                 nữa. Vậy bắt đầu thôi nào.😊
                             </p>
-                            <Link to={'/tkbs'} className={cx('button')}>
-                                <button className={cx('buttonHome')}>Bắt Đầu</button>
-                            </Link>
+
+                            <div className={cx('button-start-wrapper')}>
+                                <Link to={'/tkbs'} className={cx('button')}>
+                                    <button className={cx('buttonHome')}>Bắt Đầu</button>
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

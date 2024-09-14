@@ -134,6 +134,12 @@ button.buttonHome:active {
     flex-direction: column;
 }
 
+.button-start-wrapper {
+    a {
+        width: fit-content;
+    }
+}
+
 @media screen and (max-width: 800px) {
     .container {
         padding: 10px 0;
