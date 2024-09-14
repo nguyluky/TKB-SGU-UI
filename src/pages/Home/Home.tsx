@@ -8,6 +8,7 @@ import SimpleBar from 'simplebar-react';
 import images from '../../assets/images';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { routerConfig } from '../../config';
+import Footer from '../components/Footer';
 import style from './Home.module.scss';
 
 const cx = classNames.bind(style);
@@ -53,9 +54,12 @@ function Home() {
                                 quan. Bạn sẽ không còn phải loay hoay với những dòng chữ dài dòng
                                 nữa. Vậy bắt đầu thôi nào.😊
                             </p>
-                            <Link to={'/tkbs'} className={cx('button')}>
-                                <button className={cx('buttonHome')}>Bắt Đầu</button>
-                            </Link>
+
+                            <div className={cx('button-start-wrapper')}>
+                                <Link to={'/tkbs'} className={cx('button')}>
+                                    <button className={cx('buttonHome')}>Bắt Đầu</button>
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -107,6 +111,7 @@ function Home() {
                     <div className={cx('item')}></div>
                 </div>
             </div>
+            <Footer></Footer>
         </SimpleBar>
     );
 }

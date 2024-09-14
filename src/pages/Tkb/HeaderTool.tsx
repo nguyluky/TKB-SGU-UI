@@ -1,5 +1,6 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
+    faBars,
     faCalendarDays,
     faClone,
     faDownload,
@@ -13,6 +14,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import React, { useEffect, useRef, useState } from 'react';
+import { useMediaQuery } from 'usehooks-ts';
 import style from './HeaderTool.module.scss';
 import { commandsInterface } from './Tkb';
 
@@ -50,12 +52,13 @@ function Tool({
     };
 
     const mouseClickHandler = (event: React.MouseEvent<HTMLSpanElement>) => {
-        if (tabShow) {
+        console.log(event);
+        const spanEle = event.target as HTMLSpanElement;
+        if (tabShow === spanEle.textContent) {
             setTabShow('');
             return;
         }
 
-        const spanEle = event.target as HTMLSpanElement;
         setTabShow(spanEle.textContent || '');
     };
 
@@ -145,107 +148,213 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
         };
     };
 
-    const tools: TOOL[] = [
-        {
-            title: 'Tùy Chọn',
-            icon: undefined,
-            pos: 'bottom',
-            children: [
-                {
-                    icon: faCalendarDays,
-                    title: 'Tạo Mới',
-                    onclick: createdCommand('new'),
-                    pos: 'Left',
-                },
-                {
-                    icon: faClone,
-                    title: 'Tạo Bạn Sao',
-                    onclick: createdCommand('clone'),
-                    pos: 'Left',
-                },
-                {
-                    icon: faFolderOpen,
-                    title: 'Open',
-                    onclick: createdCommand('open'),
-                    pos: 'Left',
-                },
-                {
-                    icon: faRotate,
-                    title: 'Đồng bộ với google lịch',
-                    onclick: createdCommand('googleCalendar'),
-                    pos: 'Left',
-                },
-                {
-                    icon: faDownload,
-                    title: 'Tải xuống',
-                    onclick: createdCommand('saveAsFile'),
-                    pos: 'Left',
-                },
+    const isTabletOrMobile = useMediaQuery('(max-width: 800px)');
 
-                {
-                    title: 'Properties',
-                    onclick: createdCommand('property'),
-                    pos: 'Left',
-                },
-                {
-                    icon: faRightFromBracket,
-                    title: 'Exit',
-                    onclick: createdCommand('exit'),
-                    pos: 'Left',
-                },
-            ],
-        },
-        {
-            title: 'Edit',
-            icon: undefined,
-            pos: 'bottom',
-            children: [
-                {
-                    icon: faReply,
-                    title: 'Undo',
-                    onclick: createdCommand('undo'),
-                    pos: 'Left',
-                },
-                {
-                    icon: faShare,
-                    title: 'Redo',
-                    onclick: createdCommand('redo'),
-                    pos: 'Left',
-                },
-                {
-                    title: 'Cut',
-                    onclick: createdCommand('cut'),
-                    pos: 'Left',
-                },
-                {
-                    title: 'Past',
-                    onclick: createdCommand('past'),
-                    pos: 'Left',
-                },
-            ],
-        },
-        {
-            title: 'Share',
-            icon: undefined,
-            pos: 'bottom',
-            children: [
-                {
-                    icon: faShareFromSquare,
-                    title: 'Tạo lời mời',
-                    onclick: createdCommand('addMember'),
-                    pos: 'Left',
-                },
-                {
-                    icon: undefined,
-                    title: 'quản lý',
-                    onclick: createdCommand('manageMenber'),
-                    pos: 'Left',
-                },
-            ],
-        },
-    ];
+    let tools: TOOL[] = [];
 
-    const [tabShow, setTabShow] = useState<string>('');
+    if (isTabletOrMobile) {
+        tools = [
+            {
+                title: 'Tùy Chọn',
+                icon: undefined,
+                pos: 'Left',
+                children: [
+                    {
+                        icon: faCalendarDays,
+                        title: 'Tạo Mới',
+                        onclick: createdCommand('new'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faClone,
+                        title: 'Tạo Bạn Sao',
+                        onclick: createdCommand('clone'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faFolderOpen,
+                        title: 'Open',
+                        onclick: createdCommand('open'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faRotate,
+                        title: 'Đồng bộ với google lịch',
+                        onclick: createdCommand('googleCalendar'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faDownload,
+                        title: 'Tải xuống',
+                        onclick: createdCommand('saveAsFile'),
+                        pos: 'Left',
+                    },
+
+                    {
+                        title: 'Properties',
+                        onclick: createdCommand('property'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faRightFromBracket,
+                        title: 'Exit',
+                        onclick: createdCommand('exit'),
+                        pos: 'Left',
+                    },
+                ],
+            },
+            {
+                title: 'Edit',
+                icon: undefined,
+                pos: 'Left',
+                children: [
+                    {
+                        icon: faReply,
+                        title: 'Undo',
+                        onclick: createdCommand('undo'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faShare,
+                        title: 'Redo',
+                        onclick: createdCommand('redo'),
+                        pos: 'Left',
+                    },
+                    {
+                        title: 'Cut',
+                        onclick: createdCommand('cut'),
+                        pos: 'Left',
+                    },
+                    {
+                        title: 'Past',
+                        onclick: createdCommand('past'),
+                        pos: 'Left',
+                    },
+                ],
+            },
+            {
+                title: 'Share',
+                icon: undefined,
+                pos: 'Left',
+                children: [
+                    {
+                        icon: faShareFromSquare,
+                        title: 'Tạo lời mời',
+                        onclick: createdCommand('addMember'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: undefined,
+                        title: 'quản lý',
+                        onclick: createdCommand('manageMenber'),
+                        pos: 'Left',
+                    },
+                ],
+            },
+        ];
+    } else {
+        tools = [
+            {
+                title: 'Tùy Chọn',
+                icon: undefined,
+                pos: 'bottom',
+                children: [
+                    {
+                        icon: faCalendarDays,
+                        title: 'Tạo Mới',
+                        onclick: createdCommand('new'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faClone,
+                        title: 'Tạo Bạn Sao',
+                        onclick: createdCommand('clone'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faFolderOpen,
+                        title: 'Open',
+                        onclick: createdCommand('open'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faRotate,
+                        title: 'Đồng bộ với google lịch',
+                        onclick: createdCommand('googleCalendar'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faDownload,
+                        title: 'Tải xuống',
+                        onclick: createdCommand('saveAsFile'),
+                        pos: 'Left',
+                    },
+
+                    {
+                        title: 'Properties',
+                        onclick: createdCommand('property'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faRightFromBracket,
+                        title: 'Exit',
+                        onclick: createdCommand('exit'),
+                        pos: 'Left',
+                    },
+                ],
+            },
+            {
+                title: 'Edit',
+                icon: undefined,
+                pos: 'bottom',
+                children: [
+                    {
+                        icon: faReply,
+                        title: 'Undo',
+                        onclick: createdCommand('undo'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faShare,
+                        title: 'Redo',
+                        onclick: createdCommand('redo'),
+                        pos: 'Left',
+                    },
+                    {
+                        title: 'Cut',
+                        onclick: createdCommand('cut'),
+                        pos: 'Left',
+                    },
+                    {
+                        title: 'Past',
+                        onclick: createdCommand('past'),
+                        pos: 'Left',
+                    },
+                ],
+            },
+            {
+                title: 'Share',
+                icon: undefined,
+                pos: 'bottom',
+                children: [
+                    {
+                        icon: faShareFromSquare,
+                        title: 'Tạo lời mời',
+                        onclick: createdCommand('addMember'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: undefined,
+                        title: 'quản lý',
+                        onclick: createdCommand('manageMenber'),
+                        pos: 'Left',
+                    },
+                ],
+            },
+        ];
+    }
+
+    const [tabShow, setTabShow] = useState<string>('*');
     const mouseEnterHandler = (event: React.MouseEvent<HTMLSpanElement>) => {
         if (!tabShow) return;
 
@@ -261,25 +370,40 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
         }
 
         const spanEle = event.target as HTMLSpanElement;
-        setTabShow(spanEle.textContent || '');
+        setTabShow(spanEle.textContent || '*');
     };
 
     const onClickOutSideHandler = () => {
-        setTabShow('');
+        setTabShow('*');
     };
 
     return (
         <div className={cx('tools')}>
-            {tools.map((e, i) => (
+            {isTabletOrMobile ? (
                 <Tool
-                    key={e.title + i}
-                    tool={e}
+                    tool={{
+                        title: '',
+                        pos: 'bottom',
+                        children: tools,
+                        icon: faBars,
+                    }}
                     titleShow={tabShow}
                     onMouseEnter={mouseEnterHandler}
                     onClick={mouseClickHandler}
                     onClickOutSide={onClickOutSideHandler}
                 />
-            ))}
+            ) : (
+                tools.map((e, i) => (
+                    <Tool
+                        key={e.title + i}
+                        tool={e}
+                        titleShow={tabShow}
+                        onMouseEnter={mouseEnterHandler}
+                        onClick={mouseClickHandler}
+                        onClickOutSide={onClickOutSideHandler}
+                    />
+                ))
+            )}
         </div>
     );
 }

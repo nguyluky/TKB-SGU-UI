@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind';
 import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useMediaQuery } from 'usehooks-ts';
 
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
@@ -73,6 +74,9 @@ export default function Tkb() {
     const idAutoSaveTimeOut = useRef<NodeJS.Timeout>();
 
     const tkbHandler = useTkbHandler(tkbid || '', !!searchParams.get('isclient'));
+
+    const isTabletOrMobile = useMediaQuery('(max-width: 800px)');
+
     useTkbSocket(
         tkbHandler.onAddHphandler,
         tkbHandler.onAddNhomHocHandler,
@@ -554,9 +558,13 @@ export default function Tkb() {
                 <div className={cx('wrapper')}>
                     <div
                         className={cx('side-bar')}
-                        style={{
-                            width: miniSide ? 0 : sideBarWidth + 'px',
-                        }}
+                        style={
+                            isTabletOrMobile
+                                ? { height: miniSide ? 0 : '' }
+                                : {
+                                      width: miniSide ? 0 : sideBarWidth + 'px',
+                                  }
+                        }
                     >
                         {sideBars[sideBar] || (
                             <SelestionView

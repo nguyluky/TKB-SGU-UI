@@ -3,6 +3,10 @@
     border-radius: 5px;
     padding: 15px;
 
+    @media screen and (max-width: 660px) {
+        min-width: 90%;
+    }
+
     .header {
         color: var(--text-color);
         margin-bottom: 15px;
