@@ -15,6 +15,7 @@ interface CreateNewTkbProps extends Omit<PopupProps, 'children'> {
 export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) {
     const [name, setName] = useState<string>('Thời khóa biểu');
     const [pos, setPos] = useState<string>('client');
+    const [nam, setNam] = useState<string>('20242');
 
     return (
         <Popup {...props}>
@@ -47,6 +48,19 @@ export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) 
                         <option value="server">Server</option>
                     </select>
                 </div>
+                {/* 
+                <div className={cx('input')}>
+                    <label>Vị trí lưu</label>
+                    <select
+                        name="nam"
+                        id="nam"
+                        value={nam}
+                        onChange={(e) => setNam(e.target.value)}
+                    >
+                        <option value="client">Client</option>
+                        <option value="server">Server</option>
+                    </select>
+                </div> */}
             </PopupModel>
         </Popup>
     );
