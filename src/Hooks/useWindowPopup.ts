@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-interface GoogleRespType {
+export interface GoogleRespType {
     notify: { notifyType: 'error' | 'success' | 'info' | 'warning'; mess: string };
     googleOauth2: string;
 }
 
-interface windowPopupMessageRep<T extends keyof GoogleRespType> {
+export interface windowPopupMessageRep<T extends keyof GoogleRespType> {
     type: T;
     name: string;
     data: GoogleRespType[T];

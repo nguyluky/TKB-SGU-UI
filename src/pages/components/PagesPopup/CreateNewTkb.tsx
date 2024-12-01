@@ -48,7 +48,7 @@ export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) 
                         <option value="server">Server</option>
                     </select>
                 </div>
-                {/* 
+
                 <div className={cx('input')}>
                     <label>Vị trí lưu</label>
                     <select
@@ -60,7 +60,7 @@ export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) 
                         <option value="client">Client</option>
                         <option value="server">Server</option>
                     </select>
-                </div> */}
+                </div>
             </PopupModel>
         </Popup>
     );

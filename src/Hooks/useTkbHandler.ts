@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
     ApiResponse,
     DsNhomHocResp,
-    DsNhomHocRespData,
     NhomHoc,
     TkbContent,
     TkbContentMmh,
@@ -198,8 +197,6 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             //     return;
             // }
 
-            if (!isSocket)
-                globalState.client.socket.emit('addHocPhan', tkbInfo.id, mhp, !!isTimeLine);
 
             ma_hoc_phans.push(mhp);
             setMaMomHoc([...ma_hoc_phans]);
@@ -212,12 +209,9 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     );
 
     const onRemoveNhomHocHandler = useCallback(
-        (idToHoc: string, isTimeLine?: boolean, isSocket?: boolean) => {
+        (idToHoc: string, isTimeLine?: boolean) => {
             const nhom = dsNhomHoc?.ds_nhom_to.find((e) => e.id_to_hoc === idToHoc);
             if (!tkbInfo || !nhom || !id_to_hocs.includes(idToHoc)) return;
-
-            if (!isSocket)
-                globalState.client.socket.emit('removeNhomHoc', tkbInfo.id, idToHoc, !!isTimeLine);
 
             const index = id_to_hocs.indexOf(idToHoc);
             id_to_hocs.splice(index, 1);
@@ -239,14 +233,6 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                 return;
             }
 
-            if (!isSocket)
-                globalState.client.socket.emit(
-                    'removeHocPhan',
-                    tkbInfo.id || '',
-                    mhp,
-                    !!isTimeLine,
-                );
-
             const index = ma_hoc_phans.indexOf(mhp);
             ma_hoc_phans.splice(index, 1);
             if (cacheMhpIdToHoc.current[mhp]) onRemoveNhomHocHandler(cacheMhpIdToHoc.current[mhp]);
@@ -257,7 +243,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
 
             setTkbInfo({ ...tkbInfo });
         },
-        [globalState.client.socket, ma_hoc_phans, onRemoveNhomHocHandler, tkbInfo],
+        [ma_hoc_phans, onRemoveNhomHocHandler, tkbInfo],
     );
 
     const onAddNhomHocHandler = useCallback(
@@ -390,26 +376,12 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                 undoTimeLine.current.push({ type: 'addNhomHoc', valueId: idToHoc });
             }
 
-            if (!isSocket)
-                globalState.client.socket.emit(
-                    'addNhomHoc',
-                    tkbInfo.id,
-                    idToHoc,
-                    !!isTimeLine,
-                    !!replay,
-                );
             cacheMhpIdToHoc.current[maMon] = idToHoc;
             cacheTietNhom.current[tkbToKey(nhom.tkb)] = nhom;
             id_to_hocs.push(idToHoc);
             setIdToHocs([...id_to_hocs]);
         },
-        [
-            dsNhomHoc?.ds_nhom_to,
-            globalState.client.socket,
-            id_to_hocs,
-            onRemoveNhomHocHandler,
-            tkbInfo,
-        ],
+        [dsNhomHoc?.ds_nhom_to, id_to_hocs, onRemoveNhomHocHandler, tkbInfo],
     );
 
     const updataTkbInfo = useCallback(async () => {
@@ -442,14 +414,13 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
 
     const onRenameHandler = useCallback(
         (s: string, isSocket?: boolean) => {
-            if (!isSocket) globalState.client.socket.emit('rename', tkbId, s);
             setTkbInfo((e) => {
                 if (!e) return e;
                 e.name = s;
                 return { ...e };
             });
         },
-        [globalState.client.socket, tkbId],
+        [],
     );
 
     // getTkbData và dsNhomHoc

@@ -6,9 +6,9 @@ import { useMediaQuery } from 'usehooks-ts';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { apiConfig } from '../../config';
+import useKeypress from '../../Hooks/useKeyPress';
 import useSelection from '../../Hooks/useSelection';
 import useTkbHandler from '../../Hooks/useTkbHandler';
-import useTkbSocket from '../../Hooks/useTkbSocket';
 import useWindowPopup from '../../Hooks/useWindowPopup';
 import { globalContent } from '../../store/GlobalContent';
 import { textSaveAsFile } from '../../utils';
@@ -77,13 +77,14 @@ export default function Tkb() {
 
     const isTabletOrMobile = useMediaQuery('(max-width: 800px)');
 
-    useTkbSocket(
-        tkbHandler.onAddHphandler,
-        tkbHandler.onAddNhomHocHandler,
-        tkbHandler.onRemoveHphandeler,
-        tkbHandler.onRemoveNhomHocHandler,
-        tkbHandler.onRenameHandler,
-    );
+    // TODO: socket
+    // useTkbSocket(
+    //     tkbHandler.onAddHphandler,
+    //     tkbHandler.onAddNhomHocHandler,
+    //     tkbHandler.onRemoveHphandeler,
+    //     tkbHandler.onRemoveNhomHocHandler,
+    //     tkbHandler.onRenameHandler,
+    // );
 
     const miniSideBar = () => {
         setMintSide((e) => !e);
@@ -444,43 +445,31 @@ export default function Tkb() {
         console.log(event.clientX);
     };
 
-    // event handle
-    useEffect(() => {
-        const keyEventHandel = (e: KeyboardEvent) => {
-            if (e.keyCode === 90 && e.ctrlKey) {
-                const command = commands('undo');
-                if (command) command();
-            } else if (e.keyCode === 89 && e.ctrlKey) {
-                const command = commands('redo');
-                if (command) command();
-            } else if (e.keyCode === 65 && e.ctrlKey) {
-                selection.addAll(tkbHandler.id_to_hocs);
-                // tkbHandler.tkbData?.id_to_hocs.forEach((e) => {
-                //     selection.addSelection(e);
-                // });
-            }
-            if (e.keyCode === 27) {
-                console.log('clear');
-                if (!selection.selection) selection.clear();
-            }
+    useKeypress(['Control', 'Z'], () => {
+        const command = commands('undo');
+        if (command) command();
+    });
 
-            if (e.keyCode === 46) {
-                if (!selection.selection) return;
-                [...selection.selection].forEach((e) => {
-                    tkbHandler.onRemoveNhomHocHandler(e);
-                });
-                selection.clear();
-            }
+    useKeypress(['Control', 'Y'], () => {
+        const command = commands('redo');
+        if (command) command();
+    });
 
-            console.log(e);
-        };
+    useKeypress(['Control', 'A'], () => {
+        selection.addAll(tkbHandler.id_to_hocs);
+    });
 
-        document.addEventListener('keydown', keyEventHandel);
+    useKeypress('Escape', () => {
+        if (!selection.selection) selection.clear();
+    });
 
-        return () => {
-            document.removeEventListener('keydown', keyEventHandel);
-        };
-    }, [commands, selection, tkbHandler, tkbHandler.id_to_hocs]);
+    useKeypress('Delete', () => {
+        if (!selection.selection) return;
+        [...selection.selection].forEach((e) => {
+            tkbHandler.onRemoveNhomHocHandler(e);
+        });
+        selection.clear();
+    });
 
     // updateHeader
     useEffect(() => {

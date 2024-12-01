@@ -10,8 +10,8 @@ import {
     updateRecord,
 } from './localDB';
 import { generateUUID } from '../utils';
-import SocketManage from './socket';
 import { UserInfoType } from '../store/GlobalContent/Content';
+import { io, Socket } from 'socket.io-client';
 
 const ApiEndPoint = api.baseUrl;
 
@@ -503,13 +503,49 @@ class localApi
     }
 }
 
+
+export interface ServerToClientEvents {
+    join:             (userId: string) => void;
+    leave:            (userId: string) => void;
+    selestion:        (idToHocs: string[]) => void;
+    addHocPhan:       (mxhp: string) => void;
+    addNhomHoc:       (idToHoc: string, replay: boolean) => void;
+    removeHocPhan:    (mxhp: string) => void;
+    removeNhomHoc:    (idToHoc: string) => void;
+    rename:           (newName: string) => void;
+    undo:             () => void;
+    redo:             () => void;
+    exception:        (data: {code: number, msg: string, success: boolean, data: any}) => void;
+}
+
+export interface ClientToServerEvents {
+    onJoin:           (tkbId: string, userId: string) => void;
+    onLeave:          (tkbId: string, userId: string) => void;
+    onSelestion:      (tkbId: string, idToHocs: string[]) => void;
+    onAddHocPhan:     (tkbId: string, mxhp: string) => void;
+    onAddNhomHoc:     (tkbId: string, idToHoc: string, replay: boolean) => void;
+    onRemoveHocPhan:  (tkbId: string, mxhp: string) => void;
+    onRemoveNhomHoc:  (tkbId: string, idToHoc: string) => void;
+    onRename:         (tkbId: string, newName: string) => void;
+    onUndo:           (tkbId: string) => void;
+    onRedo:           (tkbId: string) => void;
+}
+
+export interface InterServerEvents {
+    ping: () => void;
+}
+
+export interface SocketData {
+    userId: string;
+}
+
 let ClientInstance: Client;
 export class Client {
     public request: AxiosInstance;
     public serverApi: ServerApi;
     public localApi: localApi;
     public token?: string;
-    public socket: SocketManage;
+    public socket: Socket<ClientToServerEvents, ServerToClientEvents>;
 
     constructor(token?: string) {
         this.token = token;
@@ -522,8 +558,11 @@ export class Client {
             },
         });
         this.serverApi = new ServerApi(this.request);
-        this.socket = new SocketManage(this.token || '');
-        // this.getUserInfo();
+        this.socket = io(apiConfig.baseUrl.replace('/api/v2', ''), {
+            extraHeaders: {
+                authorization: `bearer ${token}`,
+            },
+        });
     }
 
     async getUserInfo() {
