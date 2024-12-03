@@ -3,10 +3,10 @@ import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 
+import { useHotkeys } from 'react-hotkeys-hook';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { apiConfig } from '../../config';
-import useKeypress from '../../Hooks/useKeyPress';
 import useSelection from '../../Hooks/useSelection';
 import useTkbHandler from '../../Hooks/useTkbHandler';
 import useWindowPopup from '../../Hooks/useWindowPopup';
@@ -445,31 +445,52 @@ export default function Tkb() {
         console.log(event.clientX);
     };
 
-    useKeypress(['Control', 'Z'], () => {
-        const command = commands('undo');
-        if (command) command();
-    });
+    useHotkeys(
+        'ctrl+z',
+        () => {
+            const command = commands('undo');
+            if (command) command();
+        },
+        [commands],
+    );
 
-    useKeypress(['Control', 'Y'], () => {
-        const command = commands('redo');
-        if (command) command();
-    });
+    useHotkeys(
+        'ctrl+y',
+        () => {
+            const command = commands('redo');
+            if (command) command();
+        },
+        [commands],
+    );
 
-    useKeypress(['Control', 'A'], () => {
-        selection.addAll(tkbHandler.id_to_hocs);
-    });
+    useHotkeys(
+        'ctrl+a',
+        () => {
+            selection.addAll(tkbHandler.id_to_hocs);
+        },
+        [selection, tkbHandler.id_to_hocs],
+    );
 
-    useKeypress('Escape', () => {
-        if (!selection.selection) selection.clear();
-    });
+    useHotkeys(
+        'Escape',
+        () => {
+            console.log('okkkk');
+            if (selection) selection.clear();
+        },
+        [selection],
+    );
 
-    useKeypress('Delete', () => {
-        if (!selection.selection) return;
-        [...selection.selection].forEach((e) => {
-            tkbHandler.onRemoveNhomHocHandler(e);
-        });
-        selection.clear();
-    });
+    useHotkeys(
+        'Delete',
+        () => {
+            if (!selection.selection) return;
+            [...selection.selection].forEach((e) => {
+                tkbHandler.onRemoveNhomHocHandler(e);
+            });
+            selection.clear();
+        },
+        [selection, tkbHandler],
+    );
 
     // updateHeader
     useEffect(() => {
