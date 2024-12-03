@@ -192,7 +192,7 @@ export default function Tkb() {
                     const div = document.getElementById('tkb-grip-content') as HTMLDivElement;
                     if (div) {
                         toPng(div, {
-                            backgroundColor: '#e3e5e8',
+                            backgroundColor: globalState.theme === 'dark' ? '#2b2d31' : '#e3e5e8',
                             width: div.scrollWidth,
                             height: div.scrollHeight,
                         }).then((dataUrl) => {
