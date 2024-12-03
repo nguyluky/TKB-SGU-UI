@@ -3,6 +3,7 @@ import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 
+import { toPng } from 'html-to-image';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { apiConfig } from '../../config';
@@ -38,6 +39,7 @@ export interface commandsInterface {
     past?: () => void;
     manageMenber?: () => void;
     googleCalendar?: () => void;
+    saveAsPng?: () => void;
 }
 
 export default function Tkb() {
@@ -46,6 +48,7 @@ export default function Tkb() {
     // context
     const setHeaderPar = useContext(headerContent);
     const [globalState] = useContext(globalContent);
+    const calendarRef = useRef<HTMLDivElement>(null);
 
     // useParams
     const { tkbid } = useParams();
@@ -184,6 +187,24 @@ export default function Tkb() {
                         />,
                     );
                 },
+
+                saveAsPng: () => {
+                    const div = document.getElementById('tkb-grip-content') as HTMLDivElement;
+                    if (div) {
+                        toPng(div, {
+                            backgroundColor: '#e3e5e8',
+                            width: div.scrollWidth,
+                            height: div.scrollHeight,
+                        }).then((dataUrl) => {
+                            console.log(dataUrl);
+                            const link = document.createElement('a');
+                            link.download = 'my-image-name.jpeg';
+                            link.href = dataUrl;
+                            link.click();
+                        });
+                    }
+                },
+
                 saveAsFile: () => {
                     const a = tkbHandler.id_to_hocs.map((e) => {
                         const nhom = tkbHandler.dsNhomHoc?.ds_nhom_to.find(
@@ -604,6 +625,7 @@ export default function Tkb() {
                             }}
                             onTimMonHocTuTu={timNhomHocTuongTuHandel}
                             selection={selection}
+                            ref={calendarRef}
                         />
                     </div>
 
