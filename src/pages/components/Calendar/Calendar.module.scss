@@ -263,16 +263,16 @@
     box-sizing: border-box;
     padding: var(--margin-g);
     position: absolute;
-    transition: all 0.1s ease-in-out;
     scrollbar-width: thin;
     display: flex;
     justify-content: center;
     flex-direction: column;
-    // color: grey;
-    // scrollbar-color: grey transparent;
+    opacity: 0;
+    transition: all 0.1s ease-in-out;
+    transform: scale(0);
 
     &.tiet-selected {
-        outline: 2px solid var(--primary-color-1);
+        filter: drop-shadow(0 0 5px var(--primary-color-1));
     }
 
     .left-side {
@@ -298,23 +298,12 @@
         margin-left: 10px;
     }
 
-    &.entering {
-        transform: scale(0.5);
-        opacity: 0;
-    }
-
     &.entered {
+        opacity: 1;
         transform: scale(1);
-        opacity: 1;
-    }
-
-    &.exiting {
-        transform: scale(0);
-        opacity: 1;
     }
 
     &.exited {
-        transform: scale(0.5);
         opacity: 0;
     }
 }

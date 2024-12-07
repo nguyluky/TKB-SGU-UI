@@ -27,12 +27,14 @@ function textSaveAsFile(text: string) {
     element.click();
 }
 
-function hashCode(s: string) {
-    let h = 0;
-    let i = 0;
-    const l = s.length;
-    if (l > 0) while (i < l) h = ((h << 5) - h + s.charCodeAt(i++)) | 0;
-    return h;
+function hashCode(string: string) {
+    let hash = 0;
+    for (let i = 0; i < string.length; i++) {
+        const code = string.charCodeAt(i);
+        hash = ((hash<<5)-hash)+code;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
 }
 
 function popupCenter({ url, title, w, h }: { url: string; title: string; w: number; h: number }) {

@@ -10,5 +10,5 @@ export default function useTkbSocket() {
         if (!globalState.client.islogin()) return;
 
         
-    }, []);
+    }, [globalState.client]);
 }

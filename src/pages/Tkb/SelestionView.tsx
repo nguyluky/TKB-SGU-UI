@@ -38,11 +38,8 @@ export function SelestionView({
     dsNhomHoc,
     onAddHp,
     onRemoveHp,
-    onRemoveNhomHoc,
     ma_hoc_phans,
-    id_to_hocs,
     tkbData,
-    onAddNhomHoc,
     soTC,
 }: selestionViewPro) {
     const [mini, setMini] = useState<number>(0);
@@ -50,12 +47,6 @@ export function SelestionView({
         if (!tkbData) return;
         if (ma_hoc_phans.includes(mhp)) onRemoveHp(mhp);
         else onAddHp(mhp);
-    };
-
-    const toggleNhomHoc = (idToHoc: string) => {
-        if (!tkbData) return;
-        if (id_to_hocs.includes(idToHoc)) onRemoveNhomHoc(idToHoc);
-        else onAddNhomHoc(idToHoc);
     };
 
     return (
@@ -82,16 +73,7 @@ export function SelestionView({
                     }}
                 >
                     {ma_hoc_phans.map((e) => (
-                        <HocPhan
-                            id_to_hocs={id_to_hocs}
-                            mini={mini}
-                            key={e}
-                            tkb={tkbData}
-                            data={dsNhomHoc}
-                            maHocPhan={e}
-                            onRemoveHp={onRemoveHp}
-                            onAddNhomHoc={toggleNhomHoc}
-                        />
+                        <HocPhan mini={mini} key={e} maHocPhan={e} />
                     ))}
                 </SimpleBar>
             </div>

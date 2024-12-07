@@ -18,6 +18,7 @@ const ApiEndPoint = api.baseUrl;
 export interface TkbInfo {
     id: string;
     name: string;
+    nam: string;
     tkb_describe: string;
     thumbnails: null | Blob;
     isClient?: boolean;
@@ -409,6 +410,7 @@ class localApi
         await updateRecord({
             id: tkbData.id,
             name: tkbData.name,
+            nam: tkbData.nam,
             tkb_describe: tkbData.tkb_describe,
             thumbnails: tkbData.thumbnails,
             ma_hoc_phans: a.ma_hoc_phans,
@@ -439,6 +441,7 @@ class localApi
         const newTkb: TkbInfoIndexDb = {
             id: generateUUID(),
             name: tkbInfo.name,
+            nam: tkbInfo.nam,
             tkb_describe: tkbInfo.tkb_describe,
             thumbnails: tkbInfo.thumbnails,
             id_to_hocs: [],
@@ -507,28 +510,19 @@ class localApi
 export interface ServerToClientEvents {
     join:             (userId: string) => void;
     leave:            (userId: string) => void;
-    selestion:        (idToHocs: string[]) => void;
-    addHocPhan:       (mxhp: string) => void;
-    addNhomHoc:       (idToHoc: string, replay: boolean) => void;
-    removeHocPhan:    (mxhp: string) => void;
-    removeNhomHoc:    (idToHoc: string) => void;
-    rename:           (newName: string) => void;
-    undo:             () => void;
-    redo:             () => void;
+    updateTkbInfo:    (tkbInfo: TkbInfo) => void;
+    updateMaHocPhans: (tkbId: string, maHocPhans: string[]) => void;
+    updateIdToHocs:   (tkbId: string, idToHocs: string[]) => void;
     exception:        (data: {code: number, msg: string, success: boolean, data: any}) => void;
+    userJoined:       (userId: string[]) => void;
 }
 
 export interface ClientToServerEvents {
-    onJoin:           (tkbId: string, userId: string) => void;
-    onLeave:          (tkbId: string, userId: string) => void;
-    onSelestion:      (tkbId: string, idToHocs: string[]) => void;
-    onAddHocPhan:     (tkbId: string, mxhp: string) => void;
-    onAddNhomHoc:     (tkbId: string, idToHoc: string, replay: boolean) => void;
-    onRemoveHocPhan:  (tkbId: string, mxhp: string) => void;
-    onRemoveNhomHoc:  (tkbId: string, idToHoc: string) => void;
-    onRename:         (tkbId: string, newName: string) => void;
-    onUndo:           (tkbId: string) => void;
-    onRedo:           (tkbId: string) => void;
+    onJoin:           (tkbId: string) => void;
+    onLeave:          (tkbId: string) => void;
+    onUpdateTkbInfo:  (tkbInfo: TkbInfo) => void;
+    onUpdateMaHocPhans: (tkbId: string, maHocPhans: string[]) => void;
+    onUpdateIdToHocs: (tkbId: string, idToHocs: string[]) => void;
 }
 
 export interface InterServerEvents {
@@ -545,7 +539,7 @@ export class Client {
     public serverApi: ServerApi;
     public localApi: localApi;
     public token?: string;
-    public socket: Socket<ClientToServerEvents, ServerToClientEvents>;
+    public socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
     constructor(token?: string) {
         this.token = token;

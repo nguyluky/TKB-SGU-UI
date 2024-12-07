@@ -1,9 +1,13 @@
 .hocphan {
     .hocphan-title {
-        margin: 5px;
-        padding: 3px;
+        position: sticky;
+        top: 0;
+        background-color: var(--content-color);
+        margin: 3px;
+        padding: 5px;
         display: flex;
         align-items: center;
+        border-radius: 4px;
         border-bottom: 2px solid var(--content-color);
 
         svg {
@@ -29,16 +33,6 @@
             z-index: 0;
         }
 
-        .nhom + .nhom::before {
-            content: '';
-            top: 0;
-            left: 0;
-            position: absolute;
-            height: 1px;
-            width: 100%;
-            border-top: 1px solid rgba($color: #000000, $alpha: 0.2);
-        }
-
         .nhom.check::before {
             border-top: 1px solid rgba($color: #000000, $alpha: 0);
         }
@@ -49,11 +43,17 @@
     }
 
     .close-icon {
+        display: none;
         margin-left: auto;
         cursor: pointer;
         svg {
             color: var(--error-color);
         }
+    }
+
+    .hocphan-title:hover .close-icon {
+        display: initial;
+        z-index: 1;
     }
 
     .hocphan-name {
@@ -62,5 +62,25 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+    }
+}
+
+.conflict {
+    // filter: drop-shadow(0 0 5px var(--error-color));
+    outline: 2px solid var(--error-color);
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    25% {
+        transform: translateX(5px);
+    }
+
+    50% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translate(5px);
     }
 }

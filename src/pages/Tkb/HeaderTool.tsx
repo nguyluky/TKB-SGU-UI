@@ -15,8 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import React, { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
+import { commandsInterface } from '../../Hooks/useCommand';
 import style from './HeaderTool.module.scss';
-import { commandsInterface } from './Tkb';
 
 const cx = classNames.bind(style);
 

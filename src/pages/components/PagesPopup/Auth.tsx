@@ -68,7 +68,18 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
     const [password, setPassword] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [height, setHeight] = useState<number>(0);
+
+    const onClose = () => {
+        setParams((e) => {
+            e.delete('login');
+            e.delete('registration');
+
+            return e;
+        });
+    };
+
     const popupWindow = useWindowPopup((event) => {
+        console.log(event);
         const t = event.data.type;
         if (t === 'googleOauth2') {
             const accessToken = event.data.data;
@@ -82,13 +93,13 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                 setGlobalState({ ...globalState });
             });
 
-            // onClose && onClose();
             popupWindow.close();
         } else if (t === 'notify') {
             const data = event.data;
             notifyMaster[data.data.notifyType](data.data.mess);
             popupWindow.close();
         }
+        onClose();
     });
 
     const [errType, setErrType] = useState<string>('');
@@ -203,7 +214,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                         setGlobalState({ ...globalState });
                     });
 
-                    // onClose && onClose();
+                    onClose();
 
                     return;
                 }
@@ -232,7 +243,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
         if (
             email.match(
                 // eslint-disable-next-line no-useless-escape
-                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             ) == null
         ) {
             setErrType('email');
@@ -276,19 +287,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
     };
 
     return (
-        <Popup
-            {...pros}
-            open={!!(params.get('login') || params.get('registration'))}
-            onClose={() => {
-                setParams((e) => {
-                    e.delete('login');
-                    e.delete('registration');
-
-                    return e;
-                });
-                // onClose && onClose();
-            }}
-        >
+        <Popup {...pros} open={!!(params.get('login') || params.get('registration'))} onClose={onClose}>
             <div
                 className={cx('wrapper', {
                     registration: params.get('registration'),
@@ -304,8 +303,8 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                         </div>
                         <h1>Xác nhận Email</h1>
                         <span className={cx('info')}>
-                            Bạn đã nhập <strong>{email}</strong> là đại chỉ email cho tài khoản của
-                            bạn cần xác nhận email bạn.
+                            Bạn đã nhập <strong>{email}</strong> là đại chỉ email cho tài khoản của bạn cần xác nhận
+                            email bạn.
                         </span>
 
                         <button
@@ -365,11 +364,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                         <div className={cx('line')} />
                     </div>
                     <div className={cx('social-icons')}>
-                        <button
-                            aria-label="Log in with Google"
-                            className={cx('icon')}
-                            onClick={googleOauth}
-                        >
+                        <button aria-label="Log in with Google" className={cx('icon')} onClick={googleOauth}>
                             <FontAwesomeIcon icon={faGoogle} />
                         </button>
                         <button aria-label="Log in with GitHub" className={cx('icon')}>
@@ -378,12 +373,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                     </div>
                     <p className={cx('signup')}>
                         Don't have an account?
-                        <a
-                            rel="noopener noreferrer"
-                            href="/"
-                            className={cx('')}
-                            onClick={changeToRegistration}
-                        >
+                        <a rel="noopener noreferrer" href="/" className={cx('')} onClick={changeToRegistration}>
                             Sign up
                         </a>
                     </p>
@@ -433,11 +423,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                         <div className={cx('line')} />
                     </div>
                     <div className={cx('social-icons')}>
-                        <button
-                            aria-label="Log in with Google"
-                            className={cx('icon')}
-                            onClick={googleOauth}
-                        >
+                        <button aria-label="Log in with Google" className={cx('icon')} onClick={googleOauth}>
                             <FontAwesomeIcon icon={faGoogle} />
                         </button>
                         <button aria-label="Log in with GitHub" className={cx('icon')}>
@@ -446,12 +432,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                     </div>
                     <p className={cx('signup')}>
                         Already have account
-                        <a
-                            rel="noopener noreferrer"
-                            href="/"
-                            className={cx('')}
-                            onClick={changeToLogin}
-                        >
+                        <a rel="noopener noreferrer" href="/" className={cx('')} onClick={changeToLogin}>
                             Sign in
                         </a>
                     </p>
