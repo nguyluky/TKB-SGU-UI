@@ -16,7 +16,12 @@ export default function Footer() {
                 <h3>Theo dõi chúng tôi:</h3>
 
                 <div className={cx('icon-wrapper')}>
-                    <FontAwesomeIcon icon={faDiscord} />
+                    <FontAwesomeIcon
+                        icon={faDiscord}
+                        onClick={() => {
+                            window.open('https://discord.gg/gVdV6UJRvy');
+                        }}
+                    />
                 </div>
             </div>
 
@@ -25,8 +30,7 @@ export default function Footer() {
 
                 <p>Email: nguyluky@gmail.com</p>
                 <p>
-                    facebook:{' '}
-                    <a href="https://www.facebook.com/profile.php?id=61558476525330">Luky Nguy</a>
+                    facebook: <a href="https://www.facebook.com/profile.php?id=61558476525330">Luky Nguy</a>
                 </p>
             </div>
         </footer>

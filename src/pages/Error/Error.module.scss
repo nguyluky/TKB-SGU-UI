@@ -24,7 +24,7 @@
 
 .context .code,
 .context .msg {
-    stroke: var(--text-color);
+    color: var(--text-color-2);
 }
 
 .context .code {
@@ -77,7 +77,7 @@
 }
 
 .context .icon svg {
-    stroke: var(--text-color);
+    stroke: var(--text-color-2);
     height: 100%;
     width: 100%;
 }

@@ -1,13 +1,5 @@
 import classNames from 'classnames/bind';
-import {
-    createContext,
-    ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 
@@ -20,6 +12,7 @@ import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
 import Error from '../Error';
 import { HeaderTool } from './HeaderTool';
+import MemberView from './MemberVIew';
 import { ReName } from './ReName';
 import { ReplaceView, SelestionView } from './SelestionView';
 import style from './Tkb.module.scss';
@@ -87,7 +80,7 @@ export default function Tkb() {
             funs();
             console.log(command);
         },
-        [commands],
+        [commands]
     );
 
     const resize = (ev: MouseEvent) => {
@@ -104,7 +97,7 @@ export default function Tkb() {
                 setResize(false);
                 document.removeEventListener('mousemove', resize);
             },
-            false,
+            false
         );
         console.log(event.clientX);
     };
@@ -163,7 +156,7 @@ export default function Tkb() {
         if (!tkbTemp) return;
         setHeaderPar((e) => {
             e.left = <HeaderTool onCommandEvent={onCommandHandel} />;
-            e.right = undefined;
+            e.right = <MemberView userIds={tkbHandler.users} />;
             const tkbName = tkbTemp?.name || '';
             e.center = (
                 <ReName
@@ -178,7 +171,7 @@ export default function Tkb() {
         });
         // NOTE: có thể nỗi mai mốt
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [setHeaderPar, tkbHandler.tkbData?.name, tkbHandler.iconSaveing]);
+    }, [setHeaderPar, tkbHandler.tkbData?.name, tkbHandler.iconSaveing, tkbHandler.users]);
 
     // auto save
     useEffect(() => {
@@ -200,13 +193,7 @@ export default function Tkb() {
         }
         setSoTC(sCT);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        tkbHandler.doUpdate,
-        tkbHandler.dsNhomHoc,
-        tkbHandler.tkbData,
-        tkbHandler.id_to_hocs,
-        tkbHandler.ma_hoc_phans,
-    ]);
+    }, [tkbHandler.doUpdate, tkbHandler.dsNhomHoc, tkbHandler.tkbData, tkbHandler.id_to_hocs, tkbHandler.ma_hoc_phans]);
 
     const sideBars: { [Key: string]: ReactNode } = {
         tutu: (

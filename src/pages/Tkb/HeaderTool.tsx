@@ -96,9 +96,7 @@ function Tool({
                 onMouseEnter={tool.children ? onMouseEnter : undefined}
                 onClick={tool.children ? onClick : tool.onclick}
             >
-                <div className={cx('icon')}>
-                    {tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}
-                </div>
+                <div className={cx('icon')}>{tool.icon ? <FontAwesomeIcon icon={tool.icon} size="sm" /> : ''}</div>
 
                 {tool.title}
             </span>
@@ -354,7 +352,7 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
         ];
     }
 
-    const [tabShow, setTabShow] = useState<string>('*');
+    const [tabShow, setTabShow] = useState<string>('');
     const mouseEnterHandler = (event: React.MouseEvent<HTMLSpanElement>) => {
         if (!tabShow) return;
 
@@ -370,11 +368,11 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
         }
 
         const spanEle = event.target as HTMLSpanElement;
-        setTabShow(spanEle.textContent || '*');
+        setTabShow(spanEle.textContent || '');
     };
 
     const onClickOutSideHandler = () => {
-        setTabShow('*');
+        setTabShow('');
     };
 
     return (

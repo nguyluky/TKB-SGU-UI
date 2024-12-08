@@ -14,9 +14,9 @@ const icons: { [Key: string]: JSX.Element } = {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="lucide lucide-file-x-2"
         >
             <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4" />
@@ -34,9 +34,9 @@ const icons: { [Key: string]: JSX.Element } = {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="lucide lucide-mail-x"
         >
             <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h9" />
@@ -90,9 +90,7 @@ function Error({ msg, code, icon }: { msg?: string; code?: number; icon?: string
                         <button onClick={() => nav('/')}>Go Home Page</button>
                         <button
                             className={cx('nbg')}
-                            onClick={() =>
-                                window.open('https://github.com/nguyluky/TKB-SGU-UI/issues')
-                            }
+                            onClick={() => window.open('https://github.com/nguyluky/TKB-SGU-UI/issues')}
                         >
                             Report
                         </button>

@@ -47,6 +47,8 @@ const config = {
         '/tkbs/' + encodeURIComponent(tkbId) + '/member/' + encodeURIComponent(memberId),
 
     getUserInfo: () => '/user',
+
+    getUserInfoAsQuest: (userId: string) => '/user/' + encodeURIComponent(userId),
 };
 
 export default config;

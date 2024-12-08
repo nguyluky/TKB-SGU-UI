@@ -368,6 +368,13 @@ class ServerApi implements BaseApi {
         );
         return resp.data;
     }
+
+
+    async getUserInfoAsQuest(userId: string) {
+        const resp = await this.request.get<ApiResponse<UserInfoType>>(api.getUserInfoAsQuest(userId));
+        return resp.data;
+    }
+
 }
 
 class localApi
@@ -514,7 +521,7 @@ export interface ServerToClientEvents {
     updateMaHocPhans: (tkbId: string, maHocPhans: string[]) => void;
     updateIdToHocs:   (tkbId: string, idToHocs: string[]) => void;
     exception:        (data: {code: number, msg: string, success: boolean, data: any}) => void;
-    userJoined:       (userId: string[]) => void;
+    usersJoined:       (userId: string[]) => void;
 }
 
 export interface ClientToServerEvents {

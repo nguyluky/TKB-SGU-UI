@@ -1,0 +1,28 @@
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    padding: 4px;
+    background-color: var(--content-color);
+    border-radius: 15px;
+    margin-right: 5px;
+}
+
+.userAvt {
+    height: calc(var(--header-height) - 20px);
+
+    img {
+        height: 100%;
+        border-radius: 50%;
+    }
+
+    svg {
+        color: var(--text-color-2);
+        height: calc(100% - 5px);
+        padding: 2.5px;
+        aspect-ratio: 1/1;
+        // color: var(--header-color);
+    }
+}
