@@ -1,7 +1,8 @@
 
 let baseUrl;
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    baseUrl = window.location.origin.replace('3000', '4000') + '/api/v2';
+    // baseUrl = window.location.origin.replace('3000', '4000') + '/api/v2';
+    baseUrl = 'https://api.tkbsgusort.id.vn/api/v2';
 } else {
     baseUrl = 'https://api.tkbsgusort.id.vn/api/v2';
 }

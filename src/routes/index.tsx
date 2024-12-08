@@ -67,14 +67,6 @@ const routers = createBrowserRouter([
             </AuthLayout>
         ),
     },
-    // {
-    //     path: routerConfig.logInUp,
-    //     element: (
-    //         <AuthLayout>
-    //             <LoginUp />
-    //         </AuthLayout>
-    //     ),
-    // },
     {
         path: routerConfig.errorPage,
         element: <ErrorPage />,

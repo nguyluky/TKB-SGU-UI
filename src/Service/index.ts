@@ -369,10 +369,14 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-
     async getUserInfoAsQuest(userId: string) {
         const resp = await this.request.get<ApiResponse<UserInfoType>>(api.getUserInfoAsQuest(userId));
         return resp.data;
+    }
+
+    async emailVerify(token: string) {
+        // TODO: Implement emailVerify
+        // FUCKkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
     }
 
 }

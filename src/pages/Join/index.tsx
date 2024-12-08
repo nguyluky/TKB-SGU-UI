@@ -1,10 +1,11 @@
 import { useContext, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { globalContent } from '../../store/GlobalContent';
 
 export default function Join() {
     const nav = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const { joinId } = useParams();
 
@@ -13,19 +14,22 @@ export default function Join() {
     useEffect(() => {
         if (!globalState.client.islogin()) {
             notifyMaster.error('Bạn phải đăng nhập mới được tham gia tkb');
+            nav('/tkbs');
             return;
+        } else {
+            globalState.client.serverApi.join(joinId || '').then((e) => {
+                if (!e.success) {
+                    notifyMaster.error(e.msg);
+                    return;
+                }
+
+                if (e.data) nav('/tkbs/' + e.data);
+                else nav('./tkbs');
+            });
         }
 
-        globalState.client.serverApi.join(joinId || '').then((e) => {
-            if (!e.success) {
-                notifyMaster.error(e.msg);
-                return;
-            }
-
-            if (e.data) nav('/tkbs/' + e.data);
-            else nav('./tkbs');
-        });
-    });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [joinId]);
 
     console.log(joinId);
 
