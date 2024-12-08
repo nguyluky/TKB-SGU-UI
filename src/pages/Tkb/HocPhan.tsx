@@ -102,19 +102,33 @@ export function HocPhan({
                                 onAddNhomHoc(j.id_to_hoc);
                             }}
                         >
-                            <p>
-                                Thứ: {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}
-                            </p>
-                            <p>
-                                GV:{' '}
-                                {Array.from(
-                                    new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : ''))),
-                                ).join(', ')}
-                            </p>
-                            <p>Nhóm: {j.nhom}</p>
-                            <p>
-                                Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
-                            </p>
+                            {j.tkb.length !== 0 ? (
+                                <>
+                                    <p>
+                                        Thứ:{' '}
+                                        {j.tkb
+                                            .map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`)
+                                            .join(', ')}
+                                    </p>
+                                    <p>
+                                        GV:{' '}
+                                        {Array.from(
+                                            new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : ''))),
+                                        ).join(', ')}
+                                    </p>
+                                    <p>Nhóm: {j.nhom}</p>
+                                    <p>
+                                        Phòng:{' '}
+                                        {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p>Nhóm: {j.nhom}</p>
+                                    <p>Chưa có dữ liệu</p>
+                                </>
+                            )}
+
                             {/* <p>Lớp: {j.lop.ma}</p> */}
                         </div>
                     );

@@ -480,6 +480,8 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                         dsMonHoc[id] = display_name;
                     }
 
+                    dsNhomHocResp.ds_nhom_to.forEach((e) => e.tkb || (e.tkb = []));
+
                     setDsNhomHoc({
                         ds_nhom_to: dsNhomHocResp.ds_nhom_to,
                         ds_mon_hoc: dsMonHoc,
