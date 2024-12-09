@@ -1,17 +1,8 @@
 import { faDiscord, faFacebook, faGithub } from '@fortawesome/free-brands-svg-icons';
-import {
-    faAt,
-    faBug,
-    faCaretDown,
-    faGear,
-    faLock,
-    faMoon,
-    faSun,
-    faUser,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAt, faBug, faCaretDown, faGear, faLock, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
-import { ChangeEvent, ReactElement, useContext, useRef, useState } from 'react';
+import { ReactElement, useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 
@@ -28,15 +19,7 @@ import style from './Header.module.scss';
 
 const cx = classNamesBind.bind(style);
 
-function Header({
-    left,
-    center,
-    right,
-}: {
-    left?: ReactElement;
-    center?: ReactElement;
-    right?: ReactElement;
-}) {
+function Header({ left, center, right }: { left?: ReactElement; center?: ReactElement; right?: ReactElement }) {
     const [globalState, setGlobalState] = useContext(globalContent);
     const navigate = useNavigate();
 
@@ -56,14 +39,6 @@ function Header({
 
     const openDiscord = () => {
         window.open('https://discord.gg/gVdV6UJRvy');
-    };
-
-    const handelChangeTheme = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked && globalState && setGlobalState) {
-            globalState.theme = event.target.value;
-            window.localStorage.setItem('theme', event.target.value);
-            setGlobalState({ ...globalState });
-        }
     };
 
     const onChangePasswordHandel = () => {
@@ -127,9 +102,7 @@ function Header({
                             </label>
                             <label
                                 onClick={() => {
-                                    window.open(
-                                        'https://www.facebook.com/profile.php?id=61558476525330',
-                                    );
+                                    window.open('https://www.facebook.com/profile.php?id=61558476525330');
                                 }}
                             >
                                 <FontAwesomeIcon icon={faFacebook} />
@@ -147,53 +120,65 @@ function Header({
                     </DropDownButton>
                     <DropDownButton icon={faSun} className={cx('item')}>
                         <div className={cx('container')}>
-                            <label>
+                            <label
+                                onClick={() => {
+                                    globalState.theme = 'light';
+                                    window.localStorage.setItem('theme', 'light');
+                                    setGlobalState({ ...globalState });
+                                }}
+                            >
                                 <input
                                     type="radio"
                                     name="theme"
+                                    readOnly={true}
                                     checked={globalState?.theme === 'light'}
                                     value={'light'}
-                                    onChange={handelChangeTheme}
                                 />
                                 <FontAwesomeIcon icon={faSun} />
                                 <p>Light Mode</p>
                             </label>
-                            <label>
+                            <label
+                                onClick={() => {
+                                    globalState.theme = 'dark';
+                                    window.localStorage.setItem('theme', 'dark');
+                                    setGlobalState({ ...globalState });
+                                }}
+                            >
                                 <input
                                     type="radio"
                                     name="theme"
                                     value={'dark'}
+                                    readOnly={true}
                                     checked={globalState?.theme === 'dark'}
-                                    onChange={handelChangeTheme}
                                 />
                                 <FontAwesomeIcon icon={faMoon} />
                                 <p>Dark Mode</p>
                             </label>
-                            <label>
+                            <label
+                                onClick={() => {
+                                    globalState.theme = 'auto';
+                                    window.localStorage.setItem('theme', 'auto');
+                                    setGlobalState({ ...globalState });
+                                }}
+                            >
                                 <input
                                     type="radio"
                                     name="theme"
                                     value={'auto'}
+                                    readOnly={true}
                                     checked={globalState?.theme === 'auto'}
-                                    onChange={handelChangeTheme}
                                 />
                                 <FontAwesomeIcon icon={faGear} />
                                 <p>System</p>
                             </label>
                         </div>
                     </DropDownButton>
-                    <DropDownButton
-                        icon={faUser}
-                        url={globalState.userInfo?.avt}
-                        className={cx('item')}
-                    >
+                    <DropDownButton icon={faUser} url={globalState.userInfo?.avt} className={cx('item')}>
                         <div className={cx('user-info')}>
                             {globalState.client.islogin() ? (
                                 <>
                                     <div className={cx('user-info')}>
-                                        <div className={cx('line')}>
-                                            Login at: {globalState.userInfo?.display_name}
-                                        </div>
+                                        <div className={cx('line')}>Login at: {globalState.userInfo?.display_name}</div>
                                     </div>
                                     <Popup
                                         onOpen={() => {
@@ -201,17 +186,10 @@ function Header({
                                             setP2('');
                                             setP3('');
                                         }}
-                                        trigger={
-                                            <div className={cx('line', 'change-password')}>
-                                                Đổi mật khẩu
-                                            </div>
-                                        }
+                                        trigger={<div className={cx('line', 'change-password')}>Đổi mật khẩu</div>}
                                         modal
                                     >
-                                        <PopupModel
-                                            title="Đổi mật khẩu"
-                                            onOk={onChangePasswordHandel}
-                                        >
+                                        <PopupModel title="Đổi mật khẩu" onOk={onChangePasswordHandel}>
                                             <Input
                                                 className={cx('line-p')}
                                                 autoComplete="off"
