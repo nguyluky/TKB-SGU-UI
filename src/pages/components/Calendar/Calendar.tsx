@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import {
     createRef,
     CSSProperties,
+    forwardRef,
     MouseEvent,
     RefObject,
     useEffect,
@@ -98,22 +99,15 @@ interface Props {
     onMiniSide: () => void;
 }
 
-function Calendar({
-    data,
-    idToHocs,
-    onDeleteNhomHoc,
-    onTimMonHocTuTu,
-    conflict,
-    selection,
-    onMiniSide,
-}: Props) {
+const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
+    { data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict, selection, onMiniSide },
+    calendarRef,
+) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const countRow = 10;
 
     const bodyRef = useRef<HTMLDivElement>(null!);
     const contextRef = useRef<HTMLDivElement>(null!);
-    // const lastSelecion = useRef<string>('');
-    const calendarRef = useRef<HTMLDivElement>(null);
 
     const [direction, setDirectiom] = useState(false);
     const [isMouseDown, setMouseDown] = useState<boolean>(false);
@@ -469,7 +463,7 @@ function Calendar({
                         }
                     }}
                 >
-                    <div className={cx('tkb-grip-content')}>
+                    <div className={cx('tkb-grip-content')} id="tkb-grip-content">
                         {Array.from(Array(7).keys()).map((t) => {
                             return (
                                 <div className={cx('calendar-day')} key={t}>
@@ -542,6 +536,6 @@ function Calendar({
             </div>
         </div>
     );
-}
+});
 
 export default Calendar;

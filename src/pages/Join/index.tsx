@@ -1,12 +1,15 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { globalContent } from '../../store/GlobalContent';
+import Loader from '../components/Loader';
+import Error from '../Error';
 
 export default function Join() {
     const nav = useNavigate();
     const { joinId } = useParams();
     const [globalState] = useContext(globalContent);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (!globalState.client.islogin()) {
@@ -15,6 +18,8 @@ export default function Join() {
             return;
         } else {
             globalState.client.serverApi.join(joinId || '').then((e) => {
+                setIsLoading(false);
+
                 if (!e.success) {
                     notifyMaster.error(e.msg);
                     return;
@@ -30,5 +35,9 @@ export default function Join() {
 
     console.log(joinId);
 
-    return <p></p>;
+    return (
+        <Loader isLoading={isLoading}>
+            <Error code={304} msg="bad req"></Error>
+        </Loader>
+    );
 }

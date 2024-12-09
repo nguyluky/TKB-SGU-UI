@@ -3,6 +3,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 
+// import { toPng } from 'html-to-image';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
@@ -183,7 +184,9 @@ export default function Tkb() {
                 tkbHandler.doUpdate();
             }, 5000);
         }
+
         setSoTC(sCT);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tkbHandler.doUpdate, tkbHandler.dsNhomHoc, tkbHandler.tkbData, tkbHandler.id_to_hocs, tkbHandler.ma_hoc_phans]);
 

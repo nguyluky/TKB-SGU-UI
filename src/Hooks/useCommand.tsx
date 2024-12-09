@@ -1,3 +1,4 @@
+import { toPng } from 'html-to-image';
 import { ReactNode, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import notifyMaster from '../components/NotifyPopup/NotificationManager';
@@ -39,6 +40,7 @@ export interface commandsInterface {
     past?: () => void;
     manageMenber?: () => void;
     googleCalendar?: () => void;
+    saveAsPng?: () => void;
 }
 
 export default function useCommand(tkbHandler: useTkbHandlerTypes) {
@@ -159,6 +161,22 @@ export default function useCommand(tkbHandler: useTkbHandlerTypes) {
                     };
 
                     textSaveAsFile(JSON.stringify(textFile));
+                },
+                saveAsPng: () => {
+                    const div = document.getElementById('tkb-grip-content') as HTMLDivElement;
+                    if (div) {
+                        toPng(div, {
+                            backgroundColor: globalState.theme === 'dark' ? '#2b2d31' : '#e3e5e8',
+                            width: div.scrollWidth,
+                            height: div.scrollHeight,
+                        }).then((dataUrl) => {
+                            console.log(dataUrl);
+                            const link = document.createElement('a');
+                            link.download = (tkbHandler.tkbData?.name || 'tkb') + '.jpeg';
+                            link.href = dataUrl;
+                            link.click();
+                        });
+                    }
                 },
                 open: () => {
                     setPopup(

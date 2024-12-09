@@ -5,6 +5,7 @@ import {
     faClone,
     faDownload,
     faFolderOpen,
+    faImage,
     faReply,
     faRightFromBracket,
     faRotate,
@@ -182,12 +183,17 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                         pos: 'Left',
                     },
                     {
+                        icon: faImage,
+                        title: 'Tải xuống Png',
+                        onclick: createdCommand('saveAsPng'),
+                        pos: 'Left',
+                    },
+                    {
                         icon: faDownload,
                         title: 'Tải xuống',
                         onclick: createdCommand('saveAsFile'),
                         pos: 'Left',
                     },
-
                     {
                         title: 'Properties',
                         onclick: createdCommand('property'),
@@ -279,6 +285,12 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                         icon: faRotate,
                         title: 'Đồng bộ với google lịch',
                         onclick: createdCommand('googleCalendar'),
+                        pos: 'Left',
+                    },
+                    {
+                        icon: faImage,
+                        title: 'Tải xuống Png',
+                        onclick: createdCommand('saveAsPng'),
                         pos: 'Left',
                     },
                     {

@@ -18,25 +18,15 @@ export default function EmailVerify() {
         globalState.client.serverApi.emailVerify(token || '').then((resp) => {
             console.log(resp);
             if (resp.data) {
-                localStorage.setItem('token', resp.data.accessToken);
+                window.localStorage.setItem('token', resp.data.accessToken);
+                const client = new Client(resp.data.accessToken);
 
-                globalState.client.getUserInfo().then((res) => {
-                    // nếu token hết hạn thì tự động log out
-                    if (!res.success) {
-                        setGlobalState((e) => {
-                            e.userInfo = undefined;
-                            e.client = new Client('');
-                            return { ...e };
-                        });
-                    } else {
-                        setGlobalState((e) => {
-                            e.userInfo = res.data;
-                            e.client = new Client(resp.data?.accessToken);
-                            return { ...e };
-                        });
-                    }
+                client.getUserInfo().then((resp) => {
+                    if (resp.success) globalState.userInfo = resp.data;
+
+                    globalState.client = client;
+                    setGlobalState({ ...globalState });
                 });
-
                 nav('/tkbs');
                 notifyMaster.success('Xác thực email thành công');
                 return;
@@ -44,7 +34,7 @@ export default function EmailVerify() {
 
             setIsLoading(false);
         });
-    }, [token]);
+    }, [globalState, setGlobalState, token]);
 
     return (
         <Loader isLoading={isLoading}>

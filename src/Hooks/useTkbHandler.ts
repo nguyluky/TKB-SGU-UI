@@ -316,27 +316,30 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                 return;
             }
 
-            if (khacCS.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
-                NotifyMaster.error(`khác cơ sở ${ov.map((e) => e.ten_mon).join(' - ')}`);
-                setConflict((e) => {
-                    khacCS.forEach((j) => {
-                        if (!e.includes(idToHoc)) e.push(idToHoc);
-                    });
-                    return [...e];
-                });
-                setTimeout(() => {
+            // NOTE: vô hiệu hóa check khác cơ sở
+            // if (khacCS.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
+            //     NotifyMaster.error(`khác cơ sở ${ov.map((e) => e.ten_mon).join(' - ')}`);
+            //     setConflict((e) => {
+            //         khacCS.forEach((j) => {
+            //             if (!e.includes(j.id_to_hoc)) e.push(j.id_to_hoc);
+            //         });
+            //         return [...e];
+            //     });
+            //     setTimeout(() => {
+            //         // console.log('ok');
 
-                    setConflict((e) => {
-                        khacCS.forEach((j) => {
-                            const i = e.indexOf(idToHoc);
-                            if (i >= 0) e.splice(i, 1);
-                        });
+                    // setConflict((e) => {
+                    //     khacCS.forEach((j) => {
+                    //         const m = j.id_to_hoc;
+                    //         const i = e.indexOf(m);
+                    //         if (i >= 0) e.splice(i, 1);
+                    //     });
 
-                        return [...e];
-                    });
-                }, 500);
-                return;
-            }
+            //             return [...e];
+            //         });
+            //     }, 500);
+            //     return;
+            // }
 
             if (ov.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
                 // console.log(ov);
@@ -444,6 +447,8 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                     for (const { id, display_name } of dsNhomHocResp.ds_mon_hoc) {
                         dsMonHoc[id] = display_name;
                     }
+
+                    dsNhomHocResp.ds_nhom_to.forEach((e) => e.tkb || (e.tkb = []));
 
                     setDsNhomHoc({
                         ds_nhom_to: dsNhomHocResp.ds_nhom_to,
