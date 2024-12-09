@@ -366,6 +366,7 @@ export default function useCommand(tkbHandler: useTkbHandlerTypes) {
             globalState.client.localApi,
             globalState.client.serverApi,
             globalState.client.token,
+            globalState.theme,
             nav,
             tkbHandler,
             windowPopup,
