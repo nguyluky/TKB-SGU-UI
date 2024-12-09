@@ -10,7 +10,11 @@ function App() {
     const [globalState, setGlobalState] = useContext(globalContent);
 
     useEffect(() => {
-        window.document?.querySelector('html')?.setAttribute('theme', globalState?.theme || 'light');
+        if (globalState.theme && globalState.theme === 'auto') {
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const newColorScheme = darkModeMediaQuery.matches ? 'dark' : 'light';
+            window.document?.querySelector('html')?.setAttribute('theme', newColorScheme);
+        } else window.document?.querySelector('html')?.setAttribute('theme', globalState?.theme || 'light');
     }, [globalState?.theme]);
 
     useEffect(() => {
