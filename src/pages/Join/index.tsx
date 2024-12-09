@@ -1,14 +1,11 @@
 import { useContext, useEffect } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import { globalContent } from '../../store/GlobalContent';
 
 export default function Join() {
     const nav = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-
     const { joinId } = useParams();
-
     const [globalState] = useContext(globalContent);
 
     useEffect(() => {

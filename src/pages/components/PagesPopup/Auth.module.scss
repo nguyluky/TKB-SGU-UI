@@ -186,3 +186,10 @@ $background-color_3: rgba(55, 65, 81, 1);
 .bt {
     background-color: var(--text-color-2);
 }
+
+.show-password {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}

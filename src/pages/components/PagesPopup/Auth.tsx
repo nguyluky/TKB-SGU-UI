@@ -1,9 +1,8 @@
 import { faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelopeCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import classNames from 'classnames/bind';
-import { forwardRef, useContext, useEffect, useState } from 'react';
+import { forwardRef, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
@@ -44,7 +43,7 @@ function CustomInput({ name, id, labelTitle, children, ...props }: CustomInputPr
     return (
         <div className={cx('input-group')}>
             <label htmlFor={name}>{labelTitle}</label>
-            <input type="text" name={name} id={id} {...props} />
+            <input name={name} id={id} {...props} />
             {children}
         </div>
     );
@@ -67,7 +66,16 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
     const [userName, setUserName] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const [height, setHeight] = useState<number>(0);
+
+    const [errType, setErrType] = useState<string>('');
+    const [mess, setMess] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState([false, false]);
+
+    const [height, setHeight] = useState(0);
+
+    const [loginHeight, setLoginHeight] = useState(0);
+    const [registrationHeight, setRegistrationHeight] = useState(0);
 
     const onClose = () => {
         setParams((e) => {
@@ -101,11 +109,6 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
         }
         onClose();
     });
-
-    const [errType, setErrType] = useState<string>('');
-    const [mess, setMess] = useState<string>('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [dk, setDk] = useState(false);
 
     useEffect(() => {
         // MutableRefObject
@@ -155,6 +158,14 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
             };
         }
     }, [ref, setParams]);
+
+    useLayoutEffect(() => {
+        if (params.get('login')) {
+            setHeight(loginHeight);
+        } else if (params.get('registration')) {
+            setHeight(registrationHeight);
+        }
+    }, [loginHeight, params, registrationHeight]);
 
     const changeToRegistration = (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
@@ -240,6 +251,12 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
             return;
         }
 
+        if (userName.length > 30) {
+            setErrType('username');
+            setMess('Mật khẩu tối đa 30 kí tự!');
+            return;
+        }
+
         if (
             email.match(
                 // eslint-disable-next-line no-useless-escape
@@ -263,7 +280,11 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
             .then((resp) => {
                 setIsLoading(false);
                 if (resp.data.success) {
-                    setDk(true);
+                    notifyMaster.success('Đăng ký thành công, vui lòng kiểm tra email để xác nhận tài khoản');
+                    setParams((e) => {
+                        e.delete('registration');
+                        return e;
+                    });
                 }
 
                 setErrType('email');
@@ -286,6 +307,11 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
         });
     };
 
+    // useEffect(() => {
+    //     setShowPassword([false, false]);
+
+    // }, [JSON.stringify([params.get('login'), params.get('registration')])]);
+
     return (
         <Popup {...pros} open={!!(params.get('login') || params.get('registration'))} onClose={onClose}>
             <div
@@ -296,40 +322,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                     height: height,
                 }}
             >
-                {dk ? (
-                    <div className={cx('check-email')}>
-                        <div className={cx('check-icon')}>
-                            <FontAwesomeIcon icon={faEnvelopeCircleCheck} size={'6x'} />
-                        </div>
-                        <h1>Xác nhận Email</h1>
-                        <span className={cx('info')}>
-                            Bạn đã nhập <strong>{email}</strong> là đại chỉ email cho tài khoản của bạn cần xác nhận
-                            email bạn.
-                        </span>
-
-                        <button
-                            className={cx('sign')}
-                            onClick={(e) => {
-                                window.open('http://gmail.com/');
-                            }}
-                        >
-                            Go to Gmail
-                        </button>
-                        <button className={cx('sign', 'bt')} onClick={(e) => setDk(false)}>
-                            back
-                        </button>
-                    </div>
-                ) : (
-                    ''
-                )}
-                <div
-                    className={cx('form-container', 'login')}
-                    ref={(e) => {
-                        if (!params.get('registration')) {
-                            setHeight(e?.clientHeight || 0);
-                        }
-                    }}
-                >
+                <div className={cx('form-container', 'login')} ref={(e) => setLoginHeight(e?.clientHeight || 0)}>
                     <p className={cx('title')}>Login</p>
                     <form className={cx('form')} onSubmit={onLoginSubmit}>
                         <CustomInput
@@ -344,14 +337,28 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                             name="password"
                             labelTitle="Password"
                             value={password}
+                            type={showPassword[0] ? 'text' : 'password'}
                             onChange={(e) => setPassword(e.target.value)}
                         >
                             <div className={cx('err')}>{errType === 'login-pass' ? mess : ''}</div>
                         </CustomInput>
+
+                        <div className={cx('show-password')}>
+                            <input
+                                type="checkbox"
+                                name=""
+                                id=""
+                                checked={showPassword[0]}
+                                onChange={(e) => {
+                                    setShowPassword([e.target.checked, showPassword[1]]);
+                                }}
+                            />
+                            <label htmlFor="">Show password</label>
+                        </div>
+
                         <ButtonWithLoading isLoading={isLoading} className={cx('sign')}>
                             Sign in
                         </ButtonWithLoading>
-                        {/* <button className={cx('sign')}>Sign in</button> */}
                     </form>
                     <div className={cx('forgot')}>
                         <a rel="noopener noreferrer" href="/">
@@ -380,11 +387,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                 </div>
                 <div
                     className={cx('form-container', 'registration')}
-                    ref={(e) => {
-                        if (params.get('registration')) {
-                            setHeight(e?.clientHeight || 0);
-                        }
-                    }}
+                    ref={(e) => setRegistrationHeight(e?.clientHeight || 0)}
                 >
                     <p className={cx('title')}>Sign up</p>
                     <form className={cx('form')} onSubmit={onRegistration}>
@@ -408,10 +411,24 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                             labelTitle="Password"
                             name="password-registration"
                             value={password}
+                            type={showPassword[1] ? 'text' : 'password'}
                             onChange={(e) => setPassword(e.target.value)}
                         >
                             <div className={cx('err')}></div>
                         </CustomInput>
+
+                        <div className={cx('show-password')}>
+                            <input
+                                type="checkbox"
+                                name=""
+                                id=""
+                                checked={showPassword[1]}
+                                onChange={(e) => {
+                                    setShowPassword([showPassword[0], e.target.checked]);
+                                }}
+                            />
+                            <label htmlFor="">Show password</label>
+                        </div>
 
                         <ButtonWithLoading isLoading={isLoading} className={cx('sign')}>
                             Sign up

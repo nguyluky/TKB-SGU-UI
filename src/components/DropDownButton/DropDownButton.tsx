@@ -14,9 +14,10 @@ interface ActivityItemProps {
     url?: string;
     children?: ReactNode | ReactNode[];
     onClick?: MouseEventHandler;
+    keepOpen?: boolean;
 }
 
-function DropDownButton({ className, icon, children, onClick, url }: ActivityItemProps) {
+function DropDownButton({ className, icon, children, onClick, url, keepOpen }: ActivityItemProps) {
     const dorpDownRef = useRef<HTMLDivElement>(null);
 
     const [isDropDownShow, setDropDownShow] = useState(false);
@@ -43,22 +44,17 @@ function DropDownButton({ className, icon, children, onClick, url }: ActivityIte
     return (
         <div className={classNames(cx('button-wrapper'), className)} ref={dorpDownRef}>
             <div className={cx('icon-wrapper')} onClick={handleOnClickIcon}>
-                {!url ? (
-                    <FontAwesomeIcon icon={icon} />
-                ) : (
-                    <img src={url} alt="avt" referrerPolicy="no-referrer" />
-                )}
+                {!url ? <FontAwesomeIcon icon={icon} /> : <img src={url} alt="avt" referrerPolicy="no-referrer" />}
             </div>
             <div
                 className={cx('activity-drop-down', {
                     show: isDropDownShow && children,
                 })}
+                onClick={() => {
+                    if (!keepOpen) setDropDownShow(false);
+                }}
             >
-                {isDropDownShow && children ? (
-                    <div className={cx('drop-down-wrapper')}>{children}</div>
-                ) : (
-                    ''
-                )}
+                {isDropDownShow && children ? <div className={cx('drop-down-wrapper')}>{children}</div> : ''}
             </div>
         </div>
     );

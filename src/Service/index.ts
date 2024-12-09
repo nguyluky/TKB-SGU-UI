@@ -375,8 +375,12 @@ class ServerApi implements BaseApi {
     }
 
     async emailVerify(token: string) {
-        // TODO: Implement emailVerify
-        // FUCKkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+        const resp = await this.request.get<ApiResponse<{
+            accessToken: string;
+            token_type: string;
+        }>>(api.emailVerify(token));
+        
+        return resp.data;
     }
 
 }
