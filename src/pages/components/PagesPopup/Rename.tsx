@@ -29,6 +29,7 @@ export default function Rename({ onRename, currName, ...props }: RenameModalProp
                         name="inputName"
                         value={lastName}
                         onChange={(event) => setLastName(event.target.value)}
+                        maxLength={40}
                     />
                 </div>
             </PopupModel>

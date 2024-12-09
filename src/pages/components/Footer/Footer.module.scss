@@ -12,3 +12,9 @@
     display: flex;
     gap: 10px;
 }
+
+.icon-wrapper svg {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}

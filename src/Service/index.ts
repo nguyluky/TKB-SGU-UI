@@ -10,14 +10,15 @@ import {
     updateRecord,
 } from './localDB';
 import { generateUUID } from '../utils';
-import SocketManage from './socket';
 import { UserInfoType } from '../store/GlobalContent/Content';
+import { io, Socket } from 'socket.io-client';
 
 const ApiEndPoint = api.baseUrl;
 
 export interface TkbInfo {
     id: string;
     name: string;
+    nam: string;
     tkb_describe: string;
     thumbnails: null | Blob;
     isClient?: boolean;
@@ -367,6 +368,21 @@ class ServerApi implements BaseApi {
         );
         return resp.data;
     }
+
+    async getUserInfoAsQuest(userId: string) {
+        const resp = await this.request.get<ApiResponse<UserInfoType>>(api.getUserInfoAsQuest(userId));
+        return resp.data;
+    }
+
+    async emailVerify(token: string) {
+        const resp = await this.request.get<ApiResponse<{
+            accessToken: string;
+            token_type: string;
+        }>>(api.emailVerify(token));
+        
+        return resp.data;
+    }
+
 }
 
 class localApi
@@ -409,6 +425,7 @@ class localApi
         await updateRecord({
             id: tkbData.id,
             name: tkbData.name,
+            nam: tkbData.nam,
             tkb_describe: tkbData.tkb_describe,
             thumbnails: tkbData.thumbnails,
             ma_hoc_phans: a.ma_hoc_phans,
@@ -439,6 +456,7 @@ class localApi
         const newTkb: TkbInfoIndexDb = {
             id: generateUUID(),
             name: tkbInfo.name,
+            nam: tkbInfo.nam,
             tkb_describe: tkbInfo.tkb_describe,
             thumbnails: tkbInfo.thumbnails,
             id_to_hocs: [],
@@ -503,13 +521,40 @@ class localApi
     }
 }
 
+
+export interface ServerToClientEvents {
+    join:             (userId: string) => void;
+    leave:            (userId: string) => void;
+    updateTkbInfo:    (tkbInfo: TkbInfo) => void;
+    updateMaHocPhans: (tkbId: string, maHocPhans: string[]) => void;
+    updateIdToHocs:   (tkbId: string, idToHocs: string[]) => void;
+    exception:        (data: {code: number, msg: string, success: boolean, data: any}) => void;
+    usersJoined:       (userId: string[]) => void;
+}
+
+export interface ClientToServerEvents {
+    onJoin:           (tkbId: string) => void;
+    onLeave:          (tkbId: string) => void;
+    onUpdateTkbInfo:  (tkbInfo: TkbInfo) => void;
+    onUpdateMaHocPhans: (tkbId: string, maHocPhans: string[]) => void;
+    onUpdateIdToHocs: (tkbId: string, idToHocs: string[]) => void;
+}
+
+export interface InterServerEvents {
+    ping: () => void;
+}
+
+export interface SocketData {
+    userId: string;
+}
+
 let ClientInstance: Client;
 export class Client {
     public request: AxiosInstance;
     public serverApi: ServerApi;
     public localApi: localApi;
     public token?: string;
-    public socket: SocketManage;
+    public socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
     constructor(token?: string) {
         this.token = token;
@@ -522,8 +567,11 @@ export class Client {
             },
         });
         this.serverApi = new ServerApi(this.request);
-        this.socket = new SocketManage(this.token || '');
-        // this.getUserInfo();
+        this.socket = io(apiConfig.baseUrl.replace('/api/v2', ''), {
+            extraHeaders: {
+                authorization: `bearer ${token}`,
+            },
+        });
     }
 
     async getUserInfo() {

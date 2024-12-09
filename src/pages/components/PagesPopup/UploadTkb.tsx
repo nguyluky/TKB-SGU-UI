@@ -1,8 +1,9 @@
 import classNames from 'classnames/bind';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
 import PopupModel from '../../../components/PopupModel';
+import { globalContent } from '../../../store/GlobalContent';
 import style from './PagesPopup.module.scss';
 
 const cx = classNames.bind(style);
@@ -12,6 +13,8 @@ interface UploadTkbProps extends Omit<PopupProps, 'children'> {
 }
 
 export default function UploadTkb({ uploadTkb, ...pros }: UploadTkbProps) {
+    const [globoalState] = useContext(globalContent);
+
     const [pos, setPos] = useState<string>('client');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -32,14 +35,11 @@ export default function UploadTkb({ uploadTkb, ...pros }: UploadTkbProps) {
                 </div>
                 <div className={cx('input')}>
                     <label>Vị trí lưu</label>
-                    <select
-                        name="pos"
-                        id="pos"
-                        value={pos}
-                        onChange={(e) => setPos(e.target.value)}
-                    >
+                    <select name="pos" id="pos" value={pos} onChange={(e) => setPos(e.target.value)}>
                         <option value="client">Client</option>
-                        <option value="server">Server</option>
+                        <option value="server" disabled={!!!globoalState.userInfo}>
+                            Server
+                        </option>
                     </select>
                 </div>
             </PopupModel>

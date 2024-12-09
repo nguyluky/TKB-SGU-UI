@@ -127,8 +127,10 @@
     }
 
     .info {
+        box-sizing: border-box;
         flex: 1;
         padding: 5px;
+        max-width: calc(100% - 30px);
     }
 
     .icon {
@@ -150,6 +152,8 @@
 
     .name {
         font-weight: bold;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     .date {
@@ -172,6 +176,7 @@
 
     .body {
         flex: 1;
+        max-width: calc(100% - 70px);
     }
 
     .info {

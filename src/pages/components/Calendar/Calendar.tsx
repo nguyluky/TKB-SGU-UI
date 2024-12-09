@@ -34,85 +34,58 @@ interface TietDisplay {
     nodeRef: RefObject<HTMLDivElement>;
 }
 
-interface CalendarCellProps {
-    tietDisplay: TietDisplay[];
-    selectedEd: string[];
-    conflictEd: string[];
-    onContextMenu: (event: MouseEvent<HTMLDivElement>, idToHoc: string) => void;
-    onClickHanled: (event: MouseEvent<HTMLDivElement>, idToHoc: string) => void;
-}
-
-function CalendarCell({
-    tietDisplay,
-    selectedEd,
-    conflictEd,
-    onContextMenu,
+function Cell({
+    tr,
+    state,
+    isSelected,
+    isConflict,
     onClickHanled,
-}: CalendarCellProps) {
+    onContextMenu,
+}: {
+    isConflict?: boolean;
+    tr: TietDisplay;
+    state: string;
+    isSelected: boolean;
+    onClickHanled?: (event: MouseEvent<HTMLDivElement>, idToHoc: string) => void;
+    onContextMenu?: (event: MouseEvent<HTMLDivElement>, idToHoc: string) => void;
+}) {
     return (
-        <TransitionGroup>
-            {tietDisplay.map((tr) => {
-                return (
-                    <CSSTransition key={tr.key} nodeRef={tr.nodeRef} timeout={100}>
-                        {(state) => {
-                            return (
-                                <div
-                                    ref={tr.nodeRef}
-                                    key={tr.key}
-                                    onContextMenu={(event) => onContextMenu(event, tr.id_to_hoc)}
-                                    onClick={(event) => onClickHanled(event, tr.id_to_hoc)}
-                                    className={cx('item', state, {
-                                        'tiet-selected': selectedEd.includes(tr.id_to_hoc),
-                                        conflict: conflictEd.includes(tr.id_to_hoc),
-                                    })}
-                                    style={tr.style}
-                                >
-                                    <div
-                                        className={cx('left-side')}
-                                        style={{
-                                            background: tr.style.color,
-                                        }}
-                                    ></div>
-                                    <p
-                                        className={cx('title')}
-                                        content={`${tr.ten_mon} (${tr.id_mon})`}
-                                        style={{
-                                            color: tr.style.color,
-                                        }}
-                                    >
-                                        ({tr.nhom}) {tr.ten_mon}
-                                    </p>
-                                    <p className={cx('info')}>
-                                        Mã môn:{' '}
-                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
-                                            {tr.id_mon}
-                                        </span>
-                                    </p>
-                                    <p className={cx('info')}>
-                                        GV:{' '}
-                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
-                                            {tr.gv}
-                                        </span>
-                                    </p>
-                                    <p className={cx('info')}>
-                                        Phòng:{' '}
-                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
-                                            {tr.phong}
-                                        </span>
-                                    </p>
-                                    {/* <p className={cx('info')}>
-                                        Nhóm:{' '}
-                                        <span style={{ color: tr.style.color, fontWeight: 'bold' }}>
-                                            {tr.nhom}
-                                        </span>
-                                    </p> */}
-                                </div>
-                            );
-                        }}
-                    </CSSTransition>
-                );
+        <div
+            ref={tr.nodeRef}
+            onContextMenu={(event) => onContextMenu?.(event, tr.id_to_hoc)}
+            onClick={(event) => onClickHanled?.(event, tr.id_to_hoc)}
+            className={cx('item', state, {
+                'tiet-selected': isSelected,
+                conflict: isConflict,
             })}
-        </TransitionGroup>
+            style={tr.style}
+        >
+            <div
+                className={cx('left-side')}
+                style={{
+                    background: tr.style.color,
+                }}
+            ></div>
+            <p
+                className={cx('title')}
+                content={`${tr.ten_mon} (${tr.id_mon})`}
+                style={{
+                    color: tr.style.color,
+                }}
+            >
+                ({tr.nhom}) {tr.ten_mon}
+            </p>
+            <p className={cx('info')}>
+                Mã môn:{' '}
+                <span style={{ color: tr.style.color, fontWeight: 'bold' }}>{tr.id_mon}</span>
+            </p>
+            <p className={cx('info')}>
+                GV: <span style={{ color: tr.style.color, fontWeight: 'bold' }}>{tr.gv}</span>
+            </p>
+            <p className={cx('info')}>
+                Phòng: <span style={{ color: tr.style.color, fontWeight: 'bold' }}>{tr.phong}</span>
+            </p>
+        </div>
     );
 }
 
@@ -139,6 +112,7 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
     const [direction, setDirectiom] = useState(false);
     const [isMouseDown, setMouseDown] = useState<boolean>(false);
     const [tietDisplay, setTietDisplay] = useState<TietDisplay[]>([]);
+    const [conflictDisplay, setConflictDisplay] = useState<TietDisplay[]>([]);
     const [contentPos, setContentPos] = useState<[x: number, y: number, isOpen: number]>([0, 0, 0]);
 
     const testRef = useRef<SimpleBarCore>(null);
@@ -203,7 +177,8 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
 
     const onConntextMenu = (event: MouseEvent<HTMLDivElement>, idToHoc: string) => {
         event.preventDefault();
-        const { x, y } = bodyRef.current.getBoundingClientRect();
+        if (!scrollRef.current.mainEle) return;
+        const { x, y } = scrollRef.current.mainEle.getBoundingClientRect();
         console.log();
         console.log(event.clientX - x, event.clientY - y);
 
@@ -246,7 +221,6 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                     scrollbarColor: `hsl(${Math.abs(
                         hashCode(tiet?.ma_mon || '0'),
                     )} 20 50 )  transparent`,
-                    opacity: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0.5 : 1,
                     zIndex: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0 : 1,
                 };
 
@@ -273,6 +247,60 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
     }, [JSON.stringify(idToHocs)]);
 
     useEffect(() => {
+        console.log(conflict);
+        const temp: TietDisplay[] = [];
+        conflict?.forEach((e) => {
+            const tiet = data?.find((j) => j.id_to_hoc === e);
+
+            tiet?.tkb.forEach((jj, i) => {
+                const itemStyle: CSSProperties = {
+                    left: `calc(var(--sell-width) * (${+jj.thu - 2} * var(--y-s) + ${
+                        jj.tbd - 1
+                    } * var(--x-s))`,
+                    top: `calc(var(--sell-height) * (${+jj.thu - 2} * var(--x-s) + ${
+                        jj.tbd - 1
+                    } * var(--y-s)))`,
+                    height: `calc(var(--sell-height) * (${jj.tkt - jj.tbd} * var(--y-s) + 1))`,
+                    width: `calc(var(--sell-width) * (var(--x-s) + 1))`,
+                    background: `hsl(${Math.abs(
+                        hashCode(tiet?.ma_mon || '0'),
+                    )} var(--tkb-nhom-view-HSL-bg))`,
+                    color: `hsl(${Math.abs(
+                        hashCode(tiet?.ma_mon || '0'),
+                    )} var(--tkb-nhom-view-HSL))`,
+                    scrollbarColor: `hsl(${Math.abs(
+                        hashCode(tiet?.ma_mon || '0'),
+                    )} 20 50 )  transparent`,
+                    opacity: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0.5 : 1,
+                    zIndex: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0 : 1,
+                    filter: 'drop-shadow(0 0 5px var(--error-color))',
+                    transition: 'none',
+                };
+
+                const nodeRef =
+                    conflictDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef ||
+                    createRef();
+
+                temp.push({
+                    gv: jj.gv || '',
+                    phong: jj.phong,
+                    ten_mon: tiet?.ten_mon || '',
+                    id_mon: tiet?.ma_mon || '',
+                    nhom: tiet?.nhom || '',
+                    style: itemStyle,
+                    id_to_hoc: tiet?.id_to_hoc || '',
+                    key: (tiet?.ma_mon || '') + i,
+                    nodeRef: nodeRef,
+                });
+            });
+        });
+
+        setConflictDisplay(temp);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(conflict)]);
+
+    useEffect(() => {
         if (testRef.current) {
             console.log(testRef.current);
         }
@@ -295,7 +323,9 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                     console.log('ok');
                     selection.clear();
                     setMouseDown(true);
-                    setContentPos([0, 0, 0]);
+                    setContentPos((e) => {
+                        return [e[0], e[1], 0];
+                    });
                 }
             }
         };
@@ -444,39 +474,62 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                             );
                         })}
                         <div className={cx('display-tiet')}>
-                            <CalendarCell
-                                tietDisplay={tietDisplay}
-                                selectedEd={selection.selection}
-                                conflictEd={conflict}
-                                onClickHanled={onClickHanled}
-                                onContextMenu={onConntextMenu}
-                            />
-
-                            <div
-                                ref={contextRef}
-                                className={cx('context-popup', 'item', {
-                                    show: contentPos[2],
-                                })}
-                                style={{
-                                    top: contentPos[1] + 'px',
-                                    left: contentPos[0] + 'px',
+                            <TransitionGroup>
+                                {tietDisplay.map((tr) => (
+                                    <CSSTransition key={tr.key} nodeRef={tr.nodeRef} timeout={120}>
+                                        {(state) => (
+                                            <Cell
+                                                tr={tr}
+                                                state={state}
+                                                isSelected={selection.selection.includes(
+                                                    tr.id_to_hoc,
+                                                )}
+                                                onClickHanled={onClickHanled}
+                                                onContextMenu={onConntextMenu}
+                                            />
+                                        )}
+                                    </CSSTransition>
+                                ))}
+                            </TransitionGroup>
+                            <TransitionGroup>
+                                {conflictDisplay.map((tr) => (
+                                    <CSSTransition key={tr.key} nodeRef={tr.nodeRef} timeout={120}>
+                                        {(state) => (
+                                            <Cell
+                                                tr={tr}
+                                                state={state}
+                                                isSelected={false}
+                                                isConflict={true}
+                                            />
+                                        )}
+                                    </CSSTransition>
+                                ))}
+                            </TransitionGroup>
+                        </div>
+                        <div
+                            ref={contextRef}
+                            className={cx('context-popup', 'item', {
+                                show: contentPos[2],
+                            })}
+                            style={{
+                                top: contentPos[1] + 'px',
+                                left: contentPos[0] + 'px',
+                            }}
+                        >
+                            <p
+                                onClick={(e) => {
+                                    setContentPos((e) => {
+                                        if (!e) return e;
+                                        e[2] = 0;
+                                        return [...e];
+                                    });
+                                    onTimMonHocTuTu(selection.selection);
                                 }}
                             >
-                                <p
-                                    onClick={(e) => {
-                                        setContentPos((e) => {
-                                            if (!e) return e;
-                                            e[2] = 0;
-                                            return [...e];
-                                        });
-                                        onTimMonHocTuTu(selection.selection);
-                                    }}
-                                >
-                                    Replace
-                                </p>
-                                <p onClick={onDeleteHandel}>Delete</p>
-                                <p onClick={(e) => alert('chưa làm')}>Make to templa</p>
-                            </div>
+                                Replace
+                            </p>
+                            <p onClick={onDeleteHandel}>Delete</p>
+                            <p onClick={(e) => alert('chưa làm')}>Make to templa</p>
                         </div>
                     </div>
                 </div>

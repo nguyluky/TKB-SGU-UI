@@ -21,11 +21,11 @@ export function NewTkb() {
 
     const nav = useNavigate();
 
-    const sendCreateTkbReq = (name: string, pos: string) => {
+    const sendCreateTkbReq = (name: string, pos: string, nam: string) => {
         // send create tkb resp
         if (pos === 'server')
             globalState.client.serverApi
-                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null })
+                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null, nam: nam })
                 .then((data) => {
                     if (!data.success || !data.data) {
                         notifyMaster.error(data.msg);
@@ -36,7 +36,7 @@ export function NewTkb() {
 
         if (pos === 'client') {
             globalState.client.localApi
-                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null })
+                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null, nam: nam })
                 .then((data) => {
                     if (!data.success || !data.data) {
                         notifyMaster.error(data.msg);

@@ -3,6 +3,7 @@ let db: IDBDatabase;
 export interface TkbInfoIndexDb {
     id: string;
     name: string;
+    nam: string;
     tkb_describe: string;
     thumbnails: null | Blob;
     ma_hoc_phans: string[];

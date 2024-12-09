@@ -1,10 +1,4 @@
-import {
-    faArrowDownAZ,
-    faEllipsisVertical,
-    faFolderOpen,
-    faGrip,
-    faList,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowDownAZ, faEllipsisVertical, faFolderOpen, faGrip, faList } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -115,9 +109,13 @@ function DsTkb() {
             if (!reader.result) return;
             try {
                 const fileTkb = Convert.toFileTkb(reader.result as string);
-                const api =
-                    pos === 'client' ? globalState.client.localApi : globalState.client.serverApi;
-                api.createNewTkb({ name: fileTkb.name, tkb_describe: '', thumbnails: null })
+                const api = pos === 'client' ? globalState.client.localApi : globalState.client.serverApi;
+                api.createNewTkb({
+                    name: fileTkb.name,
+                    tkb_describe: '',
+                    thumbnails: null,
+                    nam: fileTkb.nam || '20242',
+                })
                     .then(async (e) => {
                         if (!e.success || !e.data?.id) {
                             notifyMaster.error('Upload tkb không thành công');
@@ -126,11 +124,11 @@ function DsTkb() {
 
                         await api.updateTkbContent(
                             e.data.id,
-                            fileTkb.data.map((e) => e.id_to_hoc),
+                            fileTkb.data.map((e) => e.id_to_hoc)
                         );
                         await api.updateTkbContentMmh(
                             e.data.id,
-                            fileTkb.data.map((e) => e.mhp),
+                            fileTkb.data.map((e) => e.mhp)
                         );
                         setUploadTkbShow(false);
                         if (!e.success) {
@@ -174,7 +172,6 @@ function DsTkb() {
             setDsTkb([...ld, ...sd]);
         });
 
-        console.log('setheader');
         setHeaderPar((e) => {
             e.left = (
                 <Link to={routerConfig.home} style={{ textDecoration: 'none' }}>
@@ -203,10 +200,7 @@ function DsTkb() {
                                 <span>Bắt đầu thời khoá biểu mới</span>
                             </div>
                             <div className={cx('right')}>
-                                <DropDownButton
-                                    icon={faEllipsisVertical}
-                                    className={cx('activity-btn')}
-                                >
+                                <DropDownButton icon={faEllipsisVertical} className={cx('activity-btn')}>
                                     <p>ẩn template</p>
                                 </DropDownButton>
                             </div>
@@ -231,10 +225,7 @@ function DsTkb() {
                                     icon={isRow ? faGrip : faList}
                                     onClick={() => setIsRow((e) => !e)}
                                 />
-                                <DropDownButton
-                                    className={cx('activity-btn')}
-                                    icon={faArrowDownAZ}
-                                />
+                                <DropDownButton className={cx('activity-btn')} icon={faArrowDownAZ} />
                                 <DropDownButton
                                     className={cx('activity-btn')}
                                     icon={faFolderOpen}

@@ -19,7 +19,7 @@ function Popup({
     noFooter?: boolean;
 }) {
     return (
-        <div className={cx('conten-menu-popup')}>
+        <form className={cx('conten-menu-popup')} onSubmit={(e) => e.preventDefault()}>
             <div className={cx('header')}>
                 <h2>{title}</h2>
             </div>
@@ -28,7 +28,7 @@ function Popup({
             {!noFooter ? (
                 <div className={cx('buttons')}>
                     {onCancel ? (
-                        <button className={cx('cancel')} onClick={() => onCancel()}>
+                        <button className={cx('cancel')} onClick={() => onCancel()} type="button">
                             Huỷ
                         </button>
                     ) : null}
@@ -41,7 +41,7 @@ function Popup({
             ) : (
                 ''
             )}
-        </div>
+        </form>
     );
 }
 

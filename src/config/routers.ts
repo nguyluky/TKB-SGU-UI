@@ -9,6 +9,7 @@ const routers = {
     forgotPassword: '/forgot-password',
     join: '/join/:joinId',
     privacyPolicy: 'privacy-policy',
+    verifyEmail: '/verify/:token',
 };
 
 export default routers;

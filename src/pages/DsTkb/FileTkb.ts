@@ -10,6 +10,7 @@
 export interface FileTkb {
     name:    string;
     created: string;
+    nam?:    string;
     data:    Datum[];
 }
 

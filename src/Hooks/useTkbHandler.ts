@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
     ApiResponse,
     DsNhomHocResp,
-    DsNhomHocRespData,
     NhomHoc,
     TkbContent,
     TkbContentMmh,
@@ -13,7 +12,7 @@ import { globalContent } from '../store/GlobalContent';
 import notifyMaster from '../components/NotifyPopup/NotificationManager';
 import { NotifyMaster } from '../components/NotifyPopup';
 
-interface eventTkb {
+export interface EventTkb {
     type:
         | 'addHocPhan'
         | 'addNhomHoc'
@@ -81,7 +80,7 @@ function getKeyBiChung(newKey: string, listKey: string[]) {
 function getKeyKhacCoSo(newKey: string, listKey: string[]) {
     const tem: { [Key: string]: string } = {};
     newKey.split('-').forEach((e) => {
-        console.log(e);
+        // console.log(e);
 
         const [ThT, CS] = e.split('|');
         const [Thu, t] = ThT.split(',');
@@ -115,6 +114,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     const [globalState] = useContext(globalContent);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
+
     const [tkbInfo, setTkbInfo] = useState<TkbInfo>();
     const [id_to_hocs, setIdToHocs] = useState<string[]>([]);
     const [ma_hoc_phans, setMaMomHoc] = useState<string[]>([]);
@@ -124,10 +124,11 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     const cacheTietNhom = useRef<{ [Key: string]: NhomHoc }>({}); // key là gí trị mà hàm tkbToKey chả về
     const tkbDataRef = useRef<TkbInfo>();
     const TkbContent = useRef<[string[], string[]]>([[], []]);
-    const undoTimeLine = useRef<eventTkb[]>([]);
-    const redoTimeLine = useRef<eventTkb[]>([]);
+    const undoTimeLine = useRef<EventTkb[]>([]);
+    const redoTimeLine = useRef<EventTkb[]>([]);
     const [iconSaveing, setIconSaveing] = useState<'saved' | 'notsave' | 'saving'>('saved');
     const [errMsg, setErrMsg] = useState<string>('');
+    const [users, setUsers] = useState<string[]>([]);
 
     const getTkbData = useCallback(async () => {
         if (!tkbId) {
@@ -186,7 +187,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     }, [globalState.client.serverApi]);
 
     const onAddHphandler = useCallback(
-        (mhp: string, isTimeLine?: boolean, isSocket?: boolean) => {
+        (mhp: string, isTimeLine?: boolean) => {
             if (!tkbInfo || ma_hoc_phans.includes(mhp)) {
                 notifyMaster.info('tkb chưa tải xong');
                 return;
@@ -198,8 +199,6 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             //     return;
             // }
 
-            if (!isSocket)
-                globalState.client.socket.emit('addHocPhan', tkbInfo.id, mhp, !!isTimeLine);
 
             ma_hoc_phans.push(mhp);
             setMaMomHoc([...ma_hoc_phans]);
@@ -208,16 +207,13 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                 redoTimeLine.current = [];
             }
         },
-        [globalState.client.socket, ma_hoc_phans, tkbInfo],
+        [ma_hoc_phans, tkbInfo],
     );
 
     const onRemoveNhomHocHandler = useCallback(
-        (idToHoc: string, isTimeLine?: boolean, isSocket?: boolean) => {
+        (idToHoc: string, isTimeLine?: boolean) => {
             const nhom = dsNhomHoc?.ds_nhom_to.find((e) => e.id_to_hoc === idToHoc);
             if (!tkbInfo || !nhom || !id_to_hocs.includes(idToHoc)) return;
-
-            if (!isSocket)
-                globalState.client.socket.emit('removeNhomHoc', tkbInfo.id, idToHoc, !!isTimeLine);
 
             const index = id_to_hocs.indexOf(idToHoc);
             id_to_hocs.splice(index, 1);
@@ -229,23 +225,15 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             delete cacheMhpIdToHoc.current[nhom.ma_mon];
             delete cacheTietNhom.current[tkbToKey(nhom.tkb)];
         },
-        [dsNhomHoc?.ds_nhom_to, globalState.client.socket, id_to_hocs, tkbInfo],
+        [dsNhomHoc?.ds_nhom_to, id_to_hocs, tkbInfo],
     );
 
     const onRemoveHphandeler = useCallback(
-        (mhp: string, isTimeLine?: boolean, isSocket?: boolean) => {
+        (mhp: string, isTimeLine?: boolean) => {
             if (!tkbInfo || !ma_hoc_phans.includes(mhp)) {
                 console.log('hp không tồn tại trong ds hoặc tkb chưa tải xong');
                 return;
             }
-
-            if (!isSocket)
-                globalState.client.socket.emit(
-                    'removeHocPhan',
-                    tkbInfo.id || '',
-                    mhp,
-                    !!isTimeLine,
-                );
 
             const index = ma_hoc_phans.indexOf(mhp);
             ma_hoc_phans.splice(index, 1);
@@ -257,11 +245,11 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
 
             setTkbInfo({ ...tkbInfo });
         },
-        [globalState.client.socket, ma_hoc_phans, onRemoveNhomHocHandler, tkbInfo],
+        [ma_hoc_phans, onRemoveNhomHocHandler, tkbInfo],
     );
 
     const onAddNhomHocHandler = useCallback(
-        (idToHoc: string, isTimeLine?: boolean, replay?: boolean, isSocket?: boolean) => {
+        (idToHoc: string, isTimeLine?: boolean, replay?: boolean) => {
             // dừng hỏi tôi cũng cũng không hiểu mình đang viết gì đâu
 
             if (!tkbInfo) return;
@@ -340,12 +328,12 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             //     setTimeout(() => {
             //         // console.log('ok');
 
-            //         setConflict((e) => {
-            //             khacCS.forEach((j) => {
-            //                 const m = j.id_to_hoc;
-            //                 const i = e.indexOf(m);
-            //                 if (i >= 0) e.splice(i, 1);
-            //             });
+                    // setConflict((e) => {
+                    //     khacCS.forEach((j) => {
+                    //         const m = j.id_to_hoc;
+                    //         const i = e.indexOf(m);
+                    //         if (i >= 0) e.splice(i, 1);
+                    //     });
 
             //             return [...e];
             //         });
@@ -356,17 +344,17 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             if (ov.length && nhom.ma_mon !== '862408' && nhom.ma_mon !== '862409') {
                 // console.log(ov);
 
-                NotifyMaster.error(`Trùng tiết ${ov.map((e) => e.ten_mon).join(' - ')}`);
+                // NotifyMaster.error(`Trùng tiết ${ov.map((e) => e.ten_mon).join(' - ')}`);
                 setConflict((e) => {
                     ov.forEach((j) => {
-                        if (!e.includes(j.id_to_hoc)) e.push(j.id_to_hoc);
+                        if (!e.includes(idToHoc)) e.push(idToHoc);
                     });
                     return [...e];
                 });
                 setTimeout(() => {
                     setConflict((e) => {
                         ov.forEach((j) => {
-                            const m = j.id_to_hoc;
+                            const m = idToHoc;
                             const i = e.indexOf(m);
                             if (i >= 0) e.splice(i, 1);
                         });
@@ -391,26 +379,12 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                 undoTimeLine.current.push({ type: 'addNhomHoc', valueId: idToHoc });
             }
 
-            if (!isSocket)
-                globalState.client.socket.emit(
-                    'addNhomHoc',
-                    tkbInfo.id,
-                    idToHoc,
-                    !!isTimeLine,
-                    !!replay,
-                );
             cacheMhpIdToHoc.current[maMon] = idToHoc;
             cacheTietNhom.current[tkbToKey(nhom.tkb)] = nhom;
             id_to_hocs.push(idToHoc);
             setIdToHocs([...id_to_hocs]);
         },
-        [
-            dsNhomHoc?.ds_nhom_to,
-            globalState.client.socket,
-            id_to_hocs,
-            onRemoveNhomHocHandler,
-            tkbInfo,
-        ],
+        [dsNhomHoc?.ds_nhom_to, id_to_hocs, onRemoveNhomHocHandler, tkbInfo],
     );
 
     const updataTkbInfo = useCallback(async () => {
@@ -442,24 +416,18 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     }, [globalState.client.localApi, globalState.client.serverApi, tkbId]);
 
     const onRenameHandler = useCallback(
-        (s: string, isSocket?: boolean) => {
-            if (!isSocket) globalState.client.socket.emit('rename', tkbId, s);
+        (s: string) => {
             setTkbInfo((e) => {
                 if (!e) return e;
                 e.name = s;
                 return { ...e };
             });
         },
-        [globalState.client.socket, tkbId],
+        [],
     );
 
     // getTkbData và dsNhomHoc
     useEffect(() => {
-        if (globalState.client.islogin()) {
-            console.log('join');
-            globalState.client.socket.emit('join', tkbId || '');
-        }
-
         if (!tkbInfo || !dsNhomHoc) {
             Promise.all([getTkbData(), getTkbContent(), getTkbContentMmh(), getDsNhomHoc()]).then(
                 ([tkbDataResp, idToHocs, mmh, dsNhomHocResp]) => {
@@ -505,6 +473,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                     if (mmh.success && mmh.data) {
                         setMaMomHoc(mmh.data);
                     }
+
                 },
             );
         }
@@ -512,7 +481,7 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
         return () => {
             console.log('hello');
             updataTkbInfo();
-            globalState.client.socket.emit('leave', tkbId || '');
+            globalState.client.socket.emit('onLeave', tkbId || '');
         };
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -522,10 +491,58 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
         if (!tkbInfo) return;
         tkbDataRef.current = tkbInfo;
         TkbContent.current = [id_to_hocs, ma_hoc_phans];
-        // setIconSaveing('notsave');
-    }, [tkbInfo, id_to_hocs, ma_hoc_phans]);
+    }, [tkbInfo, id_to_hocs, ma_hoc_phans, globalState.client, tkbId]);
+
+    // // socket
+    useEffect(() => {
+        if (!globalState.client.islogin()) { return; }
+        
+        globalState.client.socket.emit('onJoin', tkbId || '');
+
+
+        globalState.client.socket.on('updateTkbInfo', (tkbInfo_: TkbInfo) => {
+            setTkbInfo(tkbInfo_);
+        });
+
+        globalState.client.socket.on('updateMaHocPhans', (tkbId: string, maHocPhans: string[]) => {
+            setMaMomHoc(maHocPhans);
+        });
+
+        globalState.client.socket.on('updateIdToHocs', (tkbId: string, idToHocs: string[]) => {
+            setIdToHocs(idToHocs);
+        });
+
+        globalState.client.socket.on('usersJoined', (users: string[]) => {
+            const current = globalState.userInfo?.id || '';
+            setUsers(users.filter(j => j !== current));
+        });
+
+        globalState.client.socket.on('join', (userId: string) => {
+            const current = globalState.userInfo?.id || '';
+            if (userId === current) return;
+            setUsers((e) => {
+                if (e.includes(userId)) return e;
+                return [...e, userId];
+            });
+        });
+
+        globalState.client.socket.on('leave', (userId: string) => {
+            setUsers((e) => {
+                const index = e.indexOf(userId);
+                if (index >= 0) e.splice(index, 1);
+                return [...e];
+            });
+        });
+
+
+
+        return () => {
+            globalState.client.socket.emit('onLeave', tkbId || '');
+        }
+    }, [globalState.client, tkbId]);
 
     return {
+        users,
         tkbData: tkbInfo,
         dsNhomHoc,
         conflict,
@@ -538,11 +555,24 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
         ma_hoc_phans,
 
         setIconSaveing,
-        onAddHphandler,
-        onRemoveHphandeler,
-        onRemoveNhomHocHandler,
-        onAddNhomHocHandler,
-        onRenameHandler,
+        onAddHphandler : (mhp: string, isTimeLine?: boolean) => {
+            onAddHphandler(mhp, isTimeLine);
+            globalState.client.socket.emit('onUpdateMaHocPhans', tkbId, ma_hoc_phans);
+        },
+        onRemoveHphandeler: (mhp: string, isTimeLine?: boolean) => {
+            onRemoveHphandeler(mhp, isTimeLine);
+            globalState.client.socket.emit('onUpdateMaHocPhans', tkbId, ma_hoc_phans);
+            globalState.client.socket.emit('onUpdateIdToHocs', tkbId, id_to_hocs);
+        },
+        onRemoveNhomHocHandler: (idToHoc: string, isTimeLine?: boolean) => {
+            onRemoveNhomHocHandler(idToHoc, isTimeLine);
+            globalState.client.socket.emit('onUpdateIdToHocs', tkbId, id_to_hocs);
+        },
+        onAddNhomHocHandler: (idToHoc: string, isTimeLine?: boolean, replay?: boolean) => {
+            onAddNhomHocHandler(idToHoc, isTimeLine, replay);
+            globalState.client.socket.emit('onUpdateIdToHocs', tkbId, id_to_hocs);
+        },
+        onRenameHandler: onRenameHandler,
         doUpdate: updataTkbInfo,
     };
 };

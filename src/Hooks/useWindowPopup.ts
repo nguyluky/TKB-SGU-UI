@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-interface GoogleRespType {
+export interface GoogleRespType {
     notify: { notifyType: 'error' | 'success' | 'info' | 'warning'; mess: string };
     googleOauth2: string;
 }
 
-interface windowPopupMessageRep<T extends keyof GoogleRespType> {
+export interface windowPopupMessageRep<T extends keyof GoogleRespType> {
     type: T;
     name: string;
     data: GoogleRespType[T];
@@ -67,7 +67,7 @@ export default function useWindowPopup(
         return () => {
             eventListener && window.removeEventListener('message', t);
         };
-    }, []);
+    }, [eventListener]);
 
     const open = useCallback((arg: { url: string; title: string; w: number; h: number }) => {
         if (windownRef.current) {
@@ -80,7 +80,12 @@ export default function useWindowPopup(
     }, []);
 
     const close = useCallback(() => {
-        windownRef.current && windownRef.current.close();
+        try {
+            windownRef.current && windownRef.current.close();
+        }
+        catch (e) {
+            console.error(e);
+        }
     }, []);
 
     return {

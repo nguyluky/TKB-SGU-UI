@@ -5,6 +5,7 @@ import { AuthLayout, DefaultLayout } from '../components/Layout';
 import { routerConfig } from '../config';
 import ChangePassword from '../pages/ChangePassword';
 import DsTkb from '../pages/DsTkb';
+import EmailVerify from '../pages/EmailVerify/EmailVerify';
 import ErrorPage from '../pages/Error';
 import Home from '../pages/Home';
 import Join from '../pages/Join';
@@ -43,6 +44,11 @@ export const defaultLayoutChildren = [
         element: <PrivacyPolicy />,
         nodeRef: createRef<HTMLDivElement>(),
     },
+    {
+        path: routerConfig.verifyEmail,
+        element: <EmailVerify />,
+        nodeRef: createRef<HTMLDivElement>(),
+    },
 ];
 
 const routers = createBrowserRouter([
@@ -67,14 +73,6 @@ const routers = createBrowserRouter([
             </AuthLayout>
         ),
     },
-    // {
-    //     path: routerConfig.logInUp,
-    //     element: (
-    //         <AuthLayout>
-    //             <LoginUp />
-    //         </AuthLayout>
-    //     ),
-    // },
     {
         path: routerConfig.errorPage,
         element: <ErrorPage />,
