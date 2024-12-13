@@ -15,6 +15,15 @@ import { io, Socket } from 'socket.io-client';
 
 const ApiEndPoint = api.baseUrl;
 
+
+export enum Rule {
+    READ = 3,
+    WRITE = 2,
+    ADMIN = 1,
+    OWNER = 0
+}
+
+
 export interface TkbInfo {
     id: string;
     name: string;
@@ -22,6 +31,7 @@ export interface TkbInfo {
     tkb_describe: string;
     thumbnails: null | Blob;
     isClient?: boolean;
+    rule?: number;
     created: Date; //"2024-06-17T12:22:36.000Z"
 }
 
