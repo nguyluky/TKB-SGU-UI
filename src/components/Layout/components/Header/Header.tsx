@@ -249,7 +249,6 @@ function Header({ left, center, right }: { left?: ReactElement; center?: ReactEl
                                     <div className={cx('line')}>
                                         <p
                                             onClick={(e) => {
-                                                // todo
                                                 googleOauthRef.current?.openRegistrastion();
                                             }}
                                         >
