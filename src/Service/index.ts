@@ -196,6 +196,7 @@ class ServerApi implements BaseApi {
                 });
             });
         }
+
         const resp = await this.request.put<ApiResponse<null>>(
             apiConfig.updateTkbInfo(),
             tkbData,

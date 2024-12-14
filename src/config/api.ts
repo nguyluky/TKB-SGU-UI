@@ -31,7 +31,7 @@ const config = {
 
     getTkb: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
     deleteTkb: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
-    updateTkbInfo: () => '/tkbs/',
+    updateTkbInfo: () => '/tkbs',
 
     getTkbContent: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/id_to_hoc',
     updateTkbContent: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/id_to_hoc',
