@@ -52,6 +52,10 @@ const config = {
     getUserInfoAsQuest: (userId: string) => '/user/' + encodeURIComponent(userId),
 
     emailVerify: (token: string) => '/auth/verify/' + encodeURIComponent(token),
+
+    forgetPassword: () => '/auth/forgot-password',
+
+    resetIsalive: () => '/auth/reset-isalive',
 };
 
 export default config;

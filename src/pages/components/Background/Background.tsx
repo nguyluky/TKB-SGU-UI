@@ -3,9 +3,9 @@ import style from './Background.module.scss';
 
 const cx = classNames.bind(style);
 
-export default function Background({ children }: { children?: React.ReactNode }) {
+export default function Background({ children, className }: { children?: React.ReactNode; className?: string }) {
     return (
-        <div className={cx('wrapper')}>
+        <div className={cx('wrapper', className)}>
             <div id={cx('scene')}>
                 <div className={cx('sky')}>
                     <div className={cx('stars', 'layer')} data-depth="0.3">
@@ -186,10 +186,7 @@ export default function Background({ children }: { children?: React.ReactNode })
             </div>
             <div id={cx('made-by-cameron')}>
                 <div className={cx('made-by-author')}>
-                    Made by{' '}
-                    <a href="https://cameronfitzwilliam.com" target="_BLANK">
-                        Cameron Fitzwilliam
-                    </a>
+                    Made by <a href="https://cameronfitzwilliam.com">Cameron Fitzwilliam</a>
                 </div>
             </div>
             <div className={cx('container')}>{children}</div>

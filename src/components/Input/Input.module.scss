@@ -2,7 +2,7 @@
     padding: 10px 0;
     position: relative;
     display: block;
-
+    animation: all 0.2s ease;
     .title {
         top: 50%;
         left: 36px;
@@ -35,6 +35,10 @@
     .input-icon-wrapper:has(input:focus) {
         border-color: var(--primary-color-1);
         // transform: translateX();
+    }
+
+    .input-icon-wrapper:has(input:focus) svg {
+        color: var(--primary-color-1);
     }
 
     input {

@@ -394,6 +394,26 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
+    async forgetPassword(email: string) {
+        const resp = await this.request.post<ApiResponse<null>>(api.forgetPassword(), { email });
+        return resp.data;
+    }
+
+    async resetPassword(token: string, password: string) {
+        const resp = await this.request.post<ApiResponse<null>>(api.resetPassword(token), {
+            password
+        });
+
+        return resp.data;
+    }
+
+    async verifyResetPasswordToken(token: string) {
+        const resp = await this.request.post<ApiResponse<null>>(api.resetIsalive(), {
+            token
+        });
+        return resp.data;
+    }
+
 }
 
 class localApi
