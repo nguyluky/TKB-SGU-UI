@@ -50,4 +50,8 @@
         outline: none;
         padding: var(--margin-g);
     }
+
+    input::placeholder {
+        color: hsl(from var(--text-color) h s calc(100% - var(--l-2)));
+    }
 }

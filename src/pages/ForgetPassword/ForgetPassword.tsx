@@ -31,7 +31,7 @@ export default function ForgetPassword() {
             if (res.success) {
                 setIsSending(true);
             } else {
-                emailRef.current?.setCustomValidity('Email không tồn tại.');
+                emailRef.current?.setCustomValidity(res.msg);
                 emailRef.current?.reportValidity();
                 emailRef.current?.focus();
                 emailRef.current?.select();
@@ -66,6 +66,7 @@ export default function ForgetPassword() {
                             <form onSubmit={handleSubmit}>
                                 <div className={cx('input-group')}>
                                     <Input
+                                        className={cx('input')}
                                         title=""
                                         ref={emailRef}
                                         icon={faAt}

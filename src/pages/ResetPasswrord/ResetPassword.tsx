@@ -96,6 +96,7 @@ export default function ResetPassword() {
                                 <form onSubmit={handleSubmit}>
                                     <div className={cx('input-group')}>
                                         <Input
+                                            className={cx('input')}
                                             icon={faLock}
                                             ref={passwordResetEmailRef}
                                             type="password"
@@ -109,6 +110,7 @@ export default function ResetPassword() {
                                     </div>
                                     <div className={cx('input-group')}>
                                         <Input
+                                            className={cx('input')}
                                             icon={faLock}
                                             ref={passwordResetEmail1Ref}
                                             type="password"

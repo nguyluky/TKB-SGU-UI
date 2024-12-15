@@ -326,8 +326,8 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                     <p className={cx('title')}>Login</p>
                     <form className={cx('form')} onSubmit={onLoginSubmit}>
                         <CustomInput
-                            name="username"
-                            labelTitle="Username"
+                            name="username & email"
+                            labelTitle="Username & Email"
                             value={userName}
                             onChange={(e) => setUserName(e.target.value)}
                         >

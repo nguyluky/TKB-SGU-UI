@@ -3,19 +3,23 @@
 :root {
     --header-height: 45px;
 
-    --header-color: #ffffff;
-    --content-color: #e3e5e8;
-    --content-color-1: #f2f3f5;
+    --l-0: 100%;
+    --l-1: 90%;
+    --l-2: 95%;
+
+    --header-color: hsl(0, 0%, 100%);
+    --content-color: hsl(216, 10%, 90%);
+    --content-color-1: hsl(220, 10%, 95%);
     --background-btn-hover: #0000000c;
 
     --shadow-1: rgba(0, 0, 0, 0.1);
     --shadow-2: rgba(0, 0, 0, 0.2);
 
-    --text-color: black;
-    --text-color-2: #777777;
-    --text-color-selection: #e06c75;
+    --text-color: hsl(0, 0%, 0%);
+    --text-color-2: hsl(0, 0%, 47%);
+    --text-color-selection: hsl(355, 65%, 65%);
 
-    --hover-color: #555;
+    --hover-color: hsl(0, 0%, 33%);
 
     --tkb-nhom-view-HSL: 80 40;
     --tkb-nhom-view-HSL-bg: 50 78;
@@ -24,12 +28,12 @@
     --margin-g: 5px;
     --border-radius-g: 5px;
 
-    --primary-color-1: #20b6ae;
+    --primary-color-1: hsl(177, 90%, 30%);
 
-    --error-color: #fc7386;
-    --success-color: #a1e54a;
-    --warning-color: #f7c45f;
-    --info-color: #5f69f7;
+    --error-color: hsl(352, 90%, 67%);
+    --success-color: hsl(86, 90%, 67%);
+    --warning-color: hsl(40, 90%, 67%);
+    --info-color: hsl(236, 90%, 67%);
 }
 
 p,
@@ -46,10 +50,17 @@ input {
 }
 
 html[theme='dark'] {
-    --header-color: #1e1f22;
-    --content-color: #2b2d31;
-    --content-color-1: #313338;
-    --background-btn-hover: #0000000c;
+    --l-0: 10%;
+    --l-1: 20%;
+    --l-2: 25%;
+
+    --header-color: hsl(225, 7%, 10%);
+    --content-color: hsl(220, 7%, 20%);
+    --content-color-1: hsl(223, 7%, 25%);
+
+    --background-btn-hover: hsla(0, 0%, 0%, 0.047);
+
+    --primary-color-1: hsl(177, 90%, 42%);
 
     --text-color: #f3f3f3;
     --tkb-nhom-view-HSL: 80 50;
@@ -129,4 +140,8 @@ body {
 
 .simplebar-content-wrapper {
     min-height: 100%;
+}
+
+.popup-overlay {
+    background: rgba(0, 0, 0, 0.2);
 }

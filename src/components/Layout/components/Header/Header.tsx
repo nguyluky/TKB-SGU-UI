@@ -77,7 +77,12 @@ function Header({ left, center, right }: { left?: ReactElement; center?: ReactEl
             <div className={cx('right')}>
                 {right}
                 <div className={cx('activity')}>
-                    <Auth onForgotPassword={() => {}} ref={googleOauthRef} />
+                    <Auth
+                        onForgotPassword={() => {
+                            navigate('/forgot-password');
+                        }}
+                        ref={googleOauthRef}
+                    />
                     <DropDownButton icon={faCaretDown} className={cx('item')}>
                         <div className={cx('container')}>
                             <label onClick={openDiscord}>
