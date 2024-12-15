@@ -31,7 +31,7 @@ const config = {
 
     getTkb: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
     deleteTkb: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
-    updateTkbInfo: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
+    updateTkbInfo: () => '/tkbs',
 
     getTkbContent: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/id_to_hoc',
     updateTkbContent: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/id_to_hoc',
@@ -52,6 +52,10 @@ const config = {
     getUserInfoAsQuest: (userId: string) => '/user/' + encodeURIComponent(userId),
 
     emailVerify: (token: string) => '/auth/verify/' + encodeURIComponent(token),
+
+    forgetPassword: () => '/auth/forgot-password',
+
+    resetIsalive: () => '/auth/reset-isalive',
 };
 
 export default config;

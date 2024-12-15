@@ -166,6 +166,9 @@ export default function Tkb() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setHeaderPar, tkbHandler.tkbData?.name, tkbHandler.iconSaveing, tkbHandler.users]);
 
+    // TODO: chuyển vào trong useTkbHandler
+    // sửa lỗi mỗi khi vào là nó tính là thay đổi
+    // chỉ cập nhật tường phần tử thay đổi
     // auto save
     useEffect(() => {
         let sCT = 0;

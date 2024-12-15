@@ -15,6 +15,15 @@ import { io, Socket } from 'socket.io-client';
 
 const ApiEndPoint = api.baseUrl;
 
+
+export enum Rule {
+    READ = 3,
+    WRITE = 2,
+    ADMIN = 1,
+    OWNER = 0
+}
+
+
 export interface TkbInfo {
     id: string;
     name: string;
@@ -22,6 +31,7 @@ export interface TkbInfo {
     tkb_describe: string;
     thumbnails: null | Blob;
     isClient?: boolean;
+    rule?: number;
     created: Date; //"2024-06-17T12:22:36.000Z"
 }
 
@@ -186,8 +196,9 @@ class ServerApi implements BaseApi {
                 });
             });
         }
+
         const resp = await this.request.put<ApiResponse<null>>(
-            apiConfig.updateTkbInfo(tkbData.id),
+            apiConfig.updateTkbInfo(),
             tkbData,
         );
         return resp.data;
@@ -380,6 +391,26 @@ class ServerApi implements BaseApi {
             token_type: string;
         }>>(api.emailVerify(token));
         
+        return resp.data;
+    }
+
+    async forgetPassword(email: string) {
+        const resp = await this.request.post<ApiResponse<null>>(api.forgetPassword(), { email });
+        return resp.data;
+    }
+
+    async resetPassword(token: string, password: string) {
+        const resp = await this.request.post<ApiResponse<null>>(api.resetPassword(token), {
+            password
+        });
+
+        return resp.data;
+    }
+
+    async verifyResetPasswordToken(token: string) {
+        const resp = await this.request.post<ApiResponse<null>>(api.resetIsalive(), {
+            token
+        });
         return resp.data;
     }
 

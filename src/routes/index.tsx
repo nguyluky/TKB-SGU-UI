@@ -1,15 +1,16 @@
 import { createBrowserRouter, RouteObject } from 'react-router-dom';
 
 import { createRef } from 'react';
-import { AuthLayout, DefaultLayout } from '../components/Layout';
+import { DefaultLayout } from '../components/Layout';
 import { routerConfig } from '../config';
-import ChangePassword from '../pages/ChangePassword';
 import DsTkb from '../pages/DsTkb';
 import EmailVerify from '../pages/EmailVerify/EmailVerify';
 import ErrorPage from '../pages/Error';
+import ForgetPassword from '../pages/ForgetPassword';
 import Home from '../pages/Home';
 import Join from '../pages/Join';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
+import ResetPassword from '../pages/ResetPasswrord';
 import Test from '../pages/Test/Test';
 import Tkb from '../pages/Tkb';
 
@@ -66,12 +67,12 @@ const routers = createBrowserRouter([
         }),
     },
     {
-        path: routerConfig.changePassword,
-        element: (
-            <AuthLayout>
-                <ChangePassword />
-            </AuthLayout>
-        ),
+        path: routerConfig.resetPassword,
+        element: <ResetPassword />,
+    },
+    {
+        path: routerConfig.forgotPassword,
+        element: <ForgetPassword />,
     },
     {
         path: routerConfig.errorPage,

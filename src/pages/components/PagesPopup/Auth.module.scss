@@ -74,7 +74,8 @@ $background-color_3: rgba(55, 65, 81, 1);
     font-size: 0.75rem;
     line-height: 1rem;
     margin: 20px 0 0 0;
-    a {
+
+    p {
         color: var(--primary-color-1);
         text-decoration: none;
         font-size: 14px;
@@ -192,4 +193,13 @@ $background-color_3: rgba(55, 65, 81, 1);
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.show-password input {
+    background-color: var(--content-color-1);
+}
+
+.show-password label {
+    color: var(--text-color-2);
 }

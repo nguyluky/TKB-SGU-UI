@@ -1,6 +1,8 @@
 import classNames from 'classnames/bind';
-
+import { useContext, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { headerContent } from '../../components/Layout/DefaultLayout';
+import Background from '../components/Background';
 import style from './Error.module.scss';
 
 const cx = classNames.bind(style);
@@ -69,6 +71,8 @@ const icons: { [Key: string]: JSX.Element } = {
 };
 
 function Error({ msg, code, icon }: { msg?: string; code?: number; icon?: string }) {
+    const setHeader = useContext(headerContent);
+
     const [searchParams] = useSearchParams();
     const nav = useNavigate();
 
@@ -77,41 +81,38 @@ function Error({ msg, code, icon }: { msg?: string; code?: number; icon?: string
 
     icon = icon || searchParams.get('icon') || '';
 
-    const iconJsx = icons[icon] || icons['pageNotFound'];
+    // const iconJsx = icons[icon] || icons['pageNotFound'];
+
+    useEffect(() => {
+        if (setHeader)
+            setHeader((e) => {
+                e.left = (
+                    <p
+                        style={{
+                            marginLeft: '5px',
+                            fontSize: '1.3rem',
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        Error {code}
+                    </p>
+                );
+                return { ...e };
+            });
+    }, [code, setHeader]);
 
     return (
-        <div className={cx('wrapper')}>
-            <div className={cx('context')}>
-                <div className={cx('icon')}>{iconJsx}</div>
-                <div className={cx('info')}>
-                    <h1 className={cx('code')}>{code}</h1>
-                    <p className={cx('msg')}>{msg}</p>
-                    <div className={cx('button')}>
-                        <button onClick={() => nav('/')}>Go Home Page</button>
-                        <button
-                            className={cx('nbg')}
-                            onClick={() => window.open('https://github.com/nguyluky/TKB-SGU-UI/issues')}
-                        >
-                            Report
-                        </button>
+        <Background>
+            <div className={cx('wrapper')}>
+                <div className={cx('error-container')}>
+                    <div className={cx('error-code')}>{code}</div>
+                    <div className={cx('error-msg')}>{msg}</div>
+                    <div className={cx('error-btn')} onClick={() => nav('/')}>
+                        Go back Home
                     </div>
                 </div>
             </div>
-            <div className={cx('area')}>
-                <ul className={cx('circles')}>
-                    <li />
-                    <li />
-                    <li />
-                    <li />
-                    <li />
-                    <li />
-                    <li />
-                    <li />
-                    <li />
-                    <li />
-                </ul>
-            </div>
-        </div>
+        </Background>
     );
 }
 

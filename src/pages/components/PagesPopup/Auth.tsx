@@ -326,8 +326,8 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                     <p className={cx('title')}>Login</p>
                     <form className={cx('form')} onSubmit={onLoginSubmit}>
                         <CustomInput
-                            name="username"
-                            labelTitle="Username"
+                            name="username & email"
+                            labelTitle="Username & Email"
                             value={userName}
                             onChange={(e) => setUserName(e.target.value)}
                         >
@@ -361,9 +361,9 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                         </ButtonWithLoading>
                     </form>
                     <div className={cx('forgot')}>
-                        <a rel="noopener noreferrer" href="/">
+                        <p rel="noopener noreferrer" onClick={pros.onForgotPassword}>
                             Forgot Password ?
-                        </a>
+                        </p>
                     </div>
                     <div className={cx('social-message')}>
                         <div className={cx('line')} />
@@ -421,13 +421,12 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                             <input
                                 type="checkbox"
                                 name=""
-                                id=""
                                 checked={showPassword[1]}
                                 onChange={(e) => {
                                     setShowPassword([showPassword[0], e.target.checked]);
                                 }}
                             />
-                            <label htmlFor="">Show password</label>
+                            <label>Show password</label>
                         </div>
 
                         <ButtonWithLoading isLoading={isLoading} className={cx('sign')}>

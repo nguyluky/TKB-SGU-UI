@@ -1,16 +1,7 @@
 import { faGripLines } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
-import {
-    createRef,
-    CSSProperties,
-    forwardRef,
-    MouseEvent,
-    RefObject,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import { createRef, CSSProperties, forwardRef, MouseEvent, RefObject, useEffect, useRef, useState } from 'react';
 
 import useResizeObserver from '@react-hook/resize-observer';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -76,8 +67,7 @@ function Cell({
                 ({tr.nhom}) {tr.ten_mon}
             </p>
             <p className={cx('info')}>
-                Mã môn:{' '}
-                <span style={{ color: tr.style.color, fontWeight: 'bold' }}>{tr.id_mon}</span>
+                Mã môn: <span style={{ color: tr.style.color, fontWeight: 'bold' }}>{tr.id_mon}</span>
             </p>
             <p className={cx('info')}>
                 GV: <span style={{ color: tr.style.color, fontWeight: 'bold' }}>{tr.gv}</span>
@@ -101,7 +91,7 @@ interface Props {
 
 const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
     { data, idToHocs, onDeleteNhomHoc, onTimMonHocTuTu, conflict, selection, onMiniSide },
-    calendarRef,
+    calendarRef
 ) {
     const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
     const countRow = 10;
@@ -135,7 +125,7 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
         if (!scrollRef.current.thuSrcoll) return;
         const div = e.target as HTMLDivElement;
         const p = (div.clientWidth / div.scrollWidth) * 100;
-        console.log(p);
+        // console.log(p);
 
         scrollRef.current.thuSrcoll.style.width = p + '%';
         if (p === 100) {
@@ -147,7 +137,7 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
         if (!scrollRef.current.tietSrcoll) return;
         const div = e.target as HTMLDivElement;
         const p = (div.clientHeight / div.scrollHeight) * 100;
-        console.log(p);
+        // console.log(p);
 
         scrollRef.current.tietSrcoll.style.height = p + '%';
         if (p === 100) {
@@ -204,29 +194,17 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
 
             tiet?.tkb.forEach((jj, i) => {
                 const itemStyle: CSSProperties = {
-                    left: `calc(var(--sell-width) * (${+jj.thu - 2} * var(--y-s) + ${
-                        jj.tbd - 1
-                    } * var(--x-s))`,
-                    top: `calc(var(--sell-height) * (${+jj.thu - 2} * var(--x-s) + ${
-                        jj.tbd - 1
-                    } * var(--y-s)))`,
+                    left: `calc(var(--sell-width) * (${+jj.thu - 2} * var(--y-s) + ${jj.tbd - 1} * var(--x-s))`,
+                    top: `calc(var(--sell-height) * (${+jj.thu - 2} * var(--x-s) + ${jj.tbd - 1} * var(--y-s)))`,
                     height: `calc(var(--sell-height) * (${jj.tkt - jj.tbd} * var(--y-s) + 1))`,
                     width: `calc(var(--sell-width) * (var(--x-s) + 1))`,
-                    background: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} var(--tkb-nhom-view-HSL-bg))`,
-                    color: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} var(--tkb-nhom-view-HSL))`,
-                    scrollbarColor: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} 20 50 )  transparent`,
+                    background: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} var(--tkb-nhom-view-HSL-bg))`,
+                    color: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} var(--tkb-nhom-view-HSL))`,
+                    scrollbarColor: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} 20 50 )  transparent`,
                     zIndex: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0 : 1,
                 };
 
-                const nodeRef =
-                    tietDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef ||
-                    createRef();
+                const nodeRef = tietDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef || createRef();
 
                 temp.push({
                     gv: jj.gv || '',
@@ -254,32 +232,20 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
 
             tiet?.tkb.forEach((jj, i) => {
                 const itemStyle: CSSProperties = {
-                    left: `calc(var(--sell-width) * (${+jj.thu - 2} * var(--y-s) + ${
-                        jj.tbd - 1
-                    } * var(--x-s))`,
-                    top: `calc(var(--sell-height) * (${+jj.thu - 2} * var(--x-s) + ${
-                        jj.tbd - 1
-                    } * var(--y-s)))`,
+                    left: `calc(var(--sell-width) * (${+jj.thu - 2} * var(--y-s) + ${jj.tbd - 1} * var(--x-s))`,
+                    top: `calc(var(--sell-height) * (${+jj.thu - 2} * var(--x-s) + ${jj.tbd - 1} * var(--y-s)))`,
                     height: `calc(var(--sell-height) * (${jj.tkt - jj.tbd} * var(--y-s) + 1))`,
                     width: `calc(var(--sell-width) * (var(--x-s) + 1))`,
-                    background: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} var(--tkb-nhom-view-HSL-bg))`,
-                    color: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} var(--tkb-nhom-view-HSL))`,
-                    scrollbarColor: `hsl(${Math.abs(
-                        hashCode(tiet?.ma_mon || '0'),
-                    )} 20 50 )  transparent`,
+                    background: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} var(--tkb-nhom-view-HSL-bg))`,
+                    color: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} var(--tkb-nhom-view-HSL))`,
+                    scrollbarColor: `hsl(${Math.abs(hashCode(tiet?.ma_mon || '0'))} 20 50 )  transparent`,
                     opacity: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0.5 : 1,
                     zIndex: tiet?.ma_mon === '862408' || tiet?.ma_mon === '862409' ? 0 : 1,
                     filter: 'drop-shadow(0 0 5px var(--error-color))',
                     transition: 'none',
                 };
 
-                const nodeRef =
-                    conflictDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef ||
-                    createRef();
+                const nodeRef = conflictDisplay.find((e) => e.key === (tiet?.ma_mon || '') + i)?.nodeRef || createRef();
 
                 temp.push({
                     gv: jj.gv || '',
@@ -312,8 +278,7 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                 let isClickOutSide = true;
 
                 tietDisplay.forEach((e) => {
-                    if (e.nodeRef.current?.contains(event.target as HTMLElement))
-                        isClickOutSide = false;
+                    if (e.nodeRef.current?.contains(event.target as HTMLElement)) isClickOutSide = false;
                 });
 
                 if (contextRef.current && contextRef.current.contains(event.target as HTMLElement))
@@ -361,15 +326,10 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                         const d = e.target as HTMLDivElement;
                         if (scrollRef.current.thuSrcoll) {
                             scrollRef.current.thuSrcoll.style.left =
-                                d.scrollLeft *
-                                    (scrollRef.current.thuSrcoll.clientWidth / d.clientWidth) +
-                                'px';
+                                d.scrollLeft * (scrollRef.current.thuSrcoll.clientWidth / d.clientWidth) + 'px';
                         }
 
-                        if (
-                            scrollRef.current.mainEle &&
-                            !d.isEqualNode(scrollRef.current.mainEle)
-                        ) {
+                        if (scrollRef.current.mainEle && !d.isEqualNode(scrollRef.current.mainEle)) {
                             scrollRef.current.mainEle.scrollLeft = d.scrollLeft;
                         }
                     }}
@@ -402,15 +362,10 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
 
                         if (scrollRef.current.tietSrcoll) {
                             scrollRef.current.tietSrcoll.style.top =
-                                d.scrollTop *
-                                    (scrollRef.current.tietSrcoll.clientHeight / d.clientHeight) +
-                                'px';
+                                d.scrollTop * (scrollRef.current.tietSrcoll.clientHeight / d.clientHeight) + 'px';
                         }
 
-                        if (
-                            scrollRef.current.mainEle &&
-                            !d.isEqualNode(scrollRef.current.mainEle)
-                        ) {
+                        if (scrollRef.current.mainEle && !d.isEqualNode(scrollRef.current.mainEle)) {
                             scrollRef.current.mainEle.scrollTop = d.scrollTop;
                         }
                     }}
@@ -440,25 +395,18 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                         const d = e.target as HTMLDivElement;
                         if (scrollRef.current.thuSrcoll) {
                             scrollRef.current.thuSrcoll.style.left =
-                                d.scrollLeft *
-                                    (scrollRef.current.thuSrcoll.clientWidth / d.clientWidth) +
-                                'px';
+                                d.scrollLeft * (scrollRef.current.thuSrcoll.clientWidth / d.clientWidth) + 'px';
                         }
 
                         if (scrollRef.current.tietSrcoll) {
                             scrollRef.current.tietSrcoll.style.top =
-                                d.scrollTop *
-                                    (scrollRef.current.tietSrcoll.clientHeight / d.clientHeight) +
-                                'px';
+                                d.scrollTop * (scrollRef.current.tietSrcoll.clientHeight / d.clientHeight) + 'px';
                         }
                         if (scrollRef.current.thuEle && !d.isEqualNode(scrollRef.current.thuEle)) {
                             scrollRef.current.thuEle.scrollLeft = d.scrollLeft;
                         }
 
-                        if (
-                            scrollRef.current.tietEle &&
-                            !d.isEqualNode(scrollRef.current.tietEle)
-                        ) {
+                        if (scrollRef.current.tietEle && !d.isEqualNode(scrollRef.current.tietEle)) {
                             scrollRef.current.tietEle.scrollTop = d.scrollTop;
                         }
                     }}
@@ -481,9 +429,7 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                                             <Cell
                                                 tr={tr}
                                                 state={state}
-                                                isSelected={selection.selection.includes(
-                                                    tr.id_to_hoc,
-                                                )}
+                                                isSelected={selection.selection.includes(tr.id_to_hoc)}
                                                 onClickHanled={onClickHanled}
                                                 onContextMenu={onConntextMenu}
                                             />
@@ -494,14 +440,7 @@ const Calendar = forwardRef<HTMLDivElement, Props>(function Calendar(
                             <TransitionGroup>
                                 {conflictDisplay.map((tr) => (
                                     <CSSTransition key={tr.key} nodeRef={tr.nodeRef} timeout={120}>
-                                        {(state) => (
-                                            <Cell
-                                                tr={tr}
-                                                state={state}
-                                                isSelected={false}
-                                                isConflict={true}
-                                            />
-                                        )}
+                                        {(state) => <Cell tr={tr} state={state} isSelected={false} isConflict={true} />}
                                     </CSSTransition>
                                 ))}
                             </TransitionGroup>

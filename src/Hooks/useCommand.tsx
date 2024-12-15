@@ -193,64 +193,10 @@ export default function useCommand(tkbHandler: useTkbHandlerTypes) {
                     );
                 },
                 undo: () => {
-                    const event = tkbHandler.undoTimeLine.current.pop();
-                    console.log(event);
-                    if (!event) return;
-                    tkbHandler.redoTimeLine.current.push(event);
-                    switch (event.type) {
-                        case 'addHocPhan':
-                            tkbHandler.onRemoveHphandeler(event.valueId, true);
-                            break;
-
-                        case 'addNhomHoc':
-                            tkbHandler.onRemoveNhomHocHandler(event.valueId, true);
-                            break;
-
-                        case 'removeHocPhan':
-                            tkbHandler.onAddHphandler(event.valueId, true);
-                            break;
-
-                        case 'removeNhomHoc':
-                            tkbHandler.onAddNhomHocHandler(event.valueId, true);
-                            break;
-                        case 'switchNhomHoc':
-                            tkbHandler.onAddNhomHocHandler(event.valueId.split('|')[0], true);
-                            break;
-
-                        case 'replayNhomHoc':
-                            const [a, ...b] = event.valueId.split('|');
-                            console.log(a, b);
-                            tkbHandler.onRemoveNhomHocHandler(a, true);
-                            b.forEach((e) => {
-                                tkbHandler.onAddNhomHocHandler(e, true);
-                            });
-                    }
+                    tkbHandler.unDo();
                 },
                 redo: () => {
-                    const event = tkbHandler.redoTimeLine.current.pop();
-                    console.log(event);
-                    if (!event) return;
-                    tkbHandler.undoTimeLine.current.push(event);
-                    switch (event.type) {
-                        case 'addHocPhan':
-                            tkbHandler.onAddHphandler(event.valueId, true);
-                            break;
-
-                        case 'addNhomHoc':
-                            tkbHandler.onAddNhomHocHandler(event.valueId, true);
-                            break;
-
-                        case 'removeHocPhan':
-                            tkbHandler.onRemoveHphandeler(event.valueId, true);
-                            break;
-
-                        case 'removeNhomHoc':
-                            tkbHandler.onRemoveNhomHocHandler(event.valueId, true);
-                            break;
-                        case 'switchNhomHoc':
-                            tkbHandler.onAddNhomHocHandler(event.valueId.split('|')[1], true);
-                            break;
-                    }
+                    tkbHandler.reDo();
                 },
                 exit: () => {
                     nav('/tkbs');

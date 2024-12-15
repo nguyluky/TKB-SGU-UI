@@ -2,7 +2,7 @@
     padding: 10px 0;
     position: relative;
     display: block;
-
+    animation: all 0.2s ease;
     .title {
         top: 50%;
         left: 36px;
@@ -37,6 +37,10 @@
         // transform: translateX();
     }
 
+    .input-icon-wrapper:has(input:focus) svg {
+        color: var(--primary-color-1);
+    }
+
     input {
         flex: 1;
         font-size: 16px;
@@ -45,5 +49,9 @@
         border: transparent !important;
         outline: none;
         padding: var(--margin-g);
+    }
+
+    input::placeholder {
+        color: hsl(from var(--text-color) h s calc(100% - var(--l-2)));
     }
 }
