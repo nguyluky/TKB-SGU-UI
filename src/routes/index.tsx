@@ -3,6 +3,7 @@ import { createBrowserRouter, RouteObject } from 'react-router-dom';
 import { createRef } from 'react';
 import { DefaultLayout } from '../components/Layout';
 import { routerConfig } from '../config';
+import Donate from '../pages/Donate';
 import DsTkb from '../pages/DsTkb';
 import EmailVerify from '../pages/EmailVerify/EmailVerify';
 import ErrorPage from '../pages/Error';
@@ -81,6 +82,10 @@ const routers = createBrowserRouter([
     {
         path: '*',
         element: <ErrorPage />,
+    },
+    {
+        path: routerConfig.donate,
+        element: <Donate></Donate>,
     },
 ]);
 

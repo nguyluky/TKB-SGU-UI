@@ -1,5 +1,15 @@
 import { faDiscord, faFacebook, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faAt, faBug, faCaretDown, faGear, faLock, faMoon, faSun, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+    faAt,
+    faBug,
+    faCaretDown,
+    faGear,
+    faGift,
+    faLock,
+    faMoon,
+    faSun,
+    faUser,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
 import { ReactElement, useContext, useRef, useState } from 'react';
@@ -123,6 +133,13 @@ function Header({ left, center, right }: { left?: ReactElement; center?: ReactEl
                             </label>
                         </div>
                     </DropDownButton>
+                    <DropDownButton
+                        icon={faGift}
+                        className={cx('item')}
+                        onClick={() => {
+                            navigate('/donate');
+                        }}
+                    ></DropDownButton>
                     <DropDownButton icon={faSun} className={cx('item')}>
                         <div className={cx('container')}>
                             <label

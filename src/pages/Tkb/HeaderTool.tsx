@@ -26,7 +26,7 @@ interface TOOL {
     icon?: IconProp;
     onclick?: () => void;
     pos: 'Left' | 'bottom';
-    children?: TOOL[];
+    children?: TOOL[][];
 }
 
 function Tool({
@@ -106,23 +106,29 @@ function Tool({
                 tool.children ? (
                     <div className={cx('drop-down-item', tool.pos)}>
                         {tool.children?.map((e, i) => {
-                            if (e.onclick) {
-                                const c = e.onclick;
-                                e.onclick = (...arg) => {
-                                    if (onClickOutSide) onClickOutSide();
-                                    c(...arg);
-                                };
-                            }
-
                             return (
-                                <Tool
-                                    key={e.title + i}
-                                    tool={e}
-                                    titleShow={tabShow}
-                                    onMouseEnter={mouseEnterHandler}
-                                    onClick={mouseClickHandler}
-                                    onClickOutSide={onClickOutSideHandler}
-                                />
+                                <div className={cx('group-item')} key={i}>
+                                    {e.map((e, i) => {
+                                        if (e.onclick) {
+                                            const c = e.onclick;
+                                            e.onclick = (...arg) => {
+                                                if (onClickOutSide) onClickOutSide();
+                                                c(...arg);
+                                            };
+                                        }
+
+                                        return (
+                                            <Tool
+                                                key={e.title + i}
+                                                tool={e}
+                                                titleShow={tabShow}
+                                                onMouseEnter={mouseEnterHandler}
+                                                onClick={mouseClickHandler}
+                                                onClickOutSide={onClickOutSideHandler}
+                                            />
+                                        );
+                                    })}
+                                </div>
                             );
                         })}
                     </div>
@@ -158,53 +164,59 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 icon: undefined,
                 pos: 'Left',
                 children: [
-                    {
-                        icon: faCalendarDays,
-                        title: 'Tạo Mới',
-                        onclick: createdCommand('new'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faClone,
-                        title: 'Tạo Bạn Sao',
-                        onclick: createdCommand('clone'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faFolderOpen,
-                        title: 'Open',
-                        onclick: createdCommand('open'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faRotate,
-                        title: 'Đồng bộ với google lịch',
-                        onclick: createdCommand('googleCalendar'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faImage,
-                        title: 'Tải xuống Png',
-                        onclick: createdCommand('saveAsPng'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faDownload,
-                        title: 'Tải xuống',
-                        onclick: createdCommand('saveAsFile'),
-                        pos: 'Left',
-                    },
-                    {
-                        title: 'Properties',
-                        onclick: createdCommand('property'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faRightFromBracket,
-                        title: 'Exit',
-                        onclick: createdCommand('exit'),
-                        pos: 'Left',
-                    },
+                    [
+                        {
+                            icon: faCalendarDays,
+                            title: 'Tạo Mới',
+                            onclick: createdCommand('new'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faClone,
+                            title: 'Tạo Bạn Sao',
+                            onclick: createdCommand('clone'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faFolderOpen,
+                            title: 'Open',
+                            onclick: createdCommand('open'),
+                            pos: 'Left',
+                        },
+                    ],
+                    [
+                        {
+                            icon: faRotate,
+                            title: 'Đồng bộ với google lịch',
+                            onclick: createdCommand('googleCalendar'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faImage,
+                            title: 'Tải xuống Png',
+                            onclick: createdCommand('saveAsPng'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faDownload,
+                            title: 'Tải xuống',
+                            onclick: createdCommand('saveAsFile'),
+                            pos: 'Left',
+                        },
+                        {
+                            title: 'Properties',
+                            onclick: createdCommand('property'),
+                            pos: 'Left',
+                        },
+                    ],
+                    [
+                        {
+                            icon: faRightFromBracket,
+                            title: 'Exit',
+                            onclick: createdCommand('exit'),
+                            pos: 'Left',
+                        },
+                    ],
                 ],
             },
             {
@@ -212,28 +224,30 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 icon: undefined,
                 pos: 'Left',
                 children: [
-                    {
-                        icon: faReply,
-                        title: 'Undo',
-                        onclick: createdCommand('undo'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faShare,
-                        title: 'Redo',
-                        onclick: createdCommand('redo'),
-                        pos: 'Left',
-                    },
-                    {
-                        title: 'Cut',
-                        onclick: createdCommand('cut'),
-                        pos: 'Left',
-                    },
-                    {
-                        title: 'Past',
-                        onclick: createdCommand('past'),
-                        pos: 'Left',
-                    },
+                    [
+                        {
+                            icon: faReply,
+                            title: 'Undo',
+                            onclick: createdCommand('undo'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faShare,
+                            title: 'Redo',
+                            onclick: createdCommand('redo'),
+                            pos: 'Left',
+                        },
+                        {
+                            title: 'Cut',
+                            onclick: createdCommand('cut'),
+                            pos: 'Left',
+                        },
+                        {
+                            title: 'Past',
+                            onclick: createdCommand('past'),
+                            pos: 'Left',
+                        },
+                    ],
                 ],
             },
             {
@@ -241,18 +255,20 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 icon: undefined,
                 pos: 'Left',
                 children: [
-                    {
-                        icon: faShareFromSquare,
-                        title: 'Tạo lời mời',
-                        onclick: createdCommand('addMember'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: undefined,
-                        title: 'quản lý',
-                        onclick: createdCommand('manageMenber'),
-                        pos: 'Left',
-                    },
+                    [
+                        {
+                            icon: faShareFromSquare,
+                            title: 'Tạo lời mời',
+                            onclick: createdCommand('addMember'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: undefined,
+                            title: 'quản lý',
+                            onclick: createdCommand('manageMenber'),
+                            pos: 'Left',
+                        },
+                    ],
                 ],
             },
         ];
@@ -263,54 +279,60 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 icon: undefined,
                 pos: 'bottom',
                 children: [
-                    {
-                        icon: faCalendarDays,
-                        title: 'Tạo Mới',
-                        onclick: createdCommand('new'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faClone,
-                        title: 'Tạo Bạn Sao',
-                        onclick: createdCommand('clone'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faFolderOpen,
-                        title: 'Open',
-                        onclick: createdCommand('open'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faRotate,
-                        title: 'Đồng bộ với google lịch',
-                        onclick: createdCommand('googleCalendar'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faImage,
-                        title: 'Tải xuống Png',
-                        onclick: createdCommand('saveAsPng'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faDownload,
-                        title: 'Tải xuống',
-                        onclick: createdCommand('saveAsFile'),
-                        pos: 'Left',
-                    },
+                    [
+                        {
+                            icon: faCalendarDays,
+                            title: 'Tạo Mới',
+                            onclick: createdCommand('new'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faClone,
+                            title: 'Tạo Bạn Sao',
+                            onclick: createdCommand('clone'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faFolderOpen,
+                            title: 'Open',
+                            onclick: createdCommand('open'),
+                            pos: 'Left',
+                        },
+                    ],
+                    [
+                        {
+                            icon: faRotate,
+                            title: 'Đồng bộ với google lịch',
+                            onclick: createdCommand('googleCalendar'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faImage,
+                            title: 'Tải xuống Png',
+                            onclick: createdCommand('saveAsPng'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faDownload,
+                            title: 'Tải xuống',
+                            onclick: createdCommand('saveAsFile'),
+                            pos: 'Left',
+                        },
 
-                    {
-                        title: 'Properties',
-                        onclick: createdCommand('property'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faRightFromBracket,
-                        title: 'Exit',
-                        onclick: createdCommand('exit'),
-                        pos: 'Left',
-                    },
+                        {
+                            title: 'Properties',
+                            onclick: createdCommand('property'),
+                            pos: 'Left',
+                        },
+                    ],
+                    [
+                        {
+                            icon: faRightFromBracket,
+                            title: 'Exit',
+                            onclick: createdCommand('exit'),
+                            pos: 'Left',
+                        },
+                    ],
                 ],
             },
             {
@@ -318,28 +340,30 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 icon: undefined,
                 pos: 'bottom',
                 children: [
-                    {
-                        icon: faReply,
-                        title: 'Undo',
-                        onclick: createdCommand('undo'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: faShare,
-                        title: 'Redo',
-                        onclick: createdCommand('redo'),
-                        pos: 'Left',
-                    },
-                    {
-                        title: 'Cut',
-                        onclick: createdCommand('cut'),
-                        pos: 'Left',
-                    },
-                    {
-                        title: 'Past',
-                        onclick: createdCommand('past'),
-                        pos: 'Left',
-                    },
+                    [
+                        {
+                            icon: faReply,
+                            title: 'Undo',
+                            onclick: createdCommand('undo'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: faShare,
+                            title: 'Redo',
+                            onclick: createdCommand('redo'),
+                            pos: 'Left',
+                        },
+                        {
+                            title: 'Cut',
+                            onclick: createdCommand('cut'),
+                            pos: 'Left',
+                        },
+                        {
+                            title: 'Past',
+                            onclick: createdCommand('past'),
+                            pos: 'Left',
+                        },
+                    ],
                 ],
             },
             {
@@ -347,18 +371,20 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                 icon: undefined,
                 pos: 'bottom',
                 children: [
-                    {
-                        icon: faShareFromSquare,
-                        title: 'Tạo lời mời',
-                        onclick: createdCommand('addMember'),
-                        pos: 'Left',
-                    },
-                    {
-                        icon: undefined,
-                        title: 'quản lý',
-                        onclick: createdCommand('manageMenber'),
-                        pos: 'Left',
-                    },
+                    [
+                        {
+                            icon: faShareFromSquare,
+                            title: 'Tạo lời mời',
+                            onclick: createdCommand('addMember'),
+                            pos: 'Left',
+                        },
+                        {
+                            icon: undefined,
+                            title: 'quản lý',
+                            onclick: createdCommand('manageMenber'),
+                            pos: 'Left',
+                        },
+                    ],
                 ],
             },
         ];
@@ -394,7 +420,7 @@ export function HeaderTool({ onCommandEvent }: HeaderToolProps) {
                     tool={{
                         title: '',
                         pos: 'bottom',
-                        children: tools,
+                        children: [tools],
                         icon: faBars,
                     }}
                     titleShow={tabShow}

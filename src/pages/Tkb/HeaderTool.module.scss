@@ -16,21 +16,30 @@
     }
 
     .drop-down-item {
+        // border: 1px solid rgb(from var(--text-color-2) r g b / 50);
         border-radius: var(--border-radius-g);
         position: absolute;
         background-color: var(--header-color);
         box-shadow: var(--box-shadow-g);
         width: max-content;
-        padding: 5px;
+        padding: 2px 5px;
         z-index: 10;
     }
 
-    .drop-down-item:has(> .tool-item > .title svg) {
+    .drop-down-item:has(.tool-item > .title svg) {
         .icon {
             height: 20px;
             width: 20px;
             margin-right: 10px;
         }
+    }
+
+    .group-item {
+        padding: 2px 0;
+    }
+
+    .group-item + .group-item {
+        border-top: 2px solid var(--text-color-2);
     }
 
     .drop-down-item.bottom {

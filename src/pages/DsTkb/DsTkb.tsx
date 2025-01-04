@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 
+import images from '../../assets/images';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
@@ -237,30 +238,38 @@ function DsTkb() {
                         </header>
                         <div className={cx('content')}>
                             <Loader isLoading={isLoading}>
-                                <>
-                                    {[...dsTkb]
-                                        .sort((a, b) => {
-                                            if (sortBy === 'time') {
-                                                return a.created.getTime() - b.created.getTime();
-                                            }
+                                {[...dsTkb].length === 0 ? (
+                                    <div className={cx('et-ds')}>
+                                        <img src={images.noTKB} alt="no Tkb" />
+                                        <h2>Không có thời khóa biểu nào</h2>
+                                        <p>Nhấn vào nút phía trên để tạo thời khóa biểu mới </p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {[...dsTkb]
+                                            .sort((a, b) => {
+                                                if (sortBy === 'time') {
+                                                    return a.created.getTime() - b.created.getTime();
+                                                }
 
-                                            if (sortBy === 'name') {
-                                                return a.name.localeCompare(b.name);
-                                            }
-                                            return 0;
-                                        })
-                                        .map((e) => {
-                                            return (
-                                                <CardTkb
-                                                    isRow={isRow}
-                                                    data={e}
-                                                    key={e.id}
-                                                    onDelete={onDeletehandle}
-                                                    onRename={onRenameHandle}
-                                                />
-                                            );
-                                        })}
-                                </>
+                                                if (sortBy === 'name') {
+                                                    return a.name.localeCompare(b.name);
+                                                }
+                                                return 0;
+                                            })
+                                            .map((e) => {
+                                                return (
+                                                    <CardTkb
+                                                        isRow={isRow}
+                                                        data={e}
+                                                        key={e.id}
+                                                        onDelete={onDeletehandle}
+                                                        onRename={onRenameHandle}
+                                                    />
+                                                );
+                                            })}
+                                    </>
+                                )}
                             </Loader>
                         </div>
                     </div>

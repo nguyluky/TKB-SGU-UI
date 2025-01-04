@@ -283,3 +283,12 @@
         color: var(--text-color);
     }
 }
+.et-ds {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img {
+        max-width: calc(100% - 10px);
+    }
+}

@@ -56,6 +56,7 @@ const config = {
     forgetPassword: () => '/auth/forgot-password',
 
     resetIsalive: () => '/auth/reset-isalive',
+    getQr: () => '/payment/get-qr'
 };
 
 export default config;
