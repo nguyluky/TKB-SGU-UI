@@ -30,7 +30,7 @@ export function AddHp({
     const searchRef = useRef<MiniSearch>(
         new MiniSearch<item>({
             fields: ['name', 'mhp'],
-        }),
+        })
     );
 
     useEffect(() => {
@@ -79,18 +79,9 @@ export function AddHp({
     return (
         <div className={cx('add-popup')}>
             <div className={cx('header')}>
-                <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search..."
-                />
+                <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." />
                 {/* <button className={cx('filter')}>Bộ Lọc</button> */}
-                <select
-                    className={cx('filter')}
-                    value={searchBy}
-                    onChange={(e) => setSearchBy(e.target.value)}
-                >
+                <select className={cx('filter')} value={searchBy} onChange={(e) => setSearchBy(e.target.value)}>
                     <option value={'mon'}>Lọc theo môn</option>
                     <option value={'lop'}>Lọc theo lớp</option>
                     <option value={'khoa'}>Lọc theo khoa</option>
@@ -110,7 +101,8 @@ export function AddHp({
                                     }}
                                 />
                                 <div className={cx('ten')}>{e.name}</div>
-                                <div className={cx('more-info')}>{e.mhp}</div>
+                                <div className={cx('more-info')}>Mã môn: {e.mhp}</div>
+                                <div className={cx('more-info')}>Lơp: {}</div>
                             </label>
                         );
                     })}

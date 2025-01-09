@@ -114,7 +114,7 @@ function DsTkb() {
                 api.createNewTkb({
                     name: fileTkb.name,
                     tkb_describe: '',
-                    thumbnails: null,
+                    thumbnails: '',
                     nam: fileTkb.nam || '20242',
                 })
                     .then(async (e) => {

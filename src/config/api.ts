@@ -31,7 +31,7 @@ const config = {
 
     getTkb: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
     deleteTkb: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
-    updateTkbInfo: () => '/tkbs',
+    updateTkbInfo: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId),
 
     getTkbContent: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/id_to_hoc',
     updateTkbContent: (tkbId: string) => '/tkbs/' + encodeURIComponent(tkbId) + '/id_to_hoc',
@@ -56,7 +56,8 @@ const config = {
     forgetPassword: () => '/auth/forgot-password',
 
     resetIsalive: () => '/auth/reset-isalive',
-    getQr: () => '/payment/get-qr'
+    getQr: (qrId: string) => '/payment/get-qr?qrId=' + encodeURIComponent(qrId),
+    createTransfer: () => '/payment/create-transfer'
 };
 
 export default config;

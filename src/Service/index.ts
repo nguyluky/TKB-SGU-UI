@@ -29,7 +29,7 @@ export interface TkbInfo {
     name: string;
     nam: string;
     tkb_describe: string;
-    thumbnails: null | Blob;
+    thumbnails: string;
     isClient?: boolean;
     rule?: number;
     created: Date; //"2024-06-17T12:22:36.000Z"
@@ -49,17 +49,33 @@ export interface DsNhomHocRespData {
     ds_mon_hoc: { id: string; display_name: string }[];
 }
 
+
 export interface NhomHoc {
-    id_to_hoc: string;
-    id_mon: string;
+        id_to_hoc: string;
     ma_mon: string;
     ten_mon: string;
     so_tc: number;
-    lop: Lop;
-    ds_lop: Lop[];
-    ds_khoa: Lop[];
-    tkb: TkbTiet[];
     nhom: string;
+    tkb: {
+        thu: number;
+        tbd: number;
+        tkt: number;
+        phong: string;
+        gv: string;
+        th: boolean;
+    }[];
+    ds_khoa: string[];
+    ds_lop: string[];
+    // id_to_hoc: string;
+    // id_mon: string;
+    // ma_mon: string;
+    // ten_mon: string;
+    // so_tc: number;
+    // lop: Lop;
+    // ds_lop: Lop[];
+    // ds_khoa: Lop[];
+    // tkb: TkbTiet[];
+    // nhom: string;
 }
 
 export interface Lop {
@@ -198,7 +214,7 @@ class ServerApi implements BaseApi {
         }
 
         const resp = await this.request.put<ApiResponse<null>>(
-            apiConfig.updateTkbInfo(),
+            apiConfig.updateTkbInfo(tkbData.id),
             tkbData,
         );
         return resp.data;
@@ -561,6 +577,8 @@ export interface ServerToClientEvents {
     updateIdToHocs:   (tkbId: string, idToHocs: string[]) => void;
     exception:        (data: {code: number, msg: string, success: boolean, data: any}) => void;
     usersJoined:       (userId: string[]) => void;
+
+    paymentSuccess: (qrId: string) => void;
 }
 
 export interface ClientToServerEvents {
@@ -569,6 +587,8 @@ export interface ClientToServerEvents {
     onUpdateTkbInfo:  (tkbInfo: TkbInfo) => void;
     onUpdateMaHocPhans: (tkbId: string, maHocPhans: string[]) => void;
     onUpdateIdToHocs: (tkbId: string, idToHocs: string[]) => void;
+    
+    onPayment: (qrId: string) => void;
 }
 
 export interface InterServerEvents {

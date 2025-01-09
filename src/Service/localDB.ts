@@ -5,7 +5,7 @@ export interface TkbInfoIndexDb {
     name: string;
     nam: string;
     tkb_describe: string;
-    thumbnails: null | Blob;
+    thumbnails: string;
     ma_hoc_phans: string[];
     id_to_hocs: string[];
     rule: number;

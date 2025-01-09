@@ -271,11 +271,10 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
         setIsLoading(true);
 
         axios
-            .post<logupResp>(apiConfig.baseUrl + '/auth/signup', {
-                username: userName,
+            .post<logupResp>(apiConfig.logUp(), {
+                userName: userName,
                 password: password,
                 email: email,
-                type_signup: null,
             })
             .then((resp) => {
                 setIsLoading(false);

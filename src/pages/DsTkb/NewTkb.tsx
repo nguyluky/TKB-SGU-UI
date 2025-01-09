@@ -25,7 +25,7 @@ export function NewTkb() {
         // send create tkb resp
         if (pos === 'server')
             globalState.client.serverApi
-                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null, nam: nam })
+                .createNewTkb({ name: name, tkb_describe: '', thumbnails: '', nam: nam })
                 .then((data) => {
                     if (!data.success || !data.data) {
                         notifyMaster.error(data.msg);
@@ -36,7 +36,7 @@ export function NewTkb() {
 
         if (pos === 'client') {
             globalState.client.localApi
-                .createNewTkb({ name: name, tkb_describe: '', thumbnails: null, nam: nam })
+                .createNewTkb({ name: name, tkb_describe: '', thumbnails: '', nam: nam })
                 .then((data) => {
                     if (!data.success || !data.data) {
                         notifyMaster.error(data.msg);

@@ -10,7 +10,8 @@ const routers = {
     join: '/join/:joinId',
     privacyPolicy: 'privacy-policy',
     verifyEmail: '/verify/:token',
-    donate: '/donate'
+    donate: '/donate',
+    donateQr: '/donate/:qrId'
 };
 
 export default routers;

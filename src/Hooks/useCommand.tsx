@@ -74,7 +74,7 @@ export default function useCommand(tkbHandler: useTkbHandlerTypes) {
                             tkb_describe: '',
                             // NOTE: magic number
                             nam: fileTkb.nam || '20242',
-                            thumbnails: null,
+                            thumbnails: '',
                             isClient: pos === 'client',
                         })
                             .then(async (e) => {
@@ -112,7 +112,7 @@ export default function useCommand(tkbHandler: useTkbHandlerTypes) {
                         name: name,
                         nam: nam,
                         tkb_describe: '',
-                        thumbnails: null,
+                        thumbnails: '',
                         isClient: pos === 'client',
                     })
                     .then((e) => {
@@ -219,7 +219,7 @@ export default function useCommand(tkbHandler: useTkbHandlerTypes) {
                                         nam: tkbHandler.tkbData?.nam || '20242',
                                         name: name,
                                         tkb_describe: '',
-                                        thumbnails: null,
+                                        thumbnails: '',
                                     }
                                     // name,
                                     // '',

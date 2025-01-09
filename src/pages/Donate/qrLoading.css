@@ -1,0 +1,83 @@
+/* import './qrLoading.css'; */
+
+@keyframes animate {
+    0.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(0.91, 0.91) skew(0deg, 0deg);
+        opacity: 1;
+    }
+    4.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(0.91, 0.91);
+    }
+    8.00% {
+        animation-timing-function: cubic-bezier(0.69, 0.6, 0.35, 0.27);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.91, 0.91);
+    }
+    14.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(0.93, 0.93);
+    }
+    18.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(0.94, 0.94);
+    }
+    22.00% {
+        animation-timing-function: cubic-bezier(0.67, 0.66, 0.34, 0.33);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.96, 0.96);
+    }
+    26.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(0.97, 0.97);
+    }
+    30.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(0.99, 0.99);
+    }
+    34.00% {
+        animation-timing-function: cubic-bezier(0.65, 0.71, 0.32, 0.38);
+        transform: translate(0px, 0px) rotate(0deg) scale(1.01, 1.01);
+    }
+    40.00% {
+        animation-timing-function: cubic-bezier(0.64, 0.74, 0.31, 0.41);
+        transform: translate(0px, 0px) rotate(0deg) scale(1.02, 1.02);
+    }
+    46.00% {
+        animation-timing-function: cubic-bezier(0.6, 0.91, 0.23, 0.63);
+        transform: translate(0px, 0px) rotate(0deg) scale(1.03, 1.03);
+    }
+    50.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(1.03, 1.03);
+    }
+    54.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(1.03, 1.03);
+    }
+    58.00% {
+        animation-timing-function: cubic-bezier(0.69, 0.6, 0.35, 0.27);
+        transform: translate(0px, 0px) rotate(0deg) scale(1.03, 1.03);
+    }
+    64.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(1.01, 1.01);
+    }
+    68.00% {
+        transform: translate(0px, 0px) rotate(0deg) scale(1, 1);
+    }
+    72.00% {
+        animation-timing-function: cubic-bezier(0.67, 0.66, 0.34, 0.33);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.98, 0.98);
+    }
+    76.00% {
+        animation-timing-function: cubic-bezier(0.66, 0.68, 0.33, 0.35);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.97, 0.97);
+    }
+    82.00% {
+        animation-timing-function: cubic-bezier(0.65, 0.71, 0.32, 0.38);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.94, 0.94);
+    }
+    88.00% {
+        animation-timing-function: cubic-bezier(0.65, 0.73, 0.31, 0.4);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.92, 0.92);
+    }
+    94.00% {
+        animation-timing-function: cubic-bezier(0.63, 0.8, 0.28, 0.48);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.91, 0.91);
+    }
+    100.00% {
+        animation-timing-function: cubic-bezier(0.63, 0.8, 0.28, 0.48);
+        transform: translate(0px, 0px) rotate(0deg) scale(0.91, 0.91);
+    }
+}

@@ -4,6 +4,8 @@ import { createRef } from 'react';
 import { DefaultLayout } from '../components/Layout';
 import { routerConfig } from '../config';
 import Donate from '../pages/Donate';
+// import { DonateQrCode } from '../pages/Donate/DonateQrCode';
+import DonateQrCode from '../pages/Donate/DonateQrCode';
 import DsTkb from '../pages/DsTkb';
 import EmailVerify from '../pages/EmailVerify/EmailVerify';
 import ErrorPage from '../pages/Error';
@@ -86,6 +88,10 @@ const routers = createBrowserRouter([
     {
         path: routerConfig.donate,
         element: <Donate></Donate>,
+    },
+    {
+        path: routerConfig.donateQr,
+        element: <DonateQrCode></DonateQrCode>,
     },
 ]);
 
