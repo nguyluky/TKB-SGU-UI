@@ -1,15 +1,17 @@
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classNames from 'classnames/bind';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import images from '../../assets/images';
 import { apiConfig } from '../../config';
 import { ApiResponse } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';
+
+import classNames from 'classnames/bind';
+import images from '../../assets/images';
 import QRCode, { QrRef } from '../components/QRcode/QRcode';
 import style from './Donate.module.scss';
 import QrLoading from './qrLoading';
+
 const cx = classNames.bind(style);
 
 function UseCountDown(callback: () => void, time: number, deps: any[]) {
@@ -85,13 +87,11 @@ export default function DonateQrCode() {
 
             console.log(res);
 
-            if (res.data.success) {
-                globalState.client.socket.emit('onPayment', qrId);
-                globalState.client.socket.on('paymentSuccess', (data) => {
-                    setPayEd(true);
-                    timeOutRef.current?.clear();
-                });
-            }
+            globalState.client.socket.emit('onPayment', qrId);
+            globalState.client.socket.on('paymentSuccess', (data) => {
+                setPayEd(true);
+                timeOutRef.current?.clear();
+            });
 
             setQrLoading(false);
             res.data.data && setQrData(res.data.data?.qrData || '');

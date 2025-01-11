@@ -39,7 +39,7 @@ export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) 
                     />
                 </div>
 
-                <div className={cx('input')}>
+                {/* <div className={cx('input')}>
                     <label>Vị trí lưu</label>
                     <select name="pos" id="pos" value={pos} onChange={(e) => setPos(e.target.value)}>
                         <option value="client">Client</option>
@@ -47,7 +47,7 @@ export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) 
                             Server
                         </option>
                     </select>
-                </div>
+                </div> */}
 
                 <div className={cx('input')}>
                     <label>Năm học</label>

@@ -18,17 +18,28 @@ function App() {
     }, [globalState?.theme]);
 
     useEffect(() => {
-        globalState.client.getUserInfo().then((res) => {
-            // nếu token hết hạn thì tự động log out
-            if (!res.success) {
-                localStorage.removeItem('token');
+        globalState.client
+            .getUserInfo()
+            .then((res) => {
+                // nếu token hết hạn thì tự động log out
+                if (!res.success) {
+                    localStorage.removeItem('token');
+                    setGlobalState((e) => {
+                        e.userInfo = undefined;
+                        e.client = new Client('');
+                        return { ...e };
+                    });
+                    return;
+                }
+                setGlobalState({ ...globalState, userInfo: res.data });
+                localStorage.setItem('userInfo', JSON.stringify(res.data));
+            })
+            .catch(() => {
                 setGlobalState((e) => {
-                    e.userInfo = undefined;
-                    e.client = new Client('');
+                    e.userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
                     return { ...e };
                 });
-            } else setGlobalState({ ...globalState, userInfo: res.data });
-        });
+            });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [globalState.client.islogin, setGlobalState]);
 

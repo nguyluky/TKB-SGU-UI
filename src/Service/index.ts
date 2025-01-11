@@ -619,9 +619,9 @@ export class Client {
         });
         this.serverApi = new ServerApi(this.request);
         this.socket = io(apiConfig.baseUrl.replace('/api/v2', ''), {
-            extraHeaders: {
-                authorization: `bearer ${token}`,
-            },
+            query: {
+                token
+            }
         });
     }
 

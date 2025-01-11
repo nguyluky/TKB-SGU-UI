@@ -199,9 +199,8 @@ function Header({ left, center, right }: { left?: ReactElement; center?: ReactEl
                         <div className={cx('user-info')}>
                             {globalState.client.islogin() ? (
                                 <>
-                                    <div className={cx('user-info')}>
-                                        <div className={cx('line')}>Login at: {globalState.userInfo?.display_name}</div>
-                                    </div>
+                                    <div className={cx('supporter')}>❤︎❤︎❤︎︎ Người ủng hộ ❤❤︎❤</div>
+                                    <div className={cx('line')}>Login at: {globalState.userInfo?.display_name}</div>
                                     <Popup
                                         onOpen={() => {
                                             setP1('');

@@ -49,6 +49,7 @@ function DsTkb() {
     const [dsTkb, setDsTkb] = useState<TkbInfo[]>([]);
     const [isRow, setIsRow] = useState<boolean>(false);
     const [uploadTkbShow, setUploadTkbShow] = useState<boolean>(false);
+    const [error, setError] = useState<Error | null>(null);
 
     const onDeletehandle = (tkbData: TkbInfo) => {
         if (!tkbData.isClient) {
@@ -163,15 +164,19 @@ function DsTkb() {
             return resp.data || [];
         };
 
-        const getLocalData = async () => {
-            const resp = await globalState.client.localApi.getDsTkb();
-            return resp.data || [];
-        };
+        // const getLocalData = async () => {
+        //     const resp = await globalState.client.localApi.getDsTkb();
+        //     return resp.data || [];
+        // };
 
-        Promise.all([getLocalData(), getServerData()]).then(([ld, sd]) => {
-            setLoading(false);
-            setDsTkb([...ld, ...sd]);
-        });
+        getServerData()
+            .then((sd) => {
+                setLoading(false);
+                setDsTkb(sd);
+            })
+            .catch((e) => {
+                setError(e);
+            });
 
         setHeaderPar((e) => {
             e.left = (
@@ -237,7 +242,7 @@ function DsTkb() {
                             </div>
                         </header>
                         <div className={cx('content')}>
-                            <Loader isLoading={isLoading}>
+                            <Loader isLoading={isLoading} error={error || undefined}>
                                 {[...dsTkb].length === 0 ? (
                                     <div className={cx('et-ds')}>
                                         <img src={images.noTKB} alt="no Tkb" />

@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { motion } from 'motion/react';
 import { ReactElement } from 'react';
 
 import style from './PopupModel.module.scss';
@@ -19,7 +20,7 @@ function Popup({
     noFooter?: boolean;
 }) {
     return (
-        <form className={cx('conten-menu-popup')} onSubmit={(e) => e.preventDefault()}>
+        <motion.form className={cx('conten-menu-popup')} onSubmit={(e) => e.preventDefault()}>
             <div className={cx('header')}>
                 <h2>{title}</h2>
             </div>
@@ -41,7 +42,7 @@ function Popup({
             ) : (
                 ''
             )}
-        </form>
+        </motion.form>
     );
 }
 

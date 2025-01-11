@@ -22,7 +22,7 @@ function Test() {
                         'http://localhost:4000/api/v2/auth/google_calendar?tkbId=1&access_token=' +
                             encodeURI(globalState.client.token || ''),
                         'login google',
-                        'height=600,width=450',
+                        'height=600,width=450'
                     );
 
                     if (win) {
