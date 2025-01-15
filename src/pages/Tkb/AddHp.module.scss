@@ -1,11 +1,34 @@
 .add-popup {
     height: 60vh;
-    min-width: max-content;
-    width: 50vw;
+    display: flex;
+    width: 60vw;
 
     @media screen and (max-width: 660px) {
         min-width: 90vw;
         min-width: 90vw;
+    }
+
+    .split {
+        height: 100%;
+        width: 100%;
+        max-width: 1000px;
+
+        &.sup-filter {
+            width: max-content;
+            // border-right: 2px solid var(--primary-color-1);
+            border-right: 2px solid rgb(from var(--primary-color-1) r g b / 50);
+            margin-right: 5px;
+            padding-right: 5px;
+        }
+
+        &.hide {
+            padding: 0;
+            margin: 0;
+            width: 0px;
+            max-width: 10000000px;
+            overflow: hidden;
+            border-right: none;
+        }
     }
 
     .header {
@@ -33,7 +56,9 @@
     }
     .body {
         height: calc(100% - 53px);
+        display: flex;
         .relust {
+            width: 100%;
             height: 100%;
             overflow-y: scroll;
             scrollbar-width: thin;

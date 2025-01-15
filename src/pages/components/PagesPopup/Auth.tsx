@@ -13,6 +13,7 @@ import useWindowPopup from '../../../Hooks/useWindowPopup';
 import { Client } from '../../../Service';
 import { globalContent } from '../../../store/GlobalContent';
 
+import useCallbackQueue from '../../../Hooks/useCallbackQueue';
 import style from './Auth.module.scss';
 
 const cx = classNames.bind(style);
@@ -61,6 +62,8 @@ export interface AuthRef {
 
 function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
     const [globalState, setGlobalState] = useContext(globalContent);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, callCallback, deleteCallback] = useCallbackQueue();
     const [params, setParams] = useSearchParams();
 
     const [userName, setUserName] = useState<string>('');
@@ -78,10 +81,12 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
     const [registrationHeight, setRegistrationHeight] = useState(0);
 
     const onClose = () => {
+        const callbackId = params.get('callback');
+        callbackId && deleteCallback(callbackId);
         setParams((e) => {
             e.delete('login');
             e.delete('registration');
-
+            e.delete('callback');
             return e;
         });
     };
@@ -100,6 +105,9 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                 globalState.client = client;
                 setGlobalState({ ...globalState });
             });
+
+            const callbackId = params.get('callback');
+            callbackId && callCallback(callbackId);
 
             popupWindow.close();
         } else if (t === 'notify') {
@@ -224,6 +232,9 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                         globalState.client = client;
                         setGlobalState({ ...globalState });
                     });
+
+                    const callbackId = params.get('callback');
+                    callbackId && callCallback(callbackId);
 
                     onClose();
 

@@ -66,6 +66,44 @@
     display: flex;
 }
 
+.center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--warning-color);
+    padding: 0 0px 0 10px;
+    border-radius: 5px;
+    width: 50%;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+
+    div {
+        color: black;
+    }
+
+    .bu {
+        display: flex;
+    }
+
+    .button {
+        height: 29px;
+        color: black;
+        border-radius: 0 5px 5px 0;
+
+        &.check {
+            border-radius: 0;
+            svg {
+                color: hsl(from var(--success-color) h s 40);
+            }
+        }
+
+        &:hover {
+            background-color: var(--hover-color);
+        }
+    }
+}
+
 // .template-tkb .content {
 //     padding-bottom: var(--tkb-header-height);
 // }

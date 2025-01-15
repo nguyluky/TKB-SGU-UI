@@ -451,17 +451,31 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                     setTkbInfo(tkbDataResp.data);
 
                     const dsMonHoc: { [key: string]: string } = {};
-
                     for (const { id, display_name } of dsNhomHocResp.ds_mon_hoc) {
                         dsMonHoc[id] = display_name;
                     }
 
+                    // const dsKhao: { [key: string]: string } = {};
+                    // for (const { id, display_name } of dsNhomHocResp.ds_khoa) {
+                    //     dsKhao[id] = display_name;
+                    // }
+
+                    // const dsLop: { [key: string]: string } = {};
+                    // for (const { id, display_name } of dsNhomHocResp.ds_lop) {
+                    //     dsLop[id] = display_name;
+                    // }
+
                     dsNhomHocResp.ds_nhom_to.forEach((e) => e.tkb || (e.tkb = []));
 
-                    setDsNhomHoc({
-                        ds_nhom_to: dsNhomHocResp.ds_nhom_to,
-                        ds_mon_hoc: dsMonHoc,
-                    });
+                    
+                    // setDsNhomHoc({
+                    //     ds_nhom_to: dsNhomHocResp.ds_nhom_to,
+                    //     ds_mon_hoc: dsMonHoc,
+                    //     ds_khoa: dsNhomHocResp.ds_khoa,
+                    //     ds_lop: dsNhomHocResp.ds_lop,
+                    // });
+
+                    setDsNhomHoc(dsNhomHocResp)
 
                     if (idToHocs.success && idToHocs.data) {
                         setIdToHocs(idToHocs.data);

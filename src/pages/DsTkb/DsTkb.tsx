@@ -1,4 +1,12 @@
-import { faArrowDownAZ, faEllipsisVertical, faFolderOpen, faGrip, faList } from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowDownAZ,
+    faCheck,
+    faEllipsisVertical,
+    faFolderOpen,
+    faGrip,
+    faList,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -50,7 +58,9 @@ function DsTkb() {
     const [isRow, setIsRow] = useState<boolean>(false);
     const [uploadTkbShow, setUploadTkbShow] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
+    const [tkbNoBackUp, setTkbNoBackUp] = useState<TkbInfo[]>([]);
 
+    // TODO: sửa lại file này nha
     const onDeletehandle = (tkbData: TkbInfo) => {
         if (!tkbData.isClient) {
             globalState.client.serverApi.deleteTkb(tkbData.id).then((e) => {
@@ -164,10 +174,14 @@ function DsTkb() {
             return resp.data || [];
         };
 
-        // const getLocalData = async () => {
-        //     const resp = await globalState.client.localApi.getDsTkb();
-        //     return resp.data || [];
-        // };
+        const getLocalData = async () => {
+            const resp = await globalState.client.localApi.getDsTkb();
+            return resp.data || [];
+        };
+
+        getLocalData().then((e) => {
+            setTkbNoBackUp(e);
+        });
 
         getServerData()
             .then((sd) => {
@@ -225,6 +239,15 @@ function DsTkb() {
                             <div className={cx('left')}>
                                 <span>Thời khoá biểu đã lưu</span>
                             </div>
+                            {tkbNoBackUp.length !== 0 && (
+                                <div className={cx('center')}>
+                                    <div className={cx('notify')}>Khôi phục thời khóa {tkbNoBackUp.length}:</div>
+                                    <div className={cx('bu')}>
+                                        <DropDownButton icon={faCheck} className={cx('button', 'check')} />
+                                        <DropDownButton icon={faXmark} className={cx('button')} />
+                                    </div>
+                                </div>
+                            )}
                             <div className={cx('right')}>
                                 <DropDownButton
                                     className={cx('activity-btn')}

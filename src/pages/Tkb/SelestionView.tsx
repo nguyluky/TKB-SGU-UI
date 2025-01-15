@@ -1,10 +1,4 @@
-import {
-    faAngleDown,
-    faAngleUp,
-    faPlus,
-    faSquareMinus,
-    faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faPlus, faSquareMinus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
@@ -34,14 +28,7 @@ interface selestionViewPro {
     onRemoveNhomHoc: (idToHoc: string) => void;
 }
 
-export function SelestionView({
-    dsNhomHoc,
-    onAddHp,
-    onRemoveHp,
-    ma_hoc_phans,
-    tkbData,
-    soTC,
-}: selestionViewPro) {
+export function SelestionView({ dsNhomHoc, onAddHp, onRemoveHp, ma_hoc_phans, tkbData, soTC }: selestionViewPro) {
     const [mini, setMini] = useState<number>(0);
     const toggleHp = (mhp: string) => {
         if (!tkbData) return;
@@ -117,7 +104,7 @@ function Temp({
                 }}
             >
                 <FontAwesomeIcon icon={show ? faAngleDown : faAngleUp} />
-                <p className={cx('hocphan-name')}>{data?.ds_mon_hoc[maMonHoc]}</p>
+                <p className={cx('hocphan-name')}>{data?.ds_mon_hoc.find((e) => e.id === maMonHoc)?.display_name}</p>
                 <div
                     className={cx('close-icon')}
                     // onClick={() => {
@@ -142,9 +129,7 @@ function Temp({
                                 })}
                                 style={{
                                     background: id_to_hocs.includes(j.id_to_hoc)
-                                        ? `hsl(${Math.abs(
-                                              hashCode(maMonHoc || '0'),
-                                          )} var(--tkb-nhom-view-HSL) )`
+                                        ? `hsl(${Math.abs(hashCode(maMonHoc || '0'))} var(--tkb-nhom-view-HSL) )`
                                         : 'transparent',
                                 }}
                                 key={j.id_to_hoc}
@@ -152,20 +137,11 @@ function Temp({
                                     onAddNhomHoc(j.id_to_hoc);
                                 }}
                             >
+                                <p>Thứ: {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}</p>
                                 <p>
-                                    Thứ:{' '}
-                                    {j.tkb.map((i) => i.thu + ` (${i.tbd} - ${i.tkt})`).join(', ')}
+                                    GV: {Array.from(new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : '')))).join(', ')}
                                 </p>
-                                <p>
-                                    GV:{' '}
-                                    {Array.from(
-                                        new Set(j.tkb.map((i) => i.gv + (i.th ? '(TH)' : ''))),
-                                    ).join(', ')}
-                                </p>
-                                <p>
-                                    Phòng:{' '}
-                                    {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}
-                                </p>
+                                <p>Phòng: {Array.from(new Set(j.tkb.map((i) => i.phong))).join(', ')}</p>
                             </div>
                         );
                     })}

@@ -12,6 +12,7 @@
     transition: all 0.2s;
     position: relative;
     cursor: pointer;
+    color: inherit;
 
     &:active {
         background-color: var(--background-btn-hover);
@@ -21,7 +22,9 @@
     svg {
         height: 100%;
         width: 100%;
+        color: inherit;
     }
+
     img {
         position: absolute;
         top: 50%;

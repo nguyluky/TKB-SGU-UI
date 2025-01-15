@@ -1,7 +1,8 @@
 import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import useCallbackQueue from '../../Hooks/useCallbackQueue';
 import { TkbInfo } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';
 import { CreateNewTkb } from '../components/PagesPopup';
@@ -20,6 +21,10 @@ export function NewTkb() {
     const [isShow, setShow] = useState(false);
 
     const nav = useNavigate();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [searchParams, setSearchParams] = useSearchParams();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [addCallback, callCallback, deleteCallback] = useCallbackQueue();
 
     const sendCreateTkbReq = (name: string, pos: string, nam: string) => {
         // send create tkb resp
@@ -34,21 +39,39 @@ export function NewTkb() {
                     nav(data.data.id);
                 });
 
-        if (pos === 'client') {
-            globalState.client.localApi
-                .createNewTkb({ name: name, tkb_describe: '', thumbnails: '', nam: nam })
-                .then((data) => {
-                    if (!data.success || !data.data) {
-                        notifyMaster.error(data.msg);
-                        return;
-                    }
-                    nav(data.data.id + '?isclient=true');
-                });
+        // if (pos === 'client') {
+        //     globalState.client.localApi
+        //         .createNewTkb({ name: name, tkb_describe: '', thumbnails: '', nam: nam })
+        //         .then((data) => {
+        //             if (!data.success || !data.data) {
+        //                 notifyMaster.error(data.msg);
+        //                 return;
+        //             }
+        //             nav(data.data.id + '?isclient=true');
+        //         });
+        // }
+    };
+
+    const onClickHandler = () => {
+        if (globalState.client.islogin()) {
+            setShow(true);
+            return;
         }
+
+        const callbackId = 'createNewTkb';
+
+        addCallback(callbackId, () => {
+            setShow(true);
+        });
+        setSearchParams((e) => {
+            e.set('callback', callbackId);
+            e.set('login', '1');
+            return e;
+        });
     };
 
     return (
-        <div className={cx('card', 'new')} onClick={() => setShow(true)}>
+        <div className={cx('card', 'new')} onClick={onClickHandler}>
             <div className={cx('thumbnail')}>
                 <svg height="0" width="0">
                     <defs>

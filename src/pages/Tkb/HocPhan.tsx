@@ -30,7 +30,9 @@ export function HocPhan({ mini, maHocPhan }: HocPhanProps) {
         <div className={cx('hocphan')}>
             <div className={cx('hocphan-title')} onClick={() => setShow((e) => !e)}>
                 <FontAwesomeIcon icon={show ? faAngleDown : faAngleUp} />
-                <p className={cx('hocphan-name')}>{tkbState.dsNhomHoc?.ds_mon_hoc[maHocPhan]}</p>
+                <p className={cx('hocphan-name')}>
+                    {tkbState.dsNhomHoc?.ds_mon_hoc.find((e) => e.id === maHocPhan)?.display_name}
+                </p>
                 <div
                     className={cx('close-icon')}
                     onClick={(event) => {

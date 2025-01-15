@@ -41,17 +41,22 @@ export type TkbContentMmh = string[];
 
 export interface DsNhomHocResp {
     ds_nhom_to: NhomHoc[];
-    ds_mon_hoc: { [key: string]: string };
+    // ds_mon_hoc: {[key: string]: string};
+    ds_mon_hoc: { id: string; display_name: string , ds_lop: string[], ds_khoa: string[]}[];
+    ds_khoa: { id: string; display_name: string }[];
+    ds_lop: { id: string; display_name: string }[];
 }
 
 export interface DsNhomHocRespData {
     ds_nhom_to: NhomHoc[];
-    ds_mon_hoc: { id: string; display_name: string }[];
+    ds_mon_hoc: { id: string; display_name: string , ds_lop: string[], ds_khoa: string[]}[];
+    ds_khoa: { id: string; display_name: string }[];
+    ds_lop: { id: string; display_name: string }[];
 }
 
 
 export interface NhomHoc {
-        id_to_hoc: string;
+    id_to_hoc: string;
     ma_mon: string;
     ten_mon: string;
     so_tc: number;

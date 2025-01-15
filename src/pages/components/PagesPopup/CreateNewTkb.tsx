@@ -1,10 +1,9 @@
 import classNames from 'classnames/bind';
 
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import Popup from 'reactjs-popup';
 import { PopupProps } from 'reactjs-popup/dist/types';
 import PopupModel from '../../../components/PopupModel';
-import { globalContent } from '../../../store/GlobalContent';
 import style from './PagesPopup.module.scss';
 
 const cx = classNames.bind(style);
@@ -14,10 +13,10 @@ interface CreateNewTkbProps extends Omit<PopupProps, 'children'> {
 }
 
 export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) {
-    const [globoalState] = useContext(globalContent);
+    // const [globoalState] = useContext(globalContent);
 
     const [name, setName] = useState<string>('Thời khóa biểu');
-    const [pos, setPos] = useState<string>('client');
+    const [pos, setPos] = useState<string>('server');
     const [nam, setNam] = useState<string>('20242');
 
     return (
