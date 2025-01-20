@@ -22,7 +22,7 @@ function DefaultLayout() {
     const [headerPar, setHeaderPar] = useState<HeaderPar>({});
     const currentOutlet = useOutlet();
 
-    const element = <AnimatePresence>{currentOutlet}</AnimatePresence>;
+    const element = <AnimatePresence initial={false}>{currentOutlet}</AnimatePresence>;
 
     return (
         <headerContent.Provider value={setHeaderPar}>
