@@ -1,14 +1,16 @@
 import classNames from 'classnames/bind';
+import { motion } from 'framer-motion';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
+import { headerContent } from '../../components/Layout/DefaultLayout';
 
 // import { toPng } from 'html-to-image';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { headerContent } from '../../components/Layout/DefaultLayout';
+
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
 import useCommand, { commandsInterface } from '../../Hooks/useCommand';
 import useSelection from '../../Hooks/useSelection';
+import { UseShortCut as useShortCut } from '../../Hooks/UseShortCut';
 import useTkbHandler from '../../Hooks/useTkbHandler';
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
@@ -47,20 +49,11 @@ export default function Tkb() {
     const idAutoSaveTimeOut = useRef<NodeJS.Timeout>();
 
     const tkbHandler = useTkbHandler(tkbid || '', !!searchParams.get('isclient'));
+    const { commands, popup } = useCommand(tkbHandler);
+    // const popupSave = useTkbBeforeunload(tkbHandler.iconSaveing !== 'saved');
+    useShortCut(commands, tkbHandler, selection);
 
     const isTabletOrMobile = useMediaQuery('(max-width: 800px)');
-
-    const { commands, popup } = useCommand(tkbHandler);
-
-    const miniSideBar = () => {
-        setMintSide((e) => !e);
-    };
-
-    const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
-        console.log(idToHocs);
-        setSideBar('tutu');
-        setReplayIdToHoc(idToHocs);
-    };
 
     const onCommandHandel = useCallback(
         (command: keyof commandsInterface) => {
@@ -77,73 +70,6 @@ export default function Tkb() {
         [commands]
     );
 
-    const resize = (ev: MouseEvent) => {
-        console.log(ev.x);
-        setSideBarWidth(ev.x - 2);
-    };
-
-    const mouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-        setResize(true);
-        document.addEventListener('mousemove', resize);
-        document.addEventListener(
-            'mouseup',
-            () => {
-                setResize(false);
-                document.removeEventListener('mousemove', resize);
-            },
-            false
-        );
-        console.log(event.clientX);
-    };
-
-    useHotkeys(
-        'ctrl+z',
-        () => {
-            const command = commands('undo');
-            if (command) command();
-        },
-        [commands]
-    );
-
-    useHotkeys(
-        'ctrl+y',
-        () => {
-            const command = commands('redo');
-            if (command) command();
-        },
-        [commands]
-    );
-
-    useHotkeys(
-        'ctrl+a',
-        () => {
-            selection.addAll(tkbHandler.id_to_hocs);
-        },
-        [selection, tkbHandler.id_to_hocs]
-    );
-
-    useHotkeys(
-        'Escape',
-        () => {
-            console.log('okkkk');
-            if (selection) selection.clear();
-        },
-        [selection]
-    );
-
-    useHotkeys(
-        'Delete',
-        () => {
-            if (!selection.selection) return;
-            [...selection.selection].forEach((e) => {
-                tkbHandler.onRemoveNhomHocHandler(e);
-            });
-            selection.clear();
-        },
-        [selection, tkbHandler]
-    );
-
-    // updateHeader
     useEffect(() => {
         const tkbTemp = tkbHandler.tkbData;
         if (!tkbTemp) return;
@@ -165,6 +91,35 @@ export default function Tkb() {
         // NOTE: có thể nỗi mai mốt
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setHeaderPar, tkbHandler.tkbData?.name, tkbHandler.iconSaveing, tkbHandler.users]);
+
+    const miniSideBar = () => {
+        setMintSide((e) => !e);
+    };
+
+    const timNhomHocTuongTuHandel = (idToHocs: string[]) => {
+        console.log(idToHocs);
+        setSideBar('tutu');
+        setReplayIdToHoc(idToHocs);
+    };
+
+    const resize = (ev: MouseEvent) => {
+        console.log(ev.x);
+        setSideBarWidth(ev.x - 2);
+    };
+
+    const mouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+        setResize(true);
+        document.addEventListener('mousemove', resize);
+        document.addEventListener(
+            'mouseup',
+            () => {
+                setResize(false);
+                document.removeEventListener('mousemove', resize);
+            },
+            false
+        );
+        console.log(event.clientX);
+    };
 
     // TODO: chuyển vào trong useTkbHandler
     // sửa lỗi mỗi khi vào là nó tính là thay đổi
@@ -214,9 +169,9 @@ export default function Tkb() {
         <Loader isLoading={tkbHandler.isLoading}>
             <tkbContext.Provider value={tkbHandler}>
                 {tkbHandler.errMsg ? (
-                    <Error msg={tkbHandler.errMsg} />
+                    <Error msg={tkbHandler.errMsg} code={401} />
                 ) : (
-                    <div className={cx('wrapper')}>
+                    <motion.div className={cx('wrapper')}>
                         <div
                             className={cx('side-bar')}
                             style={
@@ -269,7 +224,7 @@ export default function Tkb() {
                         </div>
 
                         {popup}
-                    </div>
+                    </motion.div>
                 )}
             </tkbContext.Provider>
         </Loader>

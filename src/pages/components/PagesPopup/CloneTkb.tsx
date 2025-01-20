@@ -1,8 +1,8 @@
 import classNames from 'classnames/bind';
 import { useState } from 'react';
-import Popup from 'reactjs-popup';
-import { PopupProps } from 'reactjs-popup/dist/types';
 import notifyMaster from '../../../components/NotifyPopup/NotificationManager';
+import Popup from '../../../components/Popup';
+import { PopupProps } from '../../../components/Popup/types';
 import PopupModel from '../../../components/PopupModel';
 import style from './PagesPopup.module.scss';
 
@@ -38,12 +38,7 @@ export default function CloneTkb({ onClone, ...pros }: CloneTkbProps) {
                 </div>
                 <div className={cx('input')}>
                     <label>Vị trí lưu</label>
-                    <select
-                        name="pos"
-                        id="pos"
-                        value={pos}
-                        onChange={(e) => setPos(e.target.value)}
-                    >
+                    <select name="pos" id="pos" value={pos} onChange={(e) => setPos(e.target.value)}>
                         <option value="client">Client</option>
                         <option value="server">Server</option>
                     </select>

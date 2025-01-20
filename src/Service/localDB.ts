@@ -137,3 +137,7 @@ export async function getAllRecord() {
 
     return getALlRecord;
 }
+
+export async function deleteIndexdDb() {
+    indexedDB.deleteDatabase('tkbStorage');
+}

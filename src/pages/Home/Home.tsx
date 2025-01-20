@@ -1,6 +1,7 @@
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
+import { motion } from 'framer-motion';
 import { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
@@ -8,6 +9,7 @@ import SimpleBar from 'simplebar-react';
 import images from '../../assets/images';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import { routerConfig } from '../../config';
+import motionConfig from '../../config/motionConfig';
 import Footer from '../components/Footer';
 import style from './Home.module.scss';
 
@@ -37,7 +39,7 @@ function Home() {
                 maxHeight: '100%',
             }}
         >
-            <div className={cx('wrapper')}>
+            <motion.div {...motionConfig} className={cx('wrapper')}>
                 <div className={cx('container', 'main')}>
                     <div className={cx('item')}></div>
                     <div className={cx('item')}>
@@ -48,11 +50,10 @@ function Home() {
                             </div>
                             <h1>Thời khóa biểu thông minh - Lập kế hoạch học tập hiệu quả</h1>
                             <p>
-                                Bạn đang gặp khó khăn với việc quản lý thời gian học của mình? Vậy
-                                bán đến đúng nơi rồi đó. Trang web của chúng tôi được thiết kế đặc
-                                biệt để giúp bạn quản lý thời khóa biểu một cách dễ dàng và trực
-                                quan. Bạn sẽ không còn phải loay hoay với những dòng chữ dài dòng
-                                nữa. Vậy bắt đầu thôi nào.😊
+                                Bạn đang gặp khó khăn với việc quản lý thời gian học của mình? Vậy bán đến đúng nơi rồi
+                                đó. Trang web của chúng tôi được thiết kế đặc biệt để giúp bạn quản lý thời khóa biểu
+                                một cách dễ dàng và trực quan. Bạn sẽ không còn phải loay hoay với những dòng chữ dài
+                                dòng nữa. Vậy bắt đầu thôi nào.😊
                             </p>
 
                             <div className={cx('button-start-wrapper')}>
@@ -74,8 +75,8 @@ function Home() {
                         <div>
                             <h1>Nhập liệu nhanh chóng, chính xác.</h1>
                             <p>
-                                Với nhiều tính năng hỗ trợ bạn có thể dễ dàng chọn cho mình những
-                                môn học mình mong muốn trong 714 và nhóm học trong 1529. 😊
+                                Với nhiều tính năng hỗ trợ bạn có thể dễ dàng chọn cho mình những môn học mình mong muốn
+                                trong 714 và nhóm học trong 1529. 😊
                             </p>
                         </div>
                     </div>
@@ -91,9 +92,9 @@ function Home() {
                         <div>
                             <h1>Hiển thị thời khóa biểu trực quan.</h1>
                             <p>
-                                Thay vì đọc những dòng chữ dài dòng, bạn có thể dễ dàng nhìn thấy
-                                thời khóa biểu của mình được hiển thị trên một bảng trực quan, giúp
-                                bạn nắm bắt thông tin một cách nhanh chóng.
+                                Thay vì đọc những dòng chữ dài dòng, bạn có thể dễ dàng nhìn thấy thời khóa biểu của
+                                mình được hiển thị trên một bảng trực quan, giúp bạn nắm bắt thông tin một cách nhanh
+                                chóng.
                             </p>
                         </div>
                     </div>
@@ -102,15 +103,12 @@ function Home() {
                     <div className={cx('item')}>
                         <div>
                             <h1>Không bị giới hạn. Coi mọi lúc mọi nơi.</h1>
-                            <p>
-                                Bạn có thể xem trước thời khóa biểu ngay cả khi chưa đến thời gian
-                                đăng ký.
-                            </p>
+                            <p>Bạn có thể xem trước thời khóa biểu ngay cả khi chưa đến thời gian đăng ký.</p>
                         </div>
                     </div>
                     <div className={cx('item')}></div>
                 </div>
-            </div>
+            </motion.div>
             <Footer></Footer>
         </SimpleBar>
     );

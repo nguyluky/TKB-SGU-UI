@@ -102,6 +102,8 @@ export default function DonateQrCode() {
                 setQrEx(0);
                 timeOutRef.current?.clear();
                 // TODO:
+
+                // NOTE: todo what???
             }
         }
 

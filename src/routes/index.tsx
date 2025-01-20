@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouteObject } from 'react-router-dom';
 
-import { createRef } from 'react';
 import { DefaultLayout } from '../components/Layout';
 import { routerConfig } from '../config';
 import Donate from '../pages/Donate';
@@ -21,37 +20,30 @@ export const defaultLayoutChildren = [
     {
         path: '/',
         element: <Home />,
-        nodeRef: createRef<HTMLDivElement>(),
     },
     {
         path: routerConfig.tkbs,
         element: <DsTkb />,
-        nodeRef: createRef<HTMLDivElement>(),
     },
     {
         path: routerConfig.tkb,
         element: <Tkb />,
-        nodeRef: createRef<HTMLDivElement>(),
     },
     {
         path: routerConfig.test,
         element: <Test />,
-        nodeRef: createRef<HTMLDivElement>(),
     },
     {
         path: routerConfig.join,
         element: <Join />,
-        nodeRef: createRef<HTMLDivElement>(),
     },
     {
         path: routerConfig.privacyPolicy,
         element: <PrivacyPolicy />,
-        nodeRef: createRef<HTMLDivElement>(),
     },
     {
         path: routerConfig.verifyEmail,
         element: <EmailVerify />,
-        nodeRef: createRef<HTMLDivElement>(),
     },
 ];
 

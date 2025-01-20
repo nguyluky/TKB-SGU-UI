@@ -1,21 +1,16 @@
 .add-popup {
     height: 60vh;
     display: flex;
-    width: 60vw;
-
-    @media screen and (max-width: 660px) {
-        min-width: 90vw;
-        min-width: 90vw;
-    }
+    width: 1000px;
 
     .split {
         height: 100%;
+        transition: all 0.2s linear;
         width: 100%;
-        max-width: 1000px;
 
         &.sup-filter {
             width: max-content;
-            // border-right: 2px solid var(--primary-color-1);
+            max-width: 1000px;
             border-right: 2px solid rgb(from var(--primary-color-1) r g b / 50);
             margin-right: 5px;
             padding-right: 5px;
@@ -24,8 +19,7 @@
         &.hide {
             padding: 0;
             margin: 0;
-            width: 0px;
-            max-width: 10000000px;
+            max-width: 0px;
             overflow: hidden;
             border-right: none;
         }

@@ -8,16 +8,21 @@ import {
     faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames/bind';
+import { motion } from 'framer-motion';
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
+import Popup from '../../components/Popup';
 
 import images from '../../assets/images';
 import DropDownButton from '../../components/DropDownButton';
 import { headerContent } from '../../components/Layout/DefaultLayout';
 import notifyMaster from '../../components/NotifyPopup/NotificationManager';
+import PopupModel from '../../components/PopupModel';
 import { routerConfig } from '../../config';
+import useCallbackQueue from '../../Hooks/useCallbackQueue';
 import { TkbInfo } from '../../Service';
+import { deleteIndexdDb } from '../../Service/localDB';
 import { globalContent } from '../../store/GlobalContent';
 import Loader from '../components/Loader';
 import { UploadTkb } from '../components/PagesPopup';
@@ -52,6 +57,8 @@ function DsTkb() {
     const setHeaderPar = useContext(headerContent);
     const [globalState] = useContext(globalContent);
 
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const [sortBy] = useState<'name' | 'time' | ''>('');
     const [isLoading, setLoading] = useState(true);
     const [dsTkb, setDsTkb] = useState<TkbInfo[]>([]);
@@ -59,8 +66,13 @@ function DsTkb() {
     const [uploadTkbShow, setUploadTkbShow] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
     const [tkbNoBackUp, setTkbNoBackUp] = useState<TkbInfo[]>([]);
+    const [isRestore, setIsRestore] = useState<boolean>(false);
+    const [progress, setProgress] = useState<number>(0);
+
+    const [addCallback, callCallback, deleteCallback] = useCallbackQueue();
 
     // TODO: sửa lại file này nha
+    // NOTE: sửa lại cái gì? cái thằng này.
     const onDeletehandle = (tkbData: TkbInfo) => {
         if (!tkbData.isClient) {
             globalState.client.serverApi.deleteTkb(tkbData.id).then((e) => {
@@ -206,13 +218,72 @@ function DsTkb() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [globalState.client]);
 
+    const startRestore = () => {
+        const restore = async () => {
+            setIsRestore(true);
+            const serverApi = globalState.client.serverApi;
+            const localApi = globalState.client.localApi;
+            Promise.all(
+                tkbNoBackUp.map(async (e) => {
+                    const content = await localApi.getTkbContent(e.id);
+                    const mmh = await localApi.getTkbContentMmh(e.id);
+
+                    const resp = await serverApi.createNewTkb({
+                        name: e.name,
+                        tkb_describe: '',
+                        thumbnails: '',
+                        nam: '20242',
+                    });
+
+                    if (!resp.success || !resp.data?.id) {
+                        notifyMaster.error('Không thể khôi phục tkb ' + e.name);
+                        return;
+                    }
+
+                    await serverApi.updateTkbContent(resp.data.id, content.data || []);
+                    await serverApi.updateTkbContentMmh(resp.data.id, mmh.data || []);
+
+                    setDsTkb((J) => {
+                        if (!resp.data) return J;
+                        return [resp.data, ...J];
+                    });
+                })
+            ).then(() => {
+                cancelRestore();
+                deleteIndexdDb();
+                setTkbNoBackUp([]);
+            });
+        };
+
+        if (!globalState.client.islogin()) {
+            const callbackId = 'restoreTkb';
+            addCallback(callbackId, () => {
+                console.log('restore');
+                restore();
+            });
+            setSearchParams((e) => {
+                e.set('callback', callbackId);
+                e.set('login', '1');
+                return e;
+            });
+
+            return;
+        }
+
+        restore();
+    };
+
+    const cancelRestore = () => {
+        setIsRestore(false);
+    };
+
     return (
         <SimpleBar
             style={{
                 maxHeight: '100%',
             }}
         >
-            <div className={cx('DsTkb')}>
+            <motion.div className={cx('DsTkb')}>
                 <div className={cx('template-tkb')}>
                     <div className={cx('template-wrapper')}>
                         <header className={cx('template-header-wrapper')}>
@@ -243,7 +314,11 @@ function DsTkb() {
                                 <div className={cx('center')}>
                                     <div className={cx('notify')}>Khôi phục thời khóa {tkbNoBackUp.length}:</div>
                                     <div className={cx('bu')}>
-                                        <DropDownButton icon={faCheck} className={cx('button', 'check')} />
+                                        <DropDownButton
+                                            icon={faCheck}
+                                            className={cx('button', 'check')}
+                                            onClick={startRestore}
+                                        />
                                         <DropDownButton icon={faXmark} className={cx('button')} />
                                     </div>
                                 </div>
@@ -308,7 +383,22 @@ function DsTkb() {
                     onClose={() => setUploadTkbShow(false)}
                     uploadTkb={onUpdateFileHandle}
                 />
-            </div>
+
+                <Popup open={isRestore} onClose={cancelRestore} closeOnDocumentClick={false} closeOnEscape={false}>
+                    <PopupModel title="Khôi phục tkb" onCancel={cancelRestore}>
+                        <div className={cx('restore-tkb')}>
+                            <div className={cx('progress-bar')}>
+                                <div
+                                    style={{
+                                        width: `${progress}%`,
+                                    }}
+                                ></div>
+                            </div>
+                            <div className={cx('text')}>1/3: Đang khôi chụp dữ liệu</div>
+                        </div>
+                    </PopupModel>
+                </Popup>
+            </motion.div>
         </SimpleBar>
     );
 }

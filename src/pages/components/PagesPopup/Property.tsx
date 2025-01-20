@@ -1,10 +1,10 @@
 import classNames from 'classnames/bind';
 import { useState } from 'react';
-import Popup from 'reactjs-popup';
-import { PopupProps } from 'reactjs-popup/dist/types';
 import PopupModel from '../../../components/PopupModel';
 import { TkbInfo } from '../../../Service';
 
+import Popup from '../../../components/Popup';
+import { PopupProps } from '../../../components/Popup/types';
 import style from './PagesPopup.module.scss';
 
 const cx = classNames.bind(style);

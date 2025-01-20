@@ -94,7 +94,7 @@ export function AddHp({
         }
         setSearchResult(
             result.filter((e) => {
-                console.log(e);
+                // console.log(e);
                 if (selectedFilter.length === 0) return true;
                 if (searchBy === 'lop') return (e.ds_lop as string[]).some((lop) => selectedFilter.includes(lop));
                 if (searchBy === 'khoa') return (e.ds_khoa as string[]).some((khoa) => selectedFilter.includes(khoa));

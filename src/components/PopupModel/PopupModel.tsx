@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { ReactElement } from 'react';
 
 import style from './PopupModel.module.scss';
@@ -34,7 +34,7 @@ function Popup({
                         </button>
                     ) : null}
                     {onOk ? (
-                        <button className={cx('ok')} onClick={() => onOk()}>
+                        <button className={cx('ok')} type="submit" onClick={() => onOk()}>
                             ok
                         </button>
                     ) : null}

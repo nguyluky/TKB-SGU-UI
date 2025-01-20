@@ -21,9 +21,7 @@ export function NewTkb() {
     const [isShow, setShow] = useState(false);
 
     const nav = useNavigate();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [searchParams, setSearchParams] = useSearchParams();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [addCallback, callCallback, deleteCallback] = useCallbackQueue();
 
     const sendCreateTkbReq = (name: string, pos: string, nam: string) => {
@@ -39,20 +37,22 @@ export function NewTkb() {
                     nav(data.data.id);
                 });
 
-        // if (pos === 'client') {
-        //     globalState.client.localApi
-        //         .createNewTkb({ name: name, tkb_describe: '', thumbnails: '', nam: nam })
-        //         .then((data) => {
-        //             if (!data.success || !data.data) {
-        //                 notifyMaster.error(data.msg);
-        //                 return;
-        //             }
-        //             nav(data.data.id + '?isclient=true');
-        //         });
-        // }
+        if (pos === 'client') {
+            globalState.client.localApi
+                .createNewTkb({ name: name, tkb_describe: '', thumbnails: '', nam: nam })
+                .then((data) => {
+                    if (!data.success || !data.data) {
+                        notifyMaster.error(data.msg);
+                        return;
+                    }
+                    nav(data.data.id + '?isclient=true');
+                });
+        }
     };
 
     const onClickHandler = () => {
+        // nav('new');
+
         if (globalState.client.islogin()) {
             setShow(true);
             return;
