@@ -2,7 +2,7 @@ import { faCloud, faEllipsisVertical, faFolder } from '@fortawesome/free-solid-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Popup from 'reactjs-popup';
+import Popup from '../../components/Popup';
 
 import images from '../../assets/images';
 import PopupModel from '../../components/PopupModel';
@@ -47,11 +47,7 @@ export function CardTkb({
         >
             <div className={cx('thumbnail')}>
                 <div className={cx('icon-wrapper')}>
-                    {data.thumbnails ? (
-                        <p>imge</p>
-                    ) : (
-                        <img src={images.missingPicture} alt="Missing" />
-                    )}
+                    {data.thumbnails ? <p>imge</p> : <img src={images.missingPicture} alt="Missing" />}
                 </div>
             </div>
             <div className={cx('body')}>
@@ -119,7 +115,7 @@ export function CardTkb({
                                     window.location.origin +
                                         '/tkbs/' +
                                         data.id +
-                                        (data.isClient ? '?isclient=true' : ''),
+                                        (data.isClient ? '?isclient=true' : '')
                                 );
                             }}
                         >

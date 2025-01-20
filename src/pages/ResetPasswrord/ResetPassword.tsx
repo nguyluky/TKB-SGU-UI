@@ -12,7 +12,6 @@ import styles from './ResetPassword.module.scss';
 const cx = classNames.bind(styles);
 
 export default function ResetPassword() {
-    // TODO: Implement ResetPassword page
     const nav = useNavigate();
     const { token } = useParams();
     const [password, setPassword] = useState('');

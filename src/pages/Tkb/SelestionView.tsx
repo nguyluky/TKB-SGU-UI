@@ -2,8 +2,8 @@ import { faAngleDown, faAngleUp, faPlus, faSquareMinus, faXmark } from '@fortawe
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
-import Popup from 'reactjs-popup';
 import SimpleBar from 'simplebar-react';
+import Popup from '../../components/Popup';
 
 import { DsNhomHocResp, NhomHoc, TkbInfo, TkbTiet } from '../../Service';
 import { hashCode } from '../../utils';

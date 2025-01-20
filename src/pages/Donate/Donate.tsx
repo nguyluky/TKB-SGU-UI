@@ -1,7 +1,7 @@
 import classNames from 'classnames/bind';
 import { FormEvent, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Popup from 'reactjs-popup';
+import Popup from '../../components/Popup';
 import { apiConfig } from '../../config';
 import { ApiResponse } from '../../Service';
 import { globalContent } from '../../store/GlobalContent';

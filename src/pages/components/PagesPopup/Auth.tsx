@@ -4,16 +4,16 @@ import axios from 'axios';
 import classNames from 'classnames/bind';
 import { forwardRef, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import Popup from 'reactjs-popup';
-import { PopupProps } from 'reactjs-popup/dist/types';
 import ButtonWithLoading from '../../../components/ButtonWithLoading';
 import notifyMaster from '../../../components/NotifyPopup/NotificationManager';
 import { apiConfig } from '../../../config';
 import useWindowPopup from '../../../Hooks/useWindowPopup';
 import { Client } from '../../../Service';
-import { globalContent } from '../../../store/GlobalContent';
 
+import Popup from '../../../components/Popup';
+import { PopupProps } from '../../../components/Popup/types';
 import useCallbackQueue from '../../../Hooks/useCallbackQueue';
+import { globalContent } from '../../../store/GlobalContent';
 import style from './Auth.module.scss';
 
 const cx = classNames.bind(style);
@@ -81,8 +81,8 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
     const [registrationHeight, setRegistrationHeight] = useState(0);
 
     const onClose = () => {
-        const callbackId = params.get('callback');
-        callbackId && deleteCallback(callbackId);
+        // const callbackId = params.get('callback');
+        // callbackId && deleteCallback(callbackId);
         setParams((e) => {
             e.delete('login');
             e.delete('registration');
@@ -99,15 +99,18 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
             window.localStorage.setItem('token', accessToken);
             const client = new Client(accessToken);
 
+            const callbackId = params.get('callback');
             client.getUserInfo().then((resp) => {
                 if (resp.success) globalState.userInfo = resp.data;
 
                 globalState.client = client;
                 setGlobalState({ ...globalState });
-            });
 
-            const callbackId = params.get('callback');
-            callbackId && callCallback(callbackId);
+                if (callbackId) {
+                    callCallback(callbackId);
+                    deleteCallback(callbackId);
+                }
+            });
 
             popupWindow.close();
         } else if (t === 'notify') {
@@ -211,6 +214,7 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
         setIsLoading(true);
         setErrType('');
         setMess('');
+        const callbackId = params.get('callback');
         axios
             .post<loginResp>(apiConfig.baseUrl + apiConfig.logIn(), {
                 userName: userName,
@@ -233,8 +237,10 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
                         setGlobalState({ ...globalState });
                     });
 
-                    const callbackId = params.get('callback');
-                    callbackId && callCallback(callbackId);
+                    if (callbackId) {
+                        callCallback(callbackId);
+                        deleteCallback(callbackId);
+                    }
 
                     onClose();
 

@@ -110,3 +110,23 @@
         color: var(--text-color-2);
     }
 }
+
+.input.select {
+    .options {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .option {
+        padding: 5px 10px;
+        color: var(--text-color);
+        display: flex;
+        gap: 5px;
+        align-items: flex-start;
+
+        &.selected {
+            background-color: var(--primary-color-1);
+            color: var(--text-color-2);
+        }
+    }
+}

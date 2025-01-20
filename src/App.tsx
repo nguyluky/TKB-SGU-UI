@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import 'reactjs-popup/dist/index.css';
+// import 'reactjs-popup/dist/index.css';
+import './components/Popup/index.css';
 
 import routers from './routes';
 import { Client } from './Service';
@@ -36,7 +37,12 @@ function App() {
             })
             .catch(() => {
                 setGlobalState((e) => {
-                    e.userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                        e.userInfo = undefined;
+                    } else {
+                        e.userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+                    }
                     return { ...e };
                 });
             });

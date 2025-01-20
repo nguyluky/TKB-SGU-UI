@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ApiResponse, DsNhomHocResp, NhomHoc, Rule, TkbContent, TkbContentMmh, TkbInfo, TkbTiet } from '../Service';
 import { globalContent } from '../store/GlobalContent';
 import notifyMaster from '../components/NotifyPopup/NotificationManager';
+import { useBeforeUnload } from 'react-router-dom';
 
 interface HistoryTkb {
     tkbInfo?: TkbInfo;
@@ -114,6 +115,21 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
             return resp;
         }
 
+        // NOTE: thằng hiếu định làm cho mọi người tạo như muốn lưu thì phải login trước
+
+        // if (tkbId === 'new') {
+        //     return {
+        //         code: 200,
+        //         data: {
+        //             name: 'tkb mới',
+        //             rule: Rule.WRITE,
+        //             id: 'new',
+        //         },
+        //         msg: '',
+        //         success: true,
+        //     } as ApiResponse<TkbInfo>;
+        // }
+
         if (isClient) {
             return await globalState.client.localApi.getTkb(tkbId);
         }
@@ -121,6 +137,15 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     }, [globalState.client.localApi, globalState.client.serverApi, isClient, tkbId]);
 
     const getTkbContent = useCallback(async () => {
+
+        // if (tkbId === 'new') {
+        //     return {
+        //         code: 200,
+        //         data: [],
+        //         msg: '',
+        //         success: true,
+        //     }
+        // }
         if (!tkbId) {
             const resp: ApiResponse<TkbContent> = {
                 code: 500,
@@ -138,6 +163,14 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     }, [globalState.client.localApi, globalState.client.serverApi, isClient, tkbId]);
 
     const getTkbContentMmh = useCallback(async () => {
+        // if (tkbId === 'new') {
+        //     return {
+        //         code: 200,
+        //         data: [],
+        //         msg: '',
+        //         success: true,
+        //     }
+        // }
         if (!tkbId) {
             const resp: ApiResponse<TkbContentMmh> = {
                 code: 500,
@@ -363,6 +396,10 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     );
 
     const updataTkbInfo = useCallback(async () => {
+
+
+        // if (tkbId === 'new') return;
+
         if (!tkbDataRef.current || !TkbContent.current) return;
         console.log('dosave');
         const api = tkbDataRef.current?.isClient ? globalState.client.localApi : globalState.client.serverApi;
@@ -494,7 +531,10 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                         setMaMomHoc(mmh.data);
                     }
                 }
-            );
+            ).catch((e) => {
+                setIsLoading(false);
+                setErrMsg(e.message);
+            });
         }
 
         return () => {
@@ -505,6 +545,8 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updataTkbInfo, getDsNhomHoc, getTkbData, globalState.client, tkbId]);
+
+
 
     // save tkb to ref
     useEffect(() => {

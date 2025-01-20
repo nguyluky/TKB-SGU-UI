@@ -14,7 +14,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNamesBind from 'classnames/bind';
 import { ReactElement, useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Popup from 'reactjs-popup';
 
 import images from '../../../../assets/images';
 import { apiConfig } from '../../../../config';
@@ -24,6 +23,7 @@ import { globalContent } from '../../../../store/GlobalContent';
 import DropDownButton from '../../../DropDownButton/DropDownButton';
 import Input from '../../../Input';
 import { NotifyMaster } from '../../../NotifyPopup';
+import Popup from '../../../Popup';
 import PopupModel from '../../../PopupModel';
 import style from './Header.module.scss';
 
