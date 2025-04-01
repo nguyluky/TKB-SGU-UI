@@ -187,8 +187,8 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
         return await globalState.client.serverApi.getTkbContentMmh(tkbId);
     }, [globalState.client.localApi, globalState.client.serverApi, isClient, tkbId]);
 
-    const getDsNhomHoc = useCallback(async () => {
-        return await globalState.client.serverApi.getDsNhomHoc();
+    const getDsNhomHoc = useCallback(async (nam: string) => {
+        return await globalState.client.serverApi.getDsNhomHoc(nam);
     }, [globalState.client.serverApi]);
 
     const onAddHphandler = useCallback(
@@ -474,10 +474,9 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
     // getTkbData và dsNhomHoc
     useEffect(() => {
         if (!tkbInfo || !dsNhomHoc) {
-            Promise.all([getTkbData(), getTkbContent(), getTkbContentMmh(), getDsNhomHoc()]).then(
-                ([tkbDataResp, idToHocs, mmh, dsNhomHocResp]) => {
+            Promise.all([getTkbData(), getTkbContent(), getTkbContentMmh()]).then(
+                async ([tkbDataResp, idToHocs, mmh]) => {
                     console.log('getTkbRep', tkbDataResp);
-                    console.log('getDsNhomHocRep', dsNhomHocResp);
 
                     setIsLoading(false);
 
@@ -485,6 +484,9 @@ const useTkbHandler = (tkbId: string, isClient: boolean) => {
                         setErrMsg(tkbDataResp.msg || 'lỗi không thể lấy thời khóa biểu');
                         return;
                     }
+
+                    const dsNhomHocResp = await getDsNhomHoc(tkbDataResp.data.nam);
+                    console.log('getDsNhomHocRep', dsNhomHocResp);
                     setTkbInfo(tkbDataResp.data);
 
                     const dsMonHoc: { [key: string]: string } = {};

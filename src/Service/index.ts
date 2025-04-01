@@ -200,6 +200,7 @@ class ServerApi implements BaseApi {
             tkb_describe: tkb.tkb_describe,
             thumbnail: tkb.thumbnails,
             public: false,
+            nam: tkb.nam
         });
 
         if (resp.data.data) resp.data.data.created = new Date(resp.data.data.created);
@@ -319,12 +320,12 @@ class ServerApi implements BaseApi {
         return resp.data;
     }
 
-    async getDsNhomHoc(): Promise<DsNhomHocRespData> {
+    async getDsNhomHoc(nam: string = "24253"): Promise<DsNhomHocRespData> {
         if (!window.navigator.onLine) {
             return JSON.parse(localStorage.getItem('dsNhomHoc') || '{}');
         }
 
-        const getData = this.request.get<DsNhomHocRespData>(apiConfig.getDsNhomHoc());
+        const getData = this.request.get<DsNhomHocRespData>(apiConfig.getDsNhomHoc() + '?nam=' + nam);
         const data = (await getData).data;
         return data;
     }
