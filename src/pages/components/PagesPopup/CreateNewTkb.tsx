@@ -17,7 +17,7 @@ export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) 
     const [globoalState] = useContext(globalContent);
 
     const [name, setName] = useState<string>('Thời khóa biểu');
-    const [nam, setNam] = useState<string>('20242');
+    const [nam, setNam] = useState<string>('24253');
     const [pos, setPos] = useState<string>(!globoalState.client.islogin() ? 'client' : 'server');
 
     return (
@@ -42,8 +42,9 @@ export default function CreateNewTkb({ onCreate, ...props }: CreateNewTkbProps) 
                 <div className={cx('input')}>
                     <label>Năm học</label>
                     <select name="nam" id="nam" value={nam} onChange={(e) => setNam(e.target.value)}>
-                        <option value="20242">20242</option>
-                        <option value="20241">20241</option>
+                        <option value="24253">24-25-3</option>
+                        <option value="20242">24-25-2</option>
+                        <option value="20241">24-25-1</option>
                     </select>
                 </div>
 
