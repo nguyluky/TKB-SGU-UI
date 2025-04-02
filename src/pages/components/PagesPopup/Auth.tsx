@@ -254,6 +254,8 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
             .catch((e) => {
                 console.log(e);
                 // notifyMaster.error(String(e));
+                setIsLoading(false);
+                notifyMaster.error(e.response?.data?.msg || 'Tài khoản hoặc mật khẩu không đúng');
             });
     };
 
@@ -305,12 +307,13 @@ function Auth_({ ...pros }: AuthProps, ref: React.ForwardedRef<AuthRef>) {
 
                 setErrType('email');
                 setMess(resp.data.msg);
-                // notifyMaster.error(resp.data.msg, undefined, -1);
                 // setErr(resp.data.msg);
             })
             .catch((e) => {
                 // notifyMaster.error(String(e));
+                setIsLoading(false);
                 console.log(e);
+                notifyMaster.error(e.response?.data?.msg || 'Lỗi tạo tài khoản');
             });
     };
 
