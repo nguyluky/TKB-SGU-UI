@@ -9,17 +9,17 @@ import DsTkb from '../pages/DsTkb';
 import EmailVerify from '../pages/EmailVerify/EmailVerify';
 import ErrorPage from '../pages/Error';
 import ForgetPassword from '../pages/ForgetPassword';
-import Home from '../pages/Home';
 import Join from '../pages/Join';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import ResetPassword from '../pages/ResetPasswrord';
 import Test from '../pages/Test/Test';
 import Tkb from '../pages/Tkb';
+import MaintenancePage from '../pages/sr';
 
 export const defaultLayoutChildren = [
     {
         path: '/',
-        element: <Home />,
+        element: <MaintenancePage />,
     },
     {
         path: routerConfig.tkbs,

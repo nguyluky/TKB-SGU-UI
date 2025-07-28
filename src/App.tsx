@@ -3,7 +3,6 @@ import { RouterProvider } from 'react-router-dom';
 // import 'reactjs-popup/dist/index.css';
 import './components/Popup/index.css';
 
-import notifyMaster from './components/NotifyPopup/NotificationManager';
 import routers from './routes';
 import { Client } from './Service';
 import { globalContent } from './store/GlobalContent';
@@ -50,13 +49,13 @@ function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [globalState.client.islogin, setGlobalState]);
 
-    useEffect(() => {
-        notifyMaster.warning(
-            'Vẫn trong quá trình cập nhât. Tham gia discord để nhận được thông báo mới nhất.',
-            'Thông báo!!!',
-            -1
-        );
-    }, []);
+    // useEffect(() => {
+    //     notifyMaster.warning(
+    //         'Vẫn trong quá trình cập nhât. Tham gia discord để nhận được thông báo mới nhất.',
+    //         'Thông báo!!!',
+    //         -1
+    //     );
+    // }, []);
 
     return <RouterProvider router={routers} />;
 }
